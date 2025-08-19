@@ -12,8 +12,19 @@ add_library(BananaEngine SHARED
         include/Banana/Application.h
         include/Banana/Banana.h
         src/Banana/EntryPoint.cc
-        include/Banana/EntryPoint.h)
+        include/Banana/EntryPoint.h
+        src/Banana/Log.cc
+        include/Banana/Log.h)
 
 # 设置公共头文件目录（暴露给依赖模块）
 target_include_directories(BananaEngine PUBLIC
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>)
+
+include(FetchContent)
+FetchContent_Declare(spdlog
+    GIT_REPOSITORY https://github.com/gabime/spdlog.git
+    GIT_TAG v1.15.3
+    GIT_SHALLOW    TRUE)
+FetchContent_MakeAvailable(spdlog)
+target_link_libraries(BananaEngine PUBLIC spdlog::spdlog)
+

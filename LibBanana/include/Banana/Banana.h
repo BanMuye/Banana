@@ -7,6 +7,7 @@
 
 #include "Application.h"
 #include "Core.h"
+#include "Log.h"
 
 
 #endif //BANANA_BANANA_H

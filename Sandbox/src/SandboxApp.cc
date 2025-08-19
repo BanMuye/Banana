@@ -3,8 +3,9 @@
 //
 #include <iostream>
 #include "Banana/Banana.h"
+#include "spdlog/spdlog.h"
 
-class SandboxApp: public Banana::Application {
+class SandboxApp : public Banana::Application {
 public:
     SandboxApp() = default;
 
@@ -12,6 +13,8 @@ public:
 };
 
 int main(int argc, char *argv[]) {
+    Banana::Log::Init();
+    Banana::Log::GetCoreLogger()->info("Sandbox application Core Logger Test");
     auto app = new SandboxApp();
     app->Run();
     delete app;
