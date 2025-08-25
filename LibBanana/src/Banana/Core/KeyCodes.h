@@ -5,8 +5,10 @@
 #ifndef BANANA_KEYCODES_H
 #define BANANA_KEYCODES_H
 
+#include <cstdint>
+
 namespace Banana {
-    typedef std::unit16_t KeyCode;
+    typedef std::uint16_t KeyCode;
 
     namespace Key {
         enum: KeyCode {

@@ -7,6 +7,7 @@
 
 #include "Core.h"
 #include "Window.h"
+#include "Banana/Events/ApplicationEvent.h"
 
 namespace Banana {
     class API_EXPORT Application {
@@ -17,7 +18,11 @@ namespace Banana {
 
         void Run();
 
+        void OnEvent(Event &event);
+
     private:
+        bool OnWindowClose(WindowCloseEvent &event);
+
         std::unique_ptr<Window> m_Window;
         bool m_IsRunning = true;
     };

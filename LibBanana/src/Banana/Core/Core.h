@@ -12,8 +12,5 @@
 #endif
 
 
-class Core {
-};
-
 
 #endif //BANANA_CORE_H

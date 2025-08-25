@@ -4,7 +4,11 @@
 
 #include "MacOSWindow.h"
 
+#include "Banana/Core/Assert.h"
 #include "Banana/Core/Log.h"
+#include "Banana/Events/ApplicationEvent.h"
+#include "Banana/Events/KeyEvent.h"
+#include "Banana/Events/MouseEvent.h"
 
 namespace Banana {
     static uint8_t s_GLFWWindowCount = 0;
@@ -30,9 +34,6 @@ namespace Banana {
         glfwSwapBuffers(m_Window);
     }
 
-    void MacOSWindow::SetEventCallBack(const EventCallbackFn &callback) {
-    }
-
     void MacOSWindow::SetVSync(bool enabled) {
         if (enabled) {
             glfwSwapInterval(1);
@@ -56,14 +57,82 @@ namespace Banana {
 
         if (s_GLFWWindowCount == 0) {
             int success = glfwInit();
+            BANANA_CORE_ASSERT(success, "Could not initialize GLFW");
             glfwSetErrorCallback(GLFWErrorCallback);
         }
 
-        {
-            m_Window = glfwCreateWindow((int) props.Width, (int) props.Height, m_WindowData.Title.c_str(), nullptr,
-                                        nullptr);
-            ++s_GLFWWindowCount;
-        }
+        m_Window = glfwCreateWindow((int) props.Width, (int) props.Height, m_WindowData.Title.c_str(), nullptr,
+                                    nullptr);
+        ++s_GLFWWindowCount;
+
+        glfwMakeContextCurrent(m_Window);
+        glfwSetWindowUserPointer(m_Window, &m_WindowData);
+        SetVSync(true);
+
+        // set callbacks
+        glfwSetWindowSizeCallback(m_Window, [](GLFWwindow *window, int width, int height) {
+            WindowData &data = *(WindowData *) glfwGetWindowUserPointer(window);
+            data.Width = width;
+            data.Height = height;
+
+            WindowResizeEvent event(width, height);
+            data.EventCallBack(event);
+        });
+
+        glfwSetWindowCloseCallback(m_Window, [](GLFWwindow *window) {
+            WindowData &data = *(WindowData *) glfwGetWindowUserPointer(window);
+            WindowCloseEvent event;
+            data.EventCallBack(event);
+        });
+
+        glfwSetKeyCallback(m_Window, [](GLFWwindow *window, int key, int scancode, int action, int mods) {
+            WindowData &data = *(WindowData *) glfwGetWindowUserPointer(window);
+            switch (action) {
+                case GLFW_PRESS: {
+                    KeyPressedEvent event(key, false);
+                    data.EventCallBack(event);
+                    break;
+                }
+                case GLFW_RELEASE: {
+                    KeyReleasedEvent event(key);
+                    data.EventCallBack(event);
+                    break;
+                }
+                case GLFW_REPEAT: {
+                    KeyPressedEvent event(key, true);
+                    data.EventCallBack(event);
+                    break;
+                }
+            }
+        });
+
+        glfwSetMouseButtonCallback(m_Window, [](GLFWwindow *window, int button, int action, int mods) {
+            WindowData &data = *(WindowData *) glfwGetWindowUserPointer(window);
+            switch (action) {
+                case GLFW_PRESS: {
+                    MouseButtonPressedEvent event(button);
+                    data.EventCallBack(event);
+                    break;
+                }
+                case GLFW_RELEASE: {
+                    MouseButtonReleasedEvent event(button);
+                    data.EventCallBack(event);
+                    break;;
+                }
+            }
+        });
+
+        glfwSetScrollCallback(m_Window, [](GLFWwindow *window, double xOffset, double yOffset) {
+            WindowData &data = *(WindowData *) glfwGetWindowUserPointer(window);
+            MouseScrolledEvent event((float) xOffset, (float) yOffset);
+            data.EventCallBack(event);
+        });
+
+        glfwSetCursorPosCallback(m_Window, [](GLFWwindow *window, double xPos, double yPos) {
+            WindowData &data = *(WindowData *) glfwGetWindowUserPointer(window);
+            MouseMovedEvent event((float) xPos, (float) yPos);
+            data.EventCallBack(event);
+        });
     }
 
     void MacOSWindow::Shutdown() {

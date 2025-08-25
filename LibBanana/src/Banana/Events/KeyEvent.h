@@ -14,7 +14,7 @@ namespace Banana {
     public:
         KeyCode GetKeyCode() const { return m_KeyCode; }
 
-        EVENT_CLASS_CATEGORY(EventCategory::EventCategoryKeyboard | EventCategory::EventCategoryInput);
+        EVENT_CLASS_CATEGORY(EventCategoryKeyboard | EventCategory::EventCategoryInput);
 
     protected:
         KeyEvent(const

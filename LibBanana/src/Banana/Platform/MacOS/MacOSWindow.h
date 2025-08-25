@@ -24,7 +24,7 @@ namespace Banana {
 
         unsigned GetHeight() const override { return m_WindowData.Height; };
 
-        void SetEventCallBack(const EventCallbackFn &callback) override;
+        void SetEventCallBack(const EventCallbackFn &callback) override {m_WindowData.EventCallBack = callback;}
 
         void SetVSync(bool enabled) override;
 

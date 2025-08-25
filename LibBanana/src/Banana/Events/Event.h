@@ -16,11 +16,11 @@ namespace Banana {
         None = 0,
         WindowClose, WindowResize, WindowFocus, WindowLostFocus, WindowMoved,
         AppTick, AppUpdate, AppRender,
-        KeyPressed, KeyReleased,KeyTyped,
+        KeyPressed, KeyReleased, KeyTyped,
         MouseButtonPressed, MouseButtonReleased, MouseMoved, MouseScrolled
     };
 
-    enum class EventCategory {
+    enum EventCategory {
         None = 0,
         EventCategoryApplication = BIT(0),
         EventCategoryInput = BIT(1),
@@ -33,7 +33,7 @@ namespace Banana {
                                 virtual EventType GetEventType() const override {return GetStaticType();}\
                                 virtual const char* GetName() const override {return #type;}
 
-#define EVENT_CLASS_CATEGORY(category) virtual int GetCategoryFlags() const {return category;}
+#define EVENT_CLASS_CATEGORY(category) virtual int GetCategoryFlags() const override {return category;}
 
     class Event {
     public:
@@ -62,7 +62,7 @@ namespace Banana {
         template<typename T, typename F>
         bool Dispatch(const F &func) {
             if (m_Event.GetEventType() == T::GetStaticType()) {
-                m_Event.Handled |= func(T::GetName());
+                m_Event.Handled |= func(static_cast<T &>(m_Event));
                 return true;
             }
 
@@ -76,6 +76,8 @@ namespace Banana {
     inline std::ostream &operator<<(std::ostream &os, const Event &event) {
         return os << event.ToString();
     }
+
+
 }
 
 

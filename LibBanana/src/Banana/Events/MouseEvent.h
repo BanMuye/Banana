@@ -5,6 +5,7 @@
 #ifndef BANANA_MOUSEEVENT_H
 #define BANANA_MOUSEEVENT_H
 #include "Event.h"
+#include "Banana/Core/MouseCodes.h"
 
 namespace Banana {
     class MouseMovedEvent : public Event {

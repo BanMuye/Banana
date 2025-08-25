@@ -4,9 +4,9 @@ set(LIBRARY_OUTPUT_PATH ${CMAKE_CURRENT_SOURCE_DIR}/bin)
 
 add_definitions(-BANANA_PLATFORM_MAC)
 add_definitions(-BANANA_BUILD_DLL)
+add_definitions(-BANANA_DEBUG_MODE)
 
 add_library(BananaEngine SHARED
-        src/Banana/Core/Core.cc
         src/Banana/Core/Core.h
         src/Banana/Core/Application.cc
         src/Banana/Core/Application.h
