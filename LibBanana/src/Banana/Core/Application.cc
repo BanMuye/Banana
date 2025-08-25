@@ -27,6 +27,19 @@ namespace Banana {
         EventDispatcher dispatcher(event);
         dispatcher.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(OnWindowClose));
         BANANA_CORE_TRACE("{0}", event.ToString());
+
+        for (auto it = m_LayerStack.end(); it != m_LayerStack.begin();) {
+            (*--it)->OnEvent(event);
+            if (event.Handled)break;
+        }
+    }
+
+    void Application::PushLayer(Layer *layer) {
+        m_LayerStack.PushLayer(layer);
+    }
+
+    void Application::PushOverlay(Layer *layer) {
+        m_LayerStack.PushOverlay(layer);
     }
 
     bool Application::OnWindowClose(WindowCloseEvent &event) {

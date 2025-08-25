@@ -26,7 +26,11 @@ add_library(BananaEngine SHARED
         src/Banana/Core/Window.h
         src/Banana/Platform/MacOS/MacOSWindow.cc
         src/Banana/Platform/MacOS/MacOSWindow.h
-        src/Banana/Core/Assert.h)
+        src/Banana/Core/Assert.h
+        src/Banana/Core/Layer.cc
+        src/Banana/Core/Layer.h
+        src/Banana/Core/LayerStack.cc
+        src/Banana/Core/LayerStack.h)
 
 # 设置公共头文件目录（暴露给依赖模块）
 target_include_directories(BananaEngine PUBLIC

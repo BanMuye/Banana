@@ -35,7 +35,7 @@ namespace Banana {
 
 #define EVENT_CLASS_CATEGORY(category) virtual int GetCategoryFlags() const override {return category;}
 
-    class Event {
+    class API_EXPORT Event {
     public:
         virtual ~Event() = default;
 
