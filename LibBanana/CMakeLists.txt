@@ -32,7 +32,9 @@ add_library(BananaEngine SHARED
         src/Banana/Core/Layer.cc
         src/Banana/Core/Layer.h
         src/Banana/Core/LayerStack.cc
-        src/Banana/Core/LayerStack.h)
+        src/Banana/Core/LayerStack.h
+        src/Banana/Core/Input.h
+        src/Banana/Platform/MacOS/MacOSInput.h)
 
 # 设置公共头文件目录（暴露给依赖模块）
 target_include_directories(BananaEngine PUBLIC

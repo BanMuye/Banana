@@ -11,6 +11,9 @@
     #define API_EXPORT // 其他编译器（如MSVC）使用 __declspec(dllexport)
 #endif
 
+#ifdef BANANA_DEBUG
+    #define BANANA_ENABLE_ASSERTS
+#endif
 
 
 #endif //BANANA_CORE_H
