@@ -6,10 +6,12 @@
 #define BANANA_APPLICATION_H
 
 #include "Core.h"
+#include "Input.h"
 #include "Layer.h"
 #include "LayerStack.h"
 #include "Window.h"
 #include "Banana/Events/ApplicationEvent.h"
+#include "Banana/ImGui/ImGuiLayer.h"
 
 namespace Banana {
     class API_EXPORT Application {
@@ -26,12 +28,20 @@ namespace Banana {
 
         void PushOverlay(Layer *layer);
 
+        inline Window& GetWindow() {return *m_Window; }
+
+        inline static Application& Get() {return *s_Instance; }
+
     private:
         bool OnWindowClose(WindowCloseEvent &event);
 
         std::unique_ptr<Window> m_Window;
         bool m_IsRunning = true;
         LayerStack m_LayerStack;
+        ImGuiLayer* m_ImGuiLayer;
+    private:
+        static Application* s_Instance;
+
     };
 }
 

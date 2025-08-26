@@ -7,20 +7,36 @@
 
 
 #include "Log.h"
+#include "Banana/ImGui/ImGuiLayer.h"
 #include "Banana/Platform/MacOS/MacOSWindow.h"
 
 namespace Banana {
 #define BIND_EVENT_FN(function) std::bind(&Application::function, this, std::placeholders::_1)
 
+    Application* Application::s_Instance = nullptr;
     Application::Application() {
+        s_Instance = this;
         m_Window = std::unique_ptr<Window>(MacOSWindow::Create());
         m_Window->SetEventCallBack(BIND_EVENT_FN(OnEvent));
+
+        m_ImGuiLayer = new ImGuiLayer();
+        PushOverlay(m_ImGuiLayer);
     }
 
     Application::~Application() = default;
 
     void Application::Run() {
         while (m_IsRunning) {
+
+            for (Layer* layer : m_LayerStack) {
+                layer->OnUpdate();
+            }
+
+            m_ImGuiLayer->Begin();
+            for (Layer* layer : m_LayerStack)
+                layer->OnImGuiRender();
+            m_ImGuiLayer->End();
+
             m_Window->OnUpdate();
         }
     }
@@ -38,10 +54,12 @@ namespace Banana {
 
     void Application::PushLayer(Layer *layer) {
         m_LayerStack.PushLayer(layer);
+        layer->OnAttach();
     }
 
     void Application::PushOverlay(Layer *layer) {
         m_LayerStack.PushOverlay(layer);
+        layer->OnAttach();
     }
 
     bool Application::OnWindowClose(WindowCloseEvent &event) {

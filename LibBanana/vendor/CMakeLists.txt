@@ -16,6 +16,19 @@ add_library(imgui STATIC imgui/imconfig.h
         imgui/imgui_widgets.cpp
         imgui/imstb_rectpack.h
         imgui/imstb_textedit.h
-        imgui/imstb_truetype.h)
+        imgui/imstb_truetype.h
+        imgui/backends/imgui_impl_opengl3.cpp
+        imgui/backends/imgui_impl_opengl3.h
+        imgui/backends/imgui_impl_glfw.h
+        imgui/backends/imgui_impl_glfw.cpp)
 
-target_include_directories(imgui PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/imgui)
+target_include_directories(imgui PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/imgui"      # 解决 #include "imgui.h"
+        "${CMAKE_CURRENT_SOURCE_DIR}/imgui/backends" )
+
+include(FetchContent)
+FetchContent_Declare(glfw
+        GIT_REPOSITORY https://github.com/glfw/glfw
+        GIT_TAG 3.4
+        GIT_SHALLOW    TRUE)
+FetchContent_MakeAvailable(glfw)
+target_link_libraries(imgui PUBLIC glfw)

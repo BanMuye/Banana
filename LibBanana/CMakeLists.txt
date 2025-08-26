@@ -34,7 +34,9 @@ add_library(BananaEngine SHARED
         src/Banana/Core/LayerStack.cc
         src/Banana/Core/LayerStack.h
         src/Banana/Core/Input.h
-        src/Banana/Platform/MacOS/MacOSInput.h)
+        src/Banana/Platform/MacOS/MacOSInput.h
+        src/Banana/ImGui/ImGuiLayer.cc
+        src/Banana/ImGui/ImGuiLayer.h)
 
 # 设置公共头文件目录（暴露给依赖模块）
 target_include_directories(BananaEngine PUBLIC
@@ -55,4 +57,13 @@ FetchContent_Declare(glfw
 FetchContent_MakeAvailable(glfw)
 target_link_libraries(BananaEngine PUBLIC glfw)
 
+FetchContent_Declare(glm
+        GIT_REPOSITORY https://github.com/g-truc/glm.git
+        GIT_TAG 1.0.1
+        GIT_SHALLOW    glm)
+FetchContent_MakeAvailable(glm)
+target_link_libraries(BananaEngine PUBLIC glm)
+
+
 target_link_libraries(BananaEngine PUBLIC glad)
+target_link_libraries(BananaEngine PUBLIC imgui)
