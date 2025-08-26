@@ -6,6 +6,8 @@ add_definitions(-BANANA_PLATFORM_MAC)
 add_definitions(-BANANA_BUILD_DLL)
 add_definitions(-BANANA_DEBUG_MODE)
 
+add_subdirectory(vendor)
+
 add_library(BananaEngine SHARED
         src/Banana/Core/Core.h
         src/Banana/Core/Application.cc
@@ -51,5 +53,4 @@ FetchContent_Declare(glfw
 FetchContent_MakeAvailable(glfw)
 target_link_libraries(BananaEngine PUBLIC glfw)
 
-
-
+target_link_libraries(BananaEngine PUBLIC glad)

@@ -2,6 +2,7 @@
 // Created by 周春阳 on 2025/8/21.
 //
 
+#include "glad/glad.h"
 #include "MacOSWindow.h"
 
 #include "Banana/Core/Assert.h"
@@ -66,6 +67,8 @@ namespace Banana {
         ++s_GLFWWindowCount;
 
         glfwMakeContextCurrent(m_Window);
+        int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
+        BANANA_CORE_ASSERT(status, "Failed to initialize GLAD");
         glfwSetWindowUserPointer(m_Window, &m_WindowData);
         SetVSync(true);
 

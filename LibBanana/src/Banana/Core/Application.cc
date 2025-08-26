@@ -2,7 +2,9 @@
 // Created by 周春阳 on 2025/8/18.
 //
 #include <iostream>
+#include "glad/glad.h"
 #include "Application.h"
+
 
 #include "Log.h"
 #include "Banana/Platform/MacOS/MacOSWindow.h"
