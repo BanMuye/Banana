@@ -36,7 +36,10 @@ add_library(BananaEngine SHARED
         src/Banana/Core/Input.h
         src/Banana/Platform/MacOS/MacOSInput.h
         src/Banana/ImGui/ImGuiLayer.cc
-        src/Banana/ImGui/ImGuiLayer.h)
+        src/Banana/ImGui/ImGuiLayer.h
+        src/Banana/Renderer/GraphicsContext.h
+        src/Banana/Platform/OpenGL/OpenGLContext.cc
+        src/Banana/Platform/OpenGL/OpenGLContext.h)
 
 # 设置公共头文件目录（暴露给依赖模块）
 target_include_directories(BananaEngine PUBLIC

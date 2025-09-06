@@ -10,6 +10,7 @@
 #include "Banana/Events/ApplicationEvent.h"
 #include "Banana/Events/KeyEvent.h"
 #include "Banana/Events/MouseEvent.h"
+#include "Banana/Platform/OpenGL/OpenGLContext.h"
 
 namespace Banana {
     static uint8_t s_GLFWWindowCount = 0;
@@ -32,7 +33,7 @@ namespace Banana {
 
     void MacOSWindow::OnUpdate() {
         glfwPollEvents();
-        glfwSwapBuffers(m_Window);
+        m_Context->SwapBuffers();
     }
 
     void MacOSWindow::SetVSync(bool enabled) {
@@ -66,9 +67,8 @@ namespace Banana {
                                     nullptr);
         ++s_GLFWWindowCount;
 
-        glfwMakeContextCurrent(m_Window);
-        int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
-        BANANA_CORE_ASSERT(status, "Failed to initialize GLAD");
+        m_Context = new OpenGLContext(m_Window);
+        m_Context->Init();
         glfwSetWindowUserPointer(m_Window, &m_WindowData);
         SetVSync(true);
 

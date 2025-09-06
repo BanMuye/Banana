@@ -7,12 +7,12 @@
 
 #include "Banana/Core/bapch.h"
 
+#include "Banana/Renderer/GraphicsContext.h"
 #include "Banana/Core/Window.h"
 #include "GLFW/glfw3.h"
 
 namespace Banana {
     class MacOSWindow : public Window {
-
     public:
         MacOSWindow(const WindowProps &props);
 
@@ -24,13 +24,13 @@ namespace Banana {
 
         unsigned GetHeight() const override { return m_WindowData.Height; };
 
-        void SetEventCallBack(const EventCallbackFn &callback) override {m_WindowData.EventCallBack = callback;}
+        void SetEventCallBack(const EventCallbackFn &callback) override { m_WindowData.EventCallBack = callback; }
 
         void SetVSync(bool enabled) override;
 
         bool IsVSync() const override;
 
-        inline virtual void* GetNativeWindow() const override { return m_Window; }
+        inline virtual void *GetNativeWindow() const override { return m_Window; }
 
     private:
         virtual void Init(const WindowProps &props);
@@ -39,6 +39,7 @@ namespace Banana {
 
     private:
         GLFWwindow *m_Window;
+        GraphicsContext *m_Context;
 
         struct WindowData {
             std::string Title;
