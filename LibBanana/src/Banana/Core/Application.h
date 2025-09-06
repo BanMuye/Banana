@@ -39,6 +39,8 @@ namespace Banana {
         bool m_IsRunning = true;
         LayerStack m_LayerStack;
         ImGuiLayer* m_ImGuiLayer;
+
+        unsigned int m_VertexArray = 0, m_VertexBuffer = 0, m_IndexBuffer = 0;
     private:
         static Application* s_Instance;
 
