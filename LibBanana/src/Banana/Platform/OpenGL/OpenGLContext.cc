@@ -17,10 +17,15 @@ void Banana::OpenGLContext::Init() {
     int status = gladLoadGLLoader((GLADloadproc) glfwGetProcAddress);
     BANANA_CORE_ASSERT(status, "Failed to initialize");
 
-    BANANA_CORE_INFO("OpenGL Info:");
-    BANANA_CORE_INFO("  Vendor: {0}", static_cast<const void*>(glGetString(GL_VENDOR)));
-    BANANA_CORE_INFO("  Renderer: {0}", static_cast<const void*>(glGetString(GL_RENDERER)));
-    BANANA_CORE_INFO("  Version: {0}", static_cast<const void*>(glGetString(GL_VERSION)));
+    const GLubyte *versionStr = glGetString(GL_VERSION);
+    const GLubyte *rendererStr = glGetString(GL_RENDERER);
+    const GLubyte *vendorStr = glGetString(GL_VENDOR);
+    const GLubyte *glslVersionStr = glGetString(GL_SHADING_LANGUAGE_VERSION);
+
+    std::cout << "OpenGL 版本: " << versionStr << std::endl;
+    std::cout << "渲染器: " << rendererStr << std::endl;
+    std::cout << "供应商: " << vendorStr << std::endl;
+    std::cout << "GLSL 版本: " << glslVersionStr << std::endl;
 }
 
 void Banana::OpenGLContext::SwapBuffers() {
