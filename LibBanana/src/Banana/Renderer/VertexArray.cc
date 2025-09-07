@@ -11,9 +11,9 @@
 namespace Banana {
     VertexArray *VertexArray::Create() {
         switch (Renderer::GetAPI()) {
-            case RendererAPI::None: BANANA_CORE_ASSERT(false, "RendererAPI::None is currently not supported!");
+            case RendererAPI::API::None: BANANA_CORE_ASSERT(false, "RendererAPI::None is currently not supported!");
                 return nullptr;
-            case RendererAPI::OpenGL: return new OpenGLVertexArray();
+            case RendererAPI::API::OpenGL: return new OpenGLVertexArray();
             default:
                 BANANA_CORE_ASSERT(false, "RendererAPI::None is currently not supported!");
                 return nullptr;

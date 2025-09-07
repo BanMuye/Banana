@@ -5,17 +5,18 @@
 #ifndef BANANA_RENDERER_H
 #define BANANA_RENDERER_H
 
-namespace Banana {
-    enum class RendererAPI {
-        None = 0, OpenGL = 1
-    };
+#include <Banana/Renderer/RenderCommand.h>
 
+namespace Banana {
     class Renderer {
     public:
-        inline static RendererAPI GetAPI() { return s_RendererAPI; }
+        static void BeginScene();
 
-    private:
-        static RendererAPI s_RendererAPI;
+        static void EndScene();
+
+        static void Submit(const std::shared_ptr<VertexArray> &vertexArray);
+
+        inline static RendererAPI::API GetAPI() { return RendererAPI::GetAPI(); }
     };
 }
 

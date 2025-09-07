@@ -51,7 +51,13 @@ add_library(BananaEngine SHARED
         src/Banana/Renderer/VertexArray.cc
         src/Banana/Renderer/VertexArray.h
         src/Banana/Platform/OpenGL/OpenGLVertexArray.cc
-        src/Banana/Platform/OpenGL/OpenGLVertexArray.h)
+        src/Banana/Platform/OpenGL/OpenGLVertexArray.h
+        src/Banana/Renderer/RenderCommand.cc
+        src/Banana/Renderer/RenderCommand.h
+        src/Banana/Renderer/RendererAPI.cc
+        src/Banana/Renderer/RendererAPI.h
+        src/Banana/Platform/OpenGL/OpenGLRendererAPI.cc
+        src/Banana/Platform/OpenGL/OpenGLRendererAPI.h)
 
 # 设置公共头文件目录（暴露给依赖模块）
 target_include_directories(BananaEngine PUBLIC

@@ -2,7 +2,7 @@
 // Created by 周春阳 on 2025/8/18.
 //
 #include <iostream>
-#include "glad/glad.h"
+#include "Banana/Renderer/Renderer.h"
 #include "Application.h"
 
 
@@ -138,16 +138,18 @@ namespace Banana {
 
     void Application::Run() {
         while (m_IsRunning) {
-            glClearColor(0.1f, 0.1f, 0.5f, 1);
-            glClear(GL_COLOR_BUFFER_BIT);
+        	RenderCommand::SetClearColor({0.1, 0.2, 0.1, 1});
+        	RenderCommand::Clear();
+
+        	Renderer::BeginScene();
 
             blue_Shader->Bind();
-            m_SquareVA->Bind();
-            glDrawElements(GL_TRIANGLES, m_SquareVA->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
+        	Renderer::Submit(m_SquareVA);
 
             m_Shader->Bind();
-            m_RectangleVA->Bind();
-            glDrawElements(GL_TRIANGLES, m_RectangleVA->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
+        	Renderer::Submit(m_RectangleVA);
+
+        	Renderer::EndScene();
 
             for (Layer *layer: m_LayerStack) {
                 layer->OnUpdate();
