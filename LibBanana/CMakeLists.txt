@@ -57,7 +57,9 @@ add_library(BananaEngine SHARED
         src/Banana/Renderer/RendererAPI.cc
         src/Banana/Renderer/RendererAPI.h
         src/Banana/Platform/OpenGL/OpenGLRendererAPI.cc
-        src/Banana/Platform/OpenGL/OpenGLRendererAPI.h)
+        src/Banana/Platform/OpenGL/OpenGLRendererAPI.h
+        src/Banana/Renderer/OrthographicCamera.cc
+        src/Banana/Renderer/OrthographicCamera.h)
 
 # 设置公共头文件目录（暴露给依赖模块）
 target_include_directories(BananaEngine PUBLIC

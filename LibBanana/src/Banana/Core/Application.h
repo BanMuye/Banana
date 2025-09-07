@@ -14,6 +14,7 @@
 #include "Banana/Renderer/Buffer.h"
 #include "Banana/Renderer/Shader.h"
 #include "Banana/Renderer/VertexArray.h"
+#include "Banana/Renderer/OrthographicCamera.h"
 
 namespace Banana {
     class API_EXPORT Application {
@@ -42,11 +43,13 @@ namespace Banana {
         LayerStack m_LayerStack;
         ImGuiLayer *m_ImGuiLayer;
 
-        std::unique_ptr<Shader> m_Shader;
-        std::unique_ptr<Shader> blue_Shader;
+        std::shared_ptr<Shader> m_Shader;
+        std::shared_ptr<Shader> blue_Shader;
 
         std::shared_ptr<VertexArray> m_RectangleVA;
         std::shared_ptr<VertexArray> m_SquareVA;
+
+        OrthographicCamera m_Camera;
 
     private:
         static Application *s_Instance;

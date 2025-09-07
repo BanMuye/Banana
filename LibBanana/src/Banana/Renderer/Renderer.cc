@@ -2,17 +2,25 @@
 // Created by 周春阳 on 2025/9/7.
 //
 
+#include "Renderer.h"
+
 #include "Banana/Core/bapch.h"
 #include "Renderer.h"
 
 namespace Banana {
-    void Renderer::BeginScene() {
+    Renderer::SceneData *Renderer::s_SceneData = new Renderer::SceneData;
+
+    void Renderer::BeginScene(OrthographicCamera &camera) {
+        s_SceneData->ViewProjectionMatrix = camera.GetViewProjectionMatrix();
     }
 
     void Renderer::EndScene() {
     }
 
-    void Renderer::Submit(const std::shared_ptr<VertexArray> &vertexArray) {
+    void Renderer::Submit(const std::shared_ptr<Shader> &shader, const std::shared_ptr<VertexArray> &vertexArray) {
+        shader->Bind();
+        shader->UploadUniformMat4("u_ViewProjection", s_SceneData->ViewProjectionMatrix);
+
         vertexArray->Bind();
         RenderCommand::DrawIndexed(vertexArray);
     }

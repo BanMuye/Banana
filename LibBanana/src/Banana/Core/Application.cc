@@ -16,7 +16,7 @@ namespace Banana {
 
     Application *Application::s_Instance = nullptr;
 
-    Application::Application() {
+    Application::Application() : m_Camera(-1.6, 1.6, -0.9f, 0.9) {
         s_Instance = this;
         m_Window = std::unique_ptr<Window>(MacOSWindow::Create());
         m_Window->SetEventCallBack(BIND_EVENT_FN(OnEvent));
@@ -27,7 +27,7 @@ namespace Banana {
         m_RectangleVA.reset(VertexArray::Create());
 
         float vertices[3 * 7] = {
-            -0.5f, -0.5f, 0.0f, 0.8f, 0.2f, 0.8f, 1.0f,
+            -0.5f, -0.5f, 0.0f, 0.1f, 0.8f, 0.8f, 1.0f,
             0.5f, -0.5f, 0.0f, 0.2f, 0.3f, 0.8f, 1.0f,
             0.0f, 0.5f, 0.0f, 0.8f, 0.8f, 0.2f, 1.0f
         };
@@ -55,13 +55,15 @@ namespace Banana {
 			layout(location = 0) in vec3 a_Position;
             layout(location = 1) in vec4 a_Color;
 
+			uniform mat4 u_ViewProjection;
+
 			out vec3 v_Position;
             out vec4 v_Color;
 
 			void main()
 			{
 				v_Position = a_Position;
-				gl_Position = vec4(a_Position, 1.0);
+				gl_Position = u_ViewProjection * vec4(a_Position, 1.0);
                 v_Color = a_Color;
 			}
 		)";
@@ -109,12 +111,14 @@ namespace Banana {
 
 			layout(location = 0) in vec3 a_Position;
 
+			uniform mat4 u_ViewProjection;
+
 			out vec3 v_Position;
 
 			void main()
 			{
 				v_Position = a_Position;
-				gl_Position = vec4(a_Position, 1.0);
+				gl_Position = u_ViewProjection * vec4(a_Position, 1.0);
 			}
 		)";
 
@@ -138,18 +142,16 @@ namespace Banana {
 
     void Application::Run() {
         while (m_IsRunning) {
-        	RenderCommand::SetClearColor({0.1, 0.2, 0.1, 1});
-        	RenderCommand::Clear();
+            RenderCommand::SetClearColor({0.1, 0.2, 0.1, 1});
+            RenderCommand::Clear();
 
-        	Renderer::BeginScene();
+            Renderer::BeginScene(m_Camera);
 
-            blue_Shader->Bind();
-        	Renderer::Submit(m_SquareVA);
+            Renderer::Submit(blue_Shader, m_SquareVA);
 
-            m_Shader->Bind();
-        	Renderer::Submit(m_RectangleVA);
+            Renderer::Submit(m_Shader, m_RectangleVA);
 
-        	Renderer::EndScene();
+            Renderer::EndScene();
 
             for (Layer *layer: m_LayerStack) {
                 layer->OnUpdate();

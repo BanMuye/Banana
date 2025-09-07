@@ -6,6 +6,8 @@
 #define BANANA_SHADER_H
 #include <string>
 
+#include "glm/fwd.hpp"
+
 
 class Shader {
 public:
@@ -14,6 +16,8 @@ public:
 
     void Bind();
     void UnBind();
+
+    void UploadUniformMat4(const std::string &name, const glm::mat4 &matrix);
 
 private:
     uint32_t m_RendererID;

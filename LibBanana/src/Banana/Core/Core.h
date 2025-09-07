@@ -5,6 +5,9 @@
 #ifndef BANANA_CORE_H
 #define BANANA_CORE_H
 
+
+#define GLM_ENABLE_EXPERIMENTAL
+
 #if defined(__GNUC__) || defined(__clang__)
     #define API_EXPORT __attribute__((visibility("default")))
 #else
