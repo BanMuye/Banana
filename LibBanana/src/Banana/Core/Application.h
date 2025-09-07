@@ -13,6 +13,7 @@
 #include "Banana/ImGui/ImGuiLayer.h"
 #include "Banana/Renderer/Buffer.h"
 #include "Banana/Renderer/Shader.h"
+#include "Banana/Renderer/VertexArray.h"
 
 namespace Banana {
     class API_EXPORT Application {
@@ -41,10 +42,11 @@ namespace Banana {
         LayerStack m_LayerStack;
         ImGuiLayer *m_ImGuiLayer;
 
-        unsigned int m_VertexArray = 0;
         std::unique_ptr<Shader> m_Shader;
-        std::unique_ptr<VertexBuffer> m_VertexBuffer;
-        std::unique_ptr<IndexBuffer> m_IndexBuffer;
+        std::unique_ptr<Shader> blue_Shader;
+
+        std::shared_ptr<VertexArray> m_RectangleVA;
+        std::shared_ptr<VertexArray> m_SquareVA;
 
     private:
         static Application *s_Instance;

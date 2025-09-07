@@ -14,24 +14,6 @@
 namespace Banana {
 #define BIND_EVENT_FN(function) std::bind(&Application::function, this, std::placeholders::_1)
 
-    static GLenum ShaderDataTypeToOpenGLType(ShaderDataType type) {
-        switch (type) {
-            case ShaderDataType::Float: return GL_FLOAT;
-            case ShaderDataType::Float2: return GL_FLOAT;
-            case ShaderDataType::Float3: return GL_FLOAT;
-            case ShaderDataType::Float4: return GL_FLOAT;
-            case ShaderDataType::Mat3: return GL_FLOAT;
-            case ShaderDataType::Mat4: return GL_FLOAT;
-            case ShaderDataType::Int: return GL_INT;
-            case ShaderDataType::Int2: return GL_INT;
-            case ShaderDataType::Int3: return GL_INT;
-            case ShaderDataType::Int4: return GL_INT;
-            case ShaderDataType::Bool: return GL_BOOL;
-            default: BANANA_CORE_ASSERT(false, "Unknown shader data type!");
-                return 0;
-        }
-    }
-
     Application *Application::s_Instance = nullptr;
 
     Application::Application() {
@@ -42,8 +24,7 @@ namespace Banana {
         m_ImGuiLayer = new ImGuiLayer();
         PushOverlay(m_ImGuiLayer);
 
-        glGenVertexArrays(1, &m_VertexArray);
-        glBindVertexArray(m_VertexArray);
+        m_RectangleVA.reset(VertexArray::Create());
 
         float vertices[3 * 7] = {
             -0.5f, -0.5f, 0.0f, 0.8f, 0.2f, 0.8f, 1.0f,
@@ -51,33 +32,22 @@ namespace Banana {
             0.0f, 0.5f, 0.0f, 0.8f, 0.8f, 0.2f, 1.0f
         };
 
-        m_VertexBuffer.reset(VertexBuffer::Create(vertices, sizeof(vertices)));
-        m_VertexBuffer->Bind();
+        std::shared_ptr<VertexBuffer> rectangleVB;
+        rectangleVB.reset(VertexBuffer::Create(vertices, sizeof(vertices)));
 
-        {
-            BufferLayout layout = {
-                {ShaderDataType::Float3, "a_Position"},
-                {ShaderDataType::Float4, "a_Color"}
-            };
+        BufferLayout layout = {
+            {ShaderDataType::Float3, "a_Position"},
+            {ShaderDataType::Float4, "a_Color"}
+        };
 
-            m_VertexBuffer->SetLayout(layout);
-        }
+        rectangleVB->SetLayout(layout);
+        m_RectangleVA->AddVertexBuffer(rectangleVB);
 
-        uint32_t index = 0;
-        const auto &layout = m_VertexBuffer->GetLayout();
-        for (const auto &element: layout) {
-            glEnableVertexAttribArray(index);
-            glVertexAttribPointer(index,
-                                  static_cast<GLint>(element.GetComponentCount()),
-                                  ShaderDataTypeToOpenGLType(element.Type),
-                                  element.Normalized ? GL_TRUE : GL_FALSE, static_cast<GLint>(layout.GetStride()),
-                                  reinterpret_cast<const void *>(element.Offset));
-            index++;
-        }
-
+        std::shared_ptr<IndexBuffer> rectangleIB;
         unsigned int indices[3] = {0, 1, 2};
-        m_IndexBuffer.reset(IndexBuffer::Create(indices, sizeof(indices) / sizeof(indices[0])));
-        m_IndexBuffer->Bind();
+        rectangleIB.reset(IndexBuffer::Create(indices, sizeof(indices) / sizeof(indices[0])));
+
+        m_RectangleVA->SetIndexBuffer(rectangleIB);
 
         std::string vertexSrc = R"(
 			#version 330 core
@@ -111,6 +81,57 @@ namespace Banana {
 		)";
 
         m_Shader.reset(new Shader(vertexSrc, fragmentSrc));
+
+
+        m_SquareVA.reset(VertexArray::Create());
+
+        std::shared_ptr<VertexBuffer> squareVB;
+        float squareVertices[3 * 4] = {
+            -0.75f, -0.75f, 0.0f,
+            0.75f, -0.75f, 0.0f,
+            0.75f, 0.75f, 0.0f,
+            -0.75f, 0.75f, 0.0f
+        };
+
+        squareVB.reset(VertexBuffer::Create(squareVertices, sizeof(squareVertices)));
+
+        BufferLayout squareLayout = {{ShaderDataType::Float3, "a_Position"}};
+        squareVB->SetLayout(squareLayout);
+
+        uint32_t squareIndices[6] = {0, 1, 2, 2, 3, 0};
+        std::shared_ptr<IndexBuffer> squareIB;
+        squareIB.reset(IndexBuffer::Create(squareIndices, 6));
+        m_SquareVA->AddVertexBuffer(squareVB);
+        m_SquareVA->SetIndexBuffer(squareIB);
+
+        std::string blueShaderVertexSrc = R"(
+			#version 330 core
+
+			layout(location = 0) in vec3 a_Position;
+
+			out vec3 v_Position;
+
+			void main()
+			{
+				v_Position = a_Position;
+				gl_Position = vec4(a_Position, 1.0);
+			}
+		)";
+
+        std::string blueShaderFragmentSrc = R"(
+			#version 330 core
+
+			layout(location = 0) out vec4 color;
+
+			in vec3 v_Position;
+
+			void main()
+			{
+				color = vec4(0.8, 0.3, 0.8, 1.0);
+			}
+		)";
+
+        blue_Shader.reset(new Shader(blueShaderVertexSrc, blueShaderFragmentSrc));
     }
 
     Application::~Application() = default;
@@ -120,9 +141,13 @@ namespace Banana {
             glClearColor(0.1f, 0.1f, 0.5f, 1);
             glClear(GL_COLOR_BUFFER_BIT);
 
+            blue_Shader->Bind();
+            m_SquareVA->Bind();
+            glDrawElements(GL_TRIANGLES, m_SquareVA->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
+
             m_Shader->Bind();
-            glBindVertexArray(m_VertexArray);
-            glDrawElements(GL_TRIANGLES, m_IndexBuffer->GetCount(), GL_UNSIGNED_INT, nullptr);
+            m_RectangleVA->Bind();
+            glDrawElements(GL_TRIANGLES, m_RectangleVA->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
 
             for (Layer *layer: m_LayerStack) {
                 layer->OnUpdate();
