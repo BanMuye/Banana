@@ -39,7 +39,9 @@ add_library(BananaEngine SHARED
         src/Banana/ImGui/ImGuiLayer.h
         src/Banana/Renderer/GraphicsContext.h
         src/Banana/Platform/OpenGL/OpenGLContext.cc
-        src/Banana/Platform/OpenGL/OpenGLContext.h)
+        src/Banana/Platform/OpenGL/OpenGLContext.h
+        src/Banana/Renderer/Shader.cc
+        src/Banana/Renderer/Shader.h)
 
 # 设置公共头文件目录（暴露给依赖模块）
 target_include_directories(BananaEngine PUBLIC

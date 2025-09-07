@@ -1,4 +1,5 @@
 cmake_minimum_required(VERSION 4.0)
+set(CMAKE_CXX_STANDARD 11)
 
 add_definitions(-BANANA_PLATFORM_MAC)
 
