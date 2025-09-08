@@ -12,17 +12,17 @@ public:
     ExampleLayer() : Layer("Example"), m_Camera(-1.6f, 1.6f, -0.9f, 0.9f), m_CameraPosition(0.0f) {
         m_RectangleVA.reset(Banana::VertexArray::Create());
 
-        float vertices[3 * 7] = {
-            -0.5f, -0.5f, 0.0f, 0.1f, 0.8f, 0.8f, 1.0f,
-            0.5f, -0.5f, 0.0f, 0.2f, 0.3f, 0.8f, 1.0f,
-            0.0f, 0.5f, 0.0f, 0.8f, 0.8f, 0.2f, 1.0f
+        float vertices[3 * 8] = {
+            -0.5f, -0.5f, 0.0f, 1.0f, 0.1f, 0.8f, 0.8f, 1.0f,
+            0.5f, -0.5f, 0.0f, 1.0f, 0.2f, 0.3f, 0.8f, 1.0f,
+            0.0f, 0.5f, 0.0f, 1.0f, 0.8f, 0.8f, 0.2f, 1.0f
         };
 
         std::shared_ptr<Banana::VertexBuffer> rectangleVB;
         rectangleVB.reset(Banana::VertexBuffer::Create(vertices, sizeof(vertices)));
 
         Banana::BufferLayout layout = {
-            {Banana::ShaderDataType::Float3, "a_Position"},
+            {Banana::ShaderDataType::Float4, "a_Position"},
             {Banana::ShaderDataType::Float4, "a_Color"}
         };
 
@@ -38,18 +38,18 @@ public:
         std::string vertexSrc = R"(
 			#version 330 core
 
-			layout(location = 0) in vec3 a_Position;
+			layout(location = 0) in vec4 a_Position;
             layout(location = 1) in vec4 a_Color;
 
 			uniform mat4 u_ViewProjection;
 
-			out vec3 v_Position;
+			out vec4 v_Position;
             out vec4 v_Color;
 
 			void main()
 			{
 				v_Position = a_Position;
-				gl_Position = u_ViewProjection * vec4(a_Position, 1.0);
+				gl_Position = u_ViewProjection * a_Position;
                 v_Color = a_Color;
 			}
 		)";
