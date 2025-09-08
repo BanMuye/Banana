@@ -10,7 +10,7 @@
 #include "Banana/ImGui/ImGuiLayer.h"
 #include "Banana/Platform/MacOS/MacOSWindow.h"
 #include "Banana/Renderer/Buffer.h"
-#include "glfw/glfw3.h"
+#include "GLFW//glfw3.h"
 
 namespace Banana {
 #define BIND_EVENT_FN(function) std::bind(&Application::function, this, std::placeholders::_1)

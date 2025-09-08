@@ -61,7 +61,9 @@ add_library(BananaEngine SHARED
         src/Banana/Renderer/OrthographicCamera.cc
         src/Banana/Renderer/OrthographicCamera.h
         src/Banana/Core/Timestep.h
-        src/Banana/Platform/MacOS/MacOSInput.cc)
+        src/Banana/Platform/MacOS/MacOSInput.cc
+        src/Banana/Platform/OpenGL/OpenGLShader.cc
+        src/Banana/Platform/OpenGL/OpenGLShader.h)
 
 # 设置公共头文件目录（暴露给依赖模块）
 target_include_directories(BananaEngine PUBLIC

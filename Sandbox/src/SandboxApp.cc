@@ -1,12 +1,15 @@
 //
 // Created by 周春阳 on 2025/8/18.
 //
-#include "../../LibBanana/src/Banana/Core/Banana.h"
+#include "imgui.h"
+#include "Banana/Core/Banana.h"
 #include "Banana/Core/Input.h"
 #include "Banana/Core/KeyCodes.h"
 #include "Banana/Renderer/Renderer.h"
 #include "glm/gtx/transform.hpp"
 #include "spdlog/spdlog.h"
+#include "Banana/Platform/OpenGL/OpenGLShader.h"
+#include "glm/gtc/type_ptr.inl"
 
 class ExampleLayer : public Banana::Layer {
 public:
@@ -70,8 +73,8 @@ public:
 			}
 		)";
 
-        m_Shader.reset(new Banana::Shader(vertexSrc, fragmentSrc));
 
+        m_Shader.reset(Banana::Shader::Create(vertexSrc, fragmentSrc));
 
         m_SquareVA.reset(Banana::VertexArray::Create());
 
@@ -118,13 +121,15 @@ public:
 
 			in vec3 v_Position;
 
+			uniform vec3 u_Color;
+
 			void main()
 			{
-				color = vec4(0.8, 0.3, 0.8, 1.0);
+				color = vec4(u_Color, 1.0);
 			}
 		)";
 
-        blue_Shader.reset(new Banana::Shader(blueShaderVertexSrc, blueShaderFragmentSrc));
+        blue_Shader.reset(Banana::Shader::Create(blueShaderVertexSrc, blueShaderFragmentSrc));
     }
 
     void OnUpdate(const Banana::Timestep timestep) override {
@@ -151,11 +156,17 @@ public:
         Banana::Renderer::BeginScene(m_Camera);
 
         glm::mat4 scale = glm::scale(glm::mat4(1.0f), glm::vec3(0.1));
+        glm::vec3 color = glm::vec3(0.0, 0.0, 0.0);
         for (int i = 0; i < 10; i++) {
             for (int j = 0; j < 10; j++) {
                 glm::vec3 pos = glm::vec3(i * 0.21, j * 0.21, 0.0f);
                 glm::mat4 transform = glm::translate(glm::mat4(1.0f), pos) * scale;
 
+                color.r = m_SquareColor.r + i * 0.02;
+                color.g = m_SquareColor.g + i * 0.05;
+            	color.b = m_SquareColor.b + i * 0.02;
+                blue_Shader->Bind();
+                std::dynamic_pointer_cast<Banana::OpenGLShader>(blue_Shader)->UploadUniformFloat3("u_Color", color);
                 Banana::Renderer::Submit(blue_Shader, m_SquareVA, transform);
             }
         }
@@ -163,6 +174,13 @@ public:
 
         Banana::Renderer::Submit(m_Shader, m_RectangleVA);
         Banana::Renderer::EndScene();
+    }
+
+
+    void OnImGuiRender() override {
+        ImGui::Begin("Settings");
+        ImGui::ColorEdit3("Square Color", glm::value_ptr(m_SquareColor));
+        ImGui::End();
     }
 
     void OnEvent(Banana::Event &event) override {
@@ -181,6 +199,8 @@ private :
 
     float m_CameraRotation = 0.0f;
     float m_CameraRotationSpeed = 180.0f;
+
+    glm::vec3 m_SquareColor = glm::vec3(0.0f);
 };
 
 class SandboxApp : public Banana::Application {
