@@ -8,20 +8,22 @@
 
 #include "glm/fwd.hpp"
 
+namespace Banana {
+    class Shader {
+    public:
+        Shader(const std::string &vertexSrc, const std::string &fragmentSrc);
 
-class Shader {
-public:
-    Shader(const std::string& vertexSrc, const std::string& fragmentSrc);
-    ~Shader();
+        ~Shader();
 
-    void Bind();
-    void UnBind();
+        void Bind();
 
-    void UploadUniformMat4(const std::string &name, const glm::mat4 &matrix);
+        void UnBind();
 
-private:
-    uint32_t m_RendererID;
-};
+        void UploadUniformMat4(const std::string &name, const glm::mat4 &matrix);
 
+    private:
+        uint32_t m_RendererID;
+    };
+}
 
 #endif //BANANA_SHADER_H

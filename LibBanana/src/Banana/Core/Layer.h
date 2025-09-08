@@ -8,6 +8,7 @@
 #include "Banana/Core/bapch.h"
 #include   "Banana/Core/Core.h"
 #include "Banana/Events/Event.h"
+#include "Banana/Core/Timestep.h"
 
 namespace Banana {
     class Layer {
@@ -22,7 +23,7 @@ namespace Banana {
         virtual void OnDetach() {
         }
 
-        virtual void OnUpdate() {
+        virtual void OnUpdate(Timestep ts) {
         }
 
         virtual void OnImGuiRender() {

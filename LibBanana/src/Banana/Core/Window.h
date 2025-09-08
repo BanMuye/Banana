@@ -15,7 +15,7 @@ namespace Banana {
         std::string Title;
         unsigned int Width, Height;
 
-        WindowProps(const std::string &title = "Banana Engine", unsigned int width = 1200,
+        WindowProps(const std::string &title = "Banana Engine", unsigned int width = 1600,
                     unsigned int height = 900) : Title(title), Width(width), Height(height) {
         }
     };
