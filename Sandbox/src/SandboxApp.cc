@@ -22,7 +22,7 @@ public:
             0.0f, 0.5f, 0.0f, 1.0f, 0.8f, 0.8f, 0.2f, 1.0f
         };
 
-        std::shared_ptr<Banana::VertexBuffer> rectangleVB;
+        Banana::Ref<Banana::VertexBuffer> rectangleVB;
         rectangleVB.reset(Banana::VertexBuffer::Create(vertices, sizeof(vertices)));
 
         Banana::BufferLayout layout = {
@@ -33,7 +33,7 @@ public:
         rectangleVB->SetLayout(layout);
         m_RectangleVA->AddVertexBuffer(rectangleVB);
 
-        std::shared_ptr<Banana::IndexBuffer> rectangleIB;
+        Banana::Ref<Banana::IndexBuffer> rectangleIB;
         unsigned int indices[3] = {0, 1, 2};
         rectangleIB.reset(Banana::IndexBuffer::Create(indices, sizeof(indices) / sizeof(indices[0])));
 
@@ -74,25 +74,27 @@ public:
 		)";
 
 
-        m_Shader.reset(Banana::Shader::Create(vertexSrc, fragmentSrc));
+        m_RectangleShader.reset(Banana::Shader::Create(vertexSrc, fragmentSrc));
 
         m_SquareVA.reset(Banana::VertexArray::Create());
 
-        std::shared_ptr<Banana::VertexBuffer> squareVB;
-        float squareVertices[3 * 4] = {
-            -0.75f, -0.75f, 0.0f,
-            0.75f, -0.75f, 0.0f,
-            0.75f, 0.75f, 0.0f,
-            -0.75f, 0.75f, 0.0f
+        Banana::Ref<Banana::VertexBuffer> squareVB;
+        float squareVertices[4 * 5] = {
+            -0.5f, -0.5f, 0.0f, 0.0f, 0.0f,
+            0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
+            0.5f, 0.5f, 0.0f, 1.0f, 1.0f,
+            -0.5f, 0.5f, 0.0f, 0.0f, 1.0f
         };
 
         squareVB.reset(Banana::VertexBuffer::Create(squareVertices, sizeof(squareVertices)));
 
-        Banana::BufferLayout squareLayout = {{Banana::ShaderDataType::Float3, "a_Position"}};
+        Banana::BufferLayout squareLayout = {
+            {Banana::ShaderDataType::Float3, "a_Position"}, {Banana::ShaderDataType::Float2, "a_TexCoord"}
+        };
         squareVB->SetLayout(squareLayout);
 
         uint32_t squareIndices[6] = {0, 1, 2, 2, 3, 0};
-        std::shared_ptr<Banana::IndexBuffer> squareIB;
+        Banana::Ref<Banana::IndexBuffer> squareIB;
         squareIB.reset(Banana::IndexBuffer::Create(squareIndices, 6));
         m_SquareVA->AddVertexBuffer(squareVB);
         m_SquareVA->SetIndexBuffer(squareIB);
@@ -129,7 +131,71 @@ public:
 			}
 		)";
 
-        blue_Shader.reset(Banana::Shader::Create(blueShaderVertexSrc, blueShaderFragmentSrc));
+        m_SquareShader.reset(Banana::Shader::Create(blueShaderVertexSrc, blueShaderFragmentSrc));
+
+        m_TextureVA.reset(Banana::VertexArray::Create());
+        float textureVertices[4 * 5] = {
+            -0.5f, -0.5f, 0.0f, 0.0f, 0.0f,
+            0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
+            0.5f, 0.5f, 0.0f, 1.0f, 1.0f,
+            -0.5f, 0.5f, 0.0f, 0.0f, 1.0f
+        };
+        Banana::Ref<Banana::VertexBuffer> textureVB;
+        textureVB.reset(
+            Banana::VertexBuffer::Create(textureVertices, sizeof(textureVertices)));
+        textureVB->SetLayout({
+            {Banana::ShaderDataType::Float3, "a_Position"}, {Banana::ShaderDataType::Float2, "a_TexCoord"}
+        });
+
+        Banana::Ref<Banana::IndexBuffer> textureIB;
+        unsigned int textureIndices[6] = {0, 1, 2, 2, 3, 0};
+        textureIB.reset(
+            Banana::IndexBuffer::Create(textureIndices, sizeof(textureIndices) / sizeof(textureIndices[0])));
+        m_TextureVA->AddVertexBuffer(textureVB);
+        m_TextureVA->SetIndexBuffer(textureIB);
+
+        std::string textureVertexSrc = R"(
+           #version 330 core
+
+			layout(location = 0) in vec3 a_Position;
+			layout(location =1 ) in vec2 a_TexCoord;
+
+			uniform mat4 u_ViewProjection;
+			uniform mat4 u_Transform;
+
+			out vec3 v_Position;
+			out vec2 v_TexCoord;
+
+			void main()
+			{
+				v_Position = a_Position;
+				v_TexCoord = a_TexCoord;
+				gl_Position = u_ViewProjection * u_Transform * vec4(a_Position, 1.0);
+			}
+        )";
+
+        std::string textureFragmentSrc = R"(
+			#version 330 core
+
+			layout(location = 0) out vec4 color;
+
+			in vec2 v_TexCoord;
+
+			uniform sampler2D u_Texture;
+
+			void main() {
+				color = texture(u_Texture, v_TexCoord);
+			}
+		)";
+
+        m_TextureShader.reset(Banana::Shader::Create(textureVertexSrc, textureFragmentSrc));
+
+    	std::string path = "/Users/zhouchunyang/Documents/Projects/Banana/Sandbox/assets/IMG_5291.JPG";
+        m_Texture.reset(
+            Banana::Texture2D::Create(path));
+
+        std::dynamic_pointer_cast<Banana::OpenGLShader>(m_TextureShader)->Bind();
+        std::dynamic_pointer_cast<Banana::OpenGLShader>(m_TextureShader)->UploadUniformInt("u_Texture", 0);
     }
 
     void OnUpdate(const Banana::Timestep timestep) override {
@@ -164,15 +230,18 @@ public:
 
                 color.r = m_SquareColor.r + i * 0.02;
                 color.g = m_SquareColor.g + i * 0.05;
-            	color.b = m_SquareColor.b + i * 0.02;
-                blue_Shader->Bind();
-                std::dynamic_pointer_cast<Banana::OpenGLShader>(blue_Shader)->UploadUniformFloat3("u_Color", color);
-                Banana::Renderer::Submit(blue_Shader, m_SquareVA, transform);
+                color.b = m_SquareColor.b + i * 0.02;
+                m_SquareShader->Bind();
+                std::dynamic_pointer_cast<Banana::OpenGLShader>(m_SquareShader)->UploadUniformFloat3("u_Color", color);
+                Banana::Renderer::Submit(m_SquareShader, m_SquareVA, transform);
             }
         }
 
 
-        Banana::Renderer::Submit(m_Shader, m_RectangleVA);
+        Banana::Renderer::Submit(m_RectangleShader, m_RectangleVA);
+
+        glm::mat4 transform = glm::translate(glm::mat4(1.0f), glm::vec3(-1, -1, 0));
+        Banana::Renderer::Submit(m_TextureShader, m_TextureVA, transform);
         Banana::Renderer::EndScene();
     }
 
@@ -187,11 +256,15 @@ public:
     }
 
 private :
-    std::shared_ptr<Banana::Shader> m_Shader;
-    std::shared_ptr<Banana::VertexArray> m_RectangleVA;
+    Banana::Ref<Banana::Shader> m_RectangleShader;
+    Banana::Ref<Banana::VertexArray> m_RectangleVA;
 
-    std::shared_ptr<Banana::Shader> blue_Shader;
-    std::shared_ptr<Banana::VertexArray> m_SquareVA;
+    Banana::Ref<Banana::Shader> m_SquareShader;
+    Banana::Ref<Banana::VertexArray> m_SquareVA;
+
+    Banana::Ref<Banana::Shader> m_TextureShader;
+    Banana::Ref<Banana::VertexArray> m_TextureVA;
+    Banana::Ref<Banana::Texture> m_Texture;
 
     Banana::OrthographicCamera m_Camera;
     glm::vec3 m_CameraPosition;

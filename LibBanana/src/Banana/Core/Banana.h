@@ -9,6 +9,7 @@
 #include "Core.h"
 #include "Log.h"
 #include "Layer.h"
+#include "Banana/Renderer/Texture.h"
 
 
 #endif //BANANA_BANANA_H

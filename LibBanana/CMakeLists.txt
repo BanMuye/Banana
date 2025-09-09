@@ -63,7 +63,12 @@ add_library(BananaEngine SHARED
         src/Banana/Core/Timestep.h
         src/Banana/Platform/MacOS/MacOSInput.cc
         src/Banana/Platform/OpenGL/OpenGLShader.cc
-        src/Banana/Platform/OpenGL/OpenGLShader.h)
+        src/Banana/Platform/OpenGL/OpenGLShader.h
+        src/Banana/Renderer/Texture.cc
+        src/Banana/Renderer/Texture.h
+        src/Banana/Platform/OpenGL/OpenGLTexture.cc
+        src/Banana/Platform/OpenGL/OpenGLTexture.h
+        src/Banana/Core/MacroDefine.h)
 
 # 设置公共头文件目录（暴露给依赖模块）
 target_include_directories(BananaEngine PUBLIC
@@ -94,3 +99,4 @@ target_link_libraries(BananaEngine PUBLIC glm)
 
 target_link_libraries(BananaEngine PUBLIC glad)
 target_link_libraries(BananaEngine PUBLIC imgui)
+target_link_libraries(BananaEngine PUBLIC stb)
