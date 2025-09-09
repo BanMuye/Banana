@@ -32,3 +32,6 @@ FetchContent_Declare(glfw
         GIT_SHALLOW    TRUE)
 FetchContent_MakeAvailable(glfw)
 target_link_libraries(imgui PUBLIC glfw)
+
+add_library(stb INTERFACE)
+target_include_directories(stb INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}/stb")
