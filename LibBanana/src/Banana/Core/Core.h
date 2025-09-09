@@ -5,6 +5,7 @@
 #ifndef BANANA_CORE_H
 #define BANANA_CORE_H
 
+#include <memory>
 
 #define GLM_ENABLE_EXPERIMENTAL
 
@@ -18,5 +19,13 @@
     #define BANANA_ENABLE_ASSERTS
 #endif
 
+namespace Banana {
+    template <typename T>
+    using Scope = std::unique_ptr<T>;
+
+    template<typename T>
+    using Ref = std::shared_ptr<T>;
+
+}
 
 #endif //BANANA_CORE_H
