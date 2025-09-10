@@ -6,6 +6,7 @@
 #define BANANA_OPENGLTEXTURE_H
 #include <string>
 
+#include "glad/glad.h"
 #include "Banana/Renderer/Texture.h"
 
 namespace Banana {

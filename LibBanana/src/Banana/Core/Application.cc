@@ -22,6 +22,8 @@ namespace Banana {
         m_Window = std::unique_ptr<Window>(MacOSWindow::Create());
         m_Window->SetEventCallBack(BIND_EVENT_FN(OnEvent));
 
+        Renderer::Init();
+
         m_ImGuiLayer = new ImGuiLayer();
         PushOverlay(m_ImGuiLayer);
     }

@@ -190,7 +190,7 @@ public:
 
         m_TextureShader.reset(Banana::Shader::Create(textureVertexSrc, textureFragmentSrc));
 
-    	std::string path = "/Users/zhouchunyang/Documents/Projects/Banana/Sandbox/assets/IMG_5291.JPG";
+    	std::string path = "/Users/zhouchunyang/Documents/Projects/Banana/Sandbox/assets/ChernoLogo.png";
         m_Texture.reset(
             Banana::Texture2D::Create(path));
 
