@@ -23,4 +23,15 @@ namespace Banana {
                 return nullptr;
         }
     }
+
+    Shader *Shader::Create(const std::string &vertexFilePath, const std::string &fragmentFilePath,
+                           const std::string &geometryFilePath) {
+        switch (Renderer::GetAPI()) {
+            case RendererAPI::API::None: BANANA_CORE_ASSERT(false, "RendererAPI::None is not supported!");
+                return nullptr;
+            case RendererAPI::API::OpenGL: return new OpenGLShader(vertexFilePath, fragmentFilePath, geometryFilePath);
+            default: BANANA_CORE_ASSERT(false, "RendererAPI::None is not supported!");
+                return nullptr;
+        }
+    }
 }

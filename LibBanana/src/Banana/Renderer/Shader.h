@@ -20,7 +20,10 @@ namespace Banana {
         virtual void UnBind() const = 0;
 
     public:
-        static Shader *Create(const std::string& vertexSrc, const std::string& fragmentSrc);
+        static Shader *Create(const std::string &vertexSrc, const std::string &fragmentSrc);
+
+        static Shader *Create(const std::string &vertexFilePath, const std::string &fragmentFilePath,
+                              const std::string &geometryFilePath);
     };
 }
 
