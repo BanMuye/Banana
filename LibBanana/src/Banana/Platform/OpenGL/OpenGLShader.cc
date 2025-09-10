@@ -15,18 +15,20 @@
 #include "glm/gtc/type_ptr.inl"
 
 namespace Banana {
-    OpenGLShader::OpenGLShader(const std::string &vertexSrc, const std::string &fragmentSrc) {
-        GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
+    OpenGLShader::OpenGLShader(const std::string &name, const std::string &vertexSrc, const std::string &fragmentSrc) {
         Compile(vertexSrc, fragmentSrc, std::string());
+        m_Name = name;
     }
 
-    OpenGLShader::OpenGLShader(const std::string &vertexFilePath, const std::string &fragmentFilePath,
+    OpenGLShader::OpenGLShader(const std::string &name, const std::string &vertexFilePath, const std::string &fragmentFilePath,
                                const std::string &geometryFilePath) {
         std::string vertexSource = ReadFromFilePath(vertexFilePath);
         std::string fragmentSource = ReadFromFilePath(fragmentFilePath);
         std::string geometrySource = ReadFromFilePath(geometryFilePath);
 
         Compile(vertexSource, fragmentSource, geometryFilePath);
+
+        m_Name = name;
     }
 
     OpenGLShader::~OpenGLShader() {
@@ -38,6 +40,10 @@ namespace Banana {
 
     void OpenGLShader::UnBind() const {
         glUseProgram(0);
+    }
+
+    std::string OpenGLShader::GetName() const {
+        return m_Name;
     }
 
     void OpenGLShader::UploadUniformInt(const std::string &name, int value) {

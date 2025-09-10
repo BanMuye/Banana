@@ -5,8 +5,9 @@
 #ifndef BANANA_SHADER_H
 #define BANANA_SHADER_H
 #include <string>
+#include <unordered_map>
 
-#include "glm/fwd.hpp"
+#include "Banana/Core/Core.h"
 
 namespace Banana {
     class Shader {
@@ -19,11 +20,32 @@ namespace Banana {
 
         virtual void UnBind() const = 0;
 
-    public:
-        static Shader *Create(const std::string &vertexSrc, const std::string &fragmentSrc);
+        virtual std::string GetName() const = 0;
 
-        static Shader *Create(const std::string &vertexFilePath, const std::string &fragmentFilePath,
-                              const std::string &geometryFilePath);
+    public:
+        static Ref<Shader> Create(const std::string& name, const std::string &vertexSrc,
+                                  const std::string &fragmentSrc);
+
+        static Ref<Shader> Create(const std::string& name, const std::string &vertexFilePath,
+                                  const std::string &fragmentFilePath,
+                                  const std::string &geometryFilePath);
+    };
+
+    class ShaderLibrary {
+    public:
+        void Add(const std::string &name, const Ref<Shader> &shader);
+
+        void Add(const Ref<Shader> &shader);
+
+        Ref<Shader> Load(const std::string &name, const std::string &vertexFilePath,
+                         const std::string &fragmentFilePath, const std::string &geometryFilePath);
+
+        Ref<Shader> Get(const std::string &name);
+
+        bool Exists(const std::string &name);
+
+    private:
+        std::unordered_map<std::string, Ref<Shader> > m_Shaders;
     };
 }
 

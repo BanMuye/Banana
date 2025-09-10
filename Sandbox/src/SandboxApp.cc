@@ -73,8 +73,7 @@ public:
 			}
 		)";
 
-
-        m_RectangleShader.reset(Banana::Shader::Create(vertexSrc, fragmentSrc));
+        m_RectangleShader = Banana::Shader::Create("rectangleShader", vertexSrc, fragmentSrc);
 
         m_SquareVA.reset(Banana::VertexArray::Create());
 
@@ -131,7 +130,7 @@ public:
 			}
 		)";
 
-        m_SquareShader.reset(Banana::Shader::Create(blueShaderVertexSrc, blueShaderFragmentSrc));
+        m_SquareShader = Banana::Shader::Create("squareShader", blueShaderVertexSrc, blueShaderFragmentSrc);
 
         m_TextureVA.reset(Banana::VertexArray::Create());
         float textureVertices[4 * 5] = {
@@ -160,8 +159,8 @@ public:
                 "/Users/zhouchunyang/Documents/Projects/Banana/Sandbox/assets/shaders/texture_fragment_shader.glsl";
         std::string textureGeometryShaderFilePath =
                 "/Users/zhouchunyang/Documents/Projects/Banana/Sandbox/assets/shaders/texture_geometry_shader.glsl";
-        m_TextureShader.reset(Banana::Shader::Create(textureVertexShaderFilePath, textureFragmentShaderFilePath,
-                                                     textureGeometryShaderFilePath));
+        m_TextureShader = Banana::Shader::Create("textureShader", textureVertexShaderFilePath, textureFragmentShaderFilePath,
+                                                     textureGeometryShaderFilePath);
 
         std::string path = "/Users/zhouchunyang/Documents/Projects/Banana/Sandbox/assets/ChernoLogo.png";
         m_Texture.reset(

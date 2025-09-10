@@ -5,14 +5,17 @@
 #ifndef BANANA_OPENGLSHADER_H
 #define BANANA_OPENGLSHADER_H
 #include "Banana/Renderer/Shader.h"
+#include "glm/fwd.hpp"
+#include "glm/vec2.hpp"
+#include "glm/vec3.hpp"
+#include "glm/vec4.hpp"
 
 namespace Banana {
     class OpenGLShader : public Shader {
     public:
-        OpenGLShader(const std::string &vertexSrc, const std::string &fragmentSrc);
+        OpenGLShader(const std::string &name, const std::string &vertexSrc, const std::string &fragmentSrc);
 
-        // todo temp interface
-;        OpenGLShader(const std::string &vertexFilePath, const std::string &fragmentFilePath,
+        OpenGLShader(const std::string &name, const std::string &vertexFilePath, const std::string &fragmentFilePath,
                      const std::string &geometryFilePath);
 
         virtual ~OpenGLShader();
@@ -20,6 +23,8 @@ namespace Banana {
         virtual void Bind() const override;
 
         virtual void UnBind() const override;
+
+        virtual std::string GetName() const override;
 
         void UploadUniformInt(const std::string &name, int value);
 
@@ -37,9 +42,13 @@ namespace Banana {
 
     private:
         std::string ReadFromFilePath(const std::string &filepath);
-        void Compile(const std::string &vertexSource, const std::string &fragmentSource, const std::string &geometrySource);
+
+        void Compile(const std::string &vertexSource, const std::string &fragmentSource,
+                     const std::string &geometrySource);
+
     private:
         uint32_t m_RendererID;
+        std::string m_Name;
     };
 }
 
