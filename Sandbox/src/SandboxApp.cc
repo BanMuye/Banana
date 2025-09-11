@@ -175,7 +175,7 @@ public:
     void OnUpdate(const Banana::Timestep timestep) override {
         m_OrthographicCameraController.OnUpdate(timestep);
 
-        Banana::RenderCommand::SetClearColor({0.1f, 0.1f, 0.1f, 1.0f});
+        Banana::RenderCommand::SetClearColor({0.1f, 0.1f, 0.5f, 1.0f});
         Banana::RenderCommand::Clear();
 
         Banana::Renderer::BeginScene(m_OrthographicCameraController.GetCamera());

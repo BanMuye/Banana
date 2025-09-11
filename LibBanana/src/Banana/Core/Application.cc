@@ -32,13 +32,14 @@ namespace Banana {
 
     void Application::Run() {
         while (m_IsRunning) {
-
             float time = (float) glfwGetTime();
             Timestep timestep = time - m_LastFrameTime;
             m_LastFrameTime = time;
 
-            for (Layer *layer: m_LayerStack) {
-                layer->OnUpdate(timestep);
+            if (!m_Minimize) {
+                for (Layer *layer: m_LayerStack) {
+                    layer->OnUpdate(timestep);
+                }
             }
 
             m_ImGuiLayer->Begin();
@@ -53,6 +54,8 @@ namespace Banana {
     void Application::OnEvent(Event &event) {
         EventDispatcher dispatcher(event);
         dispatcher.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(OnWindowClose));
+        dispatcher.Dispatch<WindowResizeEvent>(BIND_EVENT_FN(OnWindowResize));
+
         BANANA_CORE_TRACE("{0}", event.ToString());
 
         for (auto it = m_LayerStack.end(); it != m_LayerStack.begin();) {
@@ -74,5 +77,16 @@ namespace Banana {
     bool Application::OnWindowClose(WindowCloseEvent &event) {
         m_IsRunning = false;
         return true;
+    }
+
+    bool Application::OnWindowResize(WindowResizeEvent &event) {
+        if (event.GetWidth() == 0 || event.GetHeight() == 0) {
+            m_Minimize = true;
+            return false;
+        }
+
+        m_Minimize = false;
+        Renderer::OnWindowResize(event.GetWidth(), event.GetHeight());
+        return false;
     }
 }

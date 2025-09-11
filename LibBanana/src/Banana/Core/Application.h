@@ -39,8 +39,14 @@ namespace Banana {
     private:
         bool OnWindowClose(WindowCloseEvent &event);
 
+        bool OnWindowResize(WindowResizeEvent &event);
+
+    private:
         std::unique_ptr<Window> m_Window;
+
         bool m_IsRunning = true;
+        bool m_Minimize = false;
+
         LayerStack m_LayerStack;
         ImGuiLayer *m_ImGuiLayer;
 
