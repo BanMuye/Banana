@@ -5,6 +5,7 @@
 #include "Banana/Core/Banana.h"
 #include "Banana/Core/Input.h"
 #include "Banana/Core/KeyCodes.h"
+#include "Banana/Core/OrthographicCameraController.h"
 #include "Banana/Renderer/Renderer.h"
 #include "glm/gtx/transform.hpp"
 #include "spdlog/spdlog.h"
@@ -13,7 +14,7 @@
 
 class ExampleLayer : public Banana::Layer {
 public:
-    ExampleLayer() : Layer("Example"), m_Camera(-1.6f, 1.6f, -0.9f, 0.9f), m_CameraPosition(0.0f) {
+    ExampleLayer() : Layer("Example"), m_OrthographicCameraController(1600.0f / 900.0f, true) {
         m_RectangleVA.reset(Banana::VertexArray::Create());
 
         float vertices[3 * 8] = {
@@ -159,8 +160,9 @@ public:
                 "/Users/zhouchunyang/Documents/Projects/Banana/Sandbox/assets/shaders/texture_fragment_shader.glsl";
         std::string textureGeometryShaderFilePath =
                 "/Users/zhouchunyang/Documents/Projects/Banana/Sandbox/assets/shaders/texture_geometry_shader.glsl";
-        m_TextureShader = Banana::Shader::Create("textureShader", textureVertexShaderFilePath, textureFragmentShaderFilePath,
-                                                     textureGeometryShaderFilePath);
+        m_TextureShader = Banana::Shader::Create("textureShader", textureVertexShaderFilePath,
+                                                 textureFragmentShaderFilePath,
+                                                 textureGeometryShaderFilePath);
 
         std::string path = "/Users/zhouchunyang/Documents/Projects/Banana/Sandbox/assets/ChernoLogo.png";
         m_Texture.reset(
@@ -171,27 +173,12 @@ public:
     }
 
     void OnUpdate(const Banana::Timestep timestep) override {
-        if (Banana::Input::IsKeyPressed(BANANA_KEY_LEFT))
-            m_CameraPosition.x -= m_CameraMoveSpeed * timestep;
-        else if (Banana::Input::IsKeyPressed(BANANA_KEY_RIGHT))
-            m_CameraPosition.x += m_CameraMoveSpeed * timestep;
-        if (Banana::Input::IsKeyPressed(BANANA_KEY_UP))
-            m_CameraPosition.y += m_CameraMoveSpeed * timestep;
-        if (Banana::Input::IsKeyPressed(BANANA_KEY_DOWN))
-            m_CameraPosition.y -= m_CameraMoveSpeed * timestep;
-
-        if (Banana::Input::IsKeyPressed(BANANA_KEY_A))
-            m_CameraRotation += m_CameraRotationSpeed * timestep;
-        if (Banana::Input::IsKeyPressed(BANANA_KEY_D))
-            m_CameraRotation -= m_CameraRotationSpeed * timestep;
-
-        m_Camera.SetPosition(m_CameraPosition);
-        m_Camera.SetRotation(m_CameraRotation);
+        m_OrthographicCameraController.OnUpdate(timestep);
 
         Banana::RenderCommand::SetClearColor({0.1f, 0.1f, 0.1f, 1.0f});
         Banana::RenderCommand::Clear();
 
-        Banana::Renderer::BeginScene(m_Camera);
+        Banana::Renderer::BeginScene(m_OrthographicCameraController.GetCamera());
 
         glm::mat4 scale = glm::scale(glm::mat4(1.0f), glm::vec3(0.1));
         glm::vec3 color = glm::vec3(0.0, 0.0, 0.0);
@@ -225,6 +212,7 @@ public:
     }
 
     void OnEvent(Banana::Event &event) override {
+        m_OrthographicCameraController.OnEvent(event);
     }
 
 private :
@@ -238,12 +226,7 @@ private :
     Banana::Ref<Banana::VertexArray> m_TextureVA;
     Banana::Ref<Banana::Texture> m_Texture;
 
-    Banana::OrthographicCamera m_Camera;
-    glm::vec3 m_CameraPosition;
-    float m_CameraMoveSpeed = 5.0f;
-
-    float m_CameraRotation = 0.0f;
-    float m_CameraRotationSpeed = 180.0f;
+    Banana::OrthographicCameraController m_OrthographicCameraController;
 
     glm::vec3 m_SquareColor = glm::vec3(0.0f);
 };

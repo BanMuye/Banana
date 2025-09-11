@@ -68,7 +68,9 @@ add_library(BananaEngine SHARED
         src/Banana/Renderer/Texture.h
         src/Banana/Platform/OpenGL/OpenGLTexture.cc
         src/Banana/Platform/OpenGL/OpenGLTexture.h
-        src/Banana/Core/MacroDefine.h)
+        src/Banana/Core/MacroDefine.h
+        src/Banana/Core/OrthographicCameraController.cc
+        src/Banana/Core/OrthographicCameraController.h)
 
 # 设置公共头文件目录（暴露给依赖模块）
 target_include_directories(BananaEngine PUBLIC
