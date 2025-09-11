@@ -4,7 +4,9 @@ set(CMAKE_CXX_STANDARD 11)
 add_definitions(-BANANA_PLATFORM_MAC)
 
 add_executable(SandboxApp
-        src/SandboxApp.cc)
+        src/SandboxApp.cc
+        src/Sandbox2D.cc
+        src/Sandbox2D.h)
 
 add_library(SandboxLib STATIC src/SandboxApp.cc)
 

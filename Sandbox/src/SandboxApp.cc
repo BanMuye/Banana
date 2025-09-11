@@ -2,6 +2,7 @@
 // Created by 周春阳 on 2025/8/18.
 //
 #include "imgui.h"
+#include "Sandbox2D.h"
 #include "Banana/Core/Banana.h"
 #include "Banana/Core/Input.h"
 #include "Banana/Core/KeyCodes.h"
@@ -15,7 +16,7 @@
 class ExampleLayer : public Banana::Layer {
 public:
     ExampleLayer() : Layer("Example"), m_OrthographicCameraController(1600.0f / 900.0f, true) {
-        m_RectangleVA.reset(Banana::VertexArray::Create());
+        m_RectangleVA = Banana::VertexArray::Create();
 
         float vertices[3 * 8] = {
             -0.5f, -0.5f, 0.0f, 1.0f, 0.1f, 0.8f, 0.8f, 1.0f,
@@ -76,7 +77,7 @@ public:
 
         m_RectangleShader = Banana::Shader::Create("rectangleShader", vertexSrc, fragmentSrc);
 
-        m_SquareVA.reset(Banana::VertexArray::Create());
+        m_SquareVA = Banana::VertexArray::Create();
 
         Banana::Ref<Banana::VertexBuffer> squareVB;
         float squareVertices[4 * 5] = {
@@ -133,7 +134,7 @@ public:
 
         m_SquareShader = Banana::Shader::Create("squareShader", blueShaderVertexSrc, blueShaderFragmentSrc);
 
-        m_TextureVA.reset(Banana::VertexArray::Create());
+        m_TextureVA = Banana::VertexArray::Create();
         float textureVertices[4 * 5] = {
             -0.5f, -0.5f, 0.0f, 0.0f, 0.0f,
             0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
@@ -233,7 +234,9 @@ private :
 
 class SandboxApp : public Banana::Application {
 public:
-    SandboxApp() = default;
+    SandboxApp() {
+        PushLayer(new Sandbox2D());
+    } ;
 
     ~SandboxApp() override = default;
 };
@@ -242,8 +245,6 @@ int main(int argc, char *argv[]) {
     Banana::Log::Init();
     BANANA_INFO("Starting SandboxApp");
     const auto app = new SandboxApp();
-
-    app->PushLayer(new ExampleLayer());
 
     app->Run();
     delete app;

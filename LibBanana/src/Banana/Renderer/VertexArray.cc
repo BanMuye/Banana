@@ -9,11 +9,12 @@
 #include "Banana/Platform/OpenGL/OpenGLVertexArray.h"
 
 namespace Banana {
-    VertexArray *VertexArray::Create() {
+    Ref<VertexArray> VertexArray::Create() {
         switch (Renderer::GetAPI()) {
             case RendererAPI::API::None: BANANA_CORE_ASSERT(false, "RendererAPI::None is currently not supported!");
                 return nullptr;
-            case RendererAPI::API::OpenGL: return new OpenGLVertexArray();
+            case RendererAPI::API::OpenGL: return std::dynamic_pointer_cast<VertexArray>(
+                    std::make_shared<OpenGLVertexArray>());
             default:
                 BANANA_CORE_ASSERT(false, "RendererAPI::None is currently not supported!");
                 return nullptr;

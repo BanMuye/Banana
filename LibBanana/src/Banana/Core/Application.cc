@@ -86,7 +86,7 @@ namespace Banana {
         }
 
         m_Minimize = false;
-        Renderer::OnWindowResize(event.GetWidth(), event.GetHeight());
+        Renderer::OnWindowResize(event.GetWidth()*2, event.GetHeight()*2);
         return false;
     }
 }
