@@ -1,0 +1,28 @@
+//
+// Created by 周春阳 on 2025/9/13.
+//
+
+#ifndef BANANA_RENDERER2D_H
+#define BANANA_RENDERER2D_H
+#include "OrthographicCamera.h"
+
+namespace Banana {
+    class Renderer2D {
+    public:
+        static void Init();
+
+        static void Shutdown();
+
+        static void BeginScene(const OrthographicCamera &camera);
+
+        static void EndScene();
+
+        // Primitives
+        static void DrawQuad(const glm::vec2 &position, const glm::vec2 &size, const glm::vec4 &color);
+
+        static void DrawQuad(const glm::vec3 &position, const glm::vec2 &size, const glm::vec4 &color);
+    };
+}
+
+
+#endif //BANANA_RENDERER2D_H
