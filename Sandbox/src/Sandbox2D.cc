@@ -11,10 +11,12 @@
 #include "glm/gtc/type_ptr.hpp"
 #include "glm/gtx/transform.hpp"
 
-Sandbox2D::Sandbox2D() : Layer("Sandbox2D"), m_CameraController(1600.0f / 900.0f) {
+Sandbox2D::Sandbox2D() : Layer("Sandbox2D"), m_CameraController(1600.0f / 900.0f, true) {
 }
 
 void Sandbox2D::OnAttach() {
+    m_Texture = Banana::Texture2D::Create(
+        "/Users/zhouchunyang/Documents/Projects/Banana/Sandbox/assets/IMG_5291.JPG");
 }
 
 void Sandbox2D::OnDetach() {
@@ -29,6 +31,7 @@ void Sandbox2D::OnUpdate(Banana::Timestep ts) {
 
     Banana::Renderer2D::BeginScene(m_CameraController.GetCamera());
     Banana::Renderer2D::DrawQuad(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec2(1.0f, 1.0f), m_SquareColor);
+    Banana::Renderer2D::DrawQuad(glm::vec3(1.0f, 0.0f, 0.0f), glm::vec2(16.0f, 9.0f), m_Texture);
     Banana::Renderer2D::EndScene();
 }
 

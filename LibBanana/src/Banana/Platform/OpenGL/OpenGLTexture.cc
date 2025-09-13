@@ -53,6 +53,7 @@ namespace Banana {
     }
 
     void OpenGLTexture2D::Bind(uint32_t slot) const {
-        glBindTextureUnit(slot, m_RendererID);
+        glActiveTexture(slot);
+        glBindTexture(GL_TEXTURE_2D, m_RendererID);
     }
 }

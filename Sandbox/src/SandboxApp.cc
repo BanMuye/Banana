@@ -166,8 +166,8 @@ public:
                                                  textureGeometryShaderFilePath);
 
         std::string path = "/Users/zhouchunyang/Documents/Projects/Banana/Sandbox/assets/ChernoLogo.png";
-        m_Texture.reset(
-            Banana::Texture2D::Create(path));
+        m_Texture =
+                Banana::Texture2D::Create(path);
 
         std::dynamic_pointer_cast<Banana::OpenGLShader>(m_TextureShader)->Bind();
         std::dynamic_pointer_cast<Banana::OpenGLShader>(m_TextureShader)->UploadUniformInt("u_Texture", 0);

@@ -8,6 +8,9 @@
 #include <unordered_map>
 
 #include "Banana/Core/Core.h"
+#include "glm/fwd.hpp"
+#include "glm/vec3.hpp"
+#include "glm/vec4.hpp"
 
 namespace Banana {
     class Shader {
@@ -20,13 +23,21 @@ namespace Banana {
 
         virtual void UnBind() const = 0;
 
+        virtual void SetInt(const std::string &name, int value) = 0;
+
+        virtual void SetFloat3(const std::string &name, const glm::vec3 &value) = 0;
+
+        virtual void SetFloat4(const std::string &name, const glm::vec4 &value) =0;
+
+        virtual void SetMat4(const std::string &name, const glm::mat4 &value) = 0;
+
         virtual std::string GetName() const = 0;
 
     public:
-        static Ref<Shader> Create(const std::string& name, const std::string &vertexSrc,
+        static Ref<Shader> Create(const std::string &name, const std::string &vertexSrc,
                                   const std::string &fragmentSrc);
 
-        static Ref<Shader> Create(const std::string& name, const std::string &vertexFilePath,
+        static Ref<Shader> Create(const std::string &name, const std::string &vertexFilePath,
                                   const std::string &fragmentFilePath,
                                   const std::string &geometryFilePath);
     };

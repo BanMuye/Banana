@@ -8,11 +8,12 @@
 #include "Banana/Platform/OpenGL/OpenGLTexture.h"
 
 namespace Banana {
-    Texture2D *Texture2D::Create(const std::string &path) {
+    Ref<Texture2D> Texture2D::Create(const std::string &path) {
         switch (Renderer::GetAPI()) {
             case RendererAPI::API::None: BANANA_CORE_ASSERT(false, "RendererAPI::None is currently not supported!");
                 return nullptr;
-            case RendererAPI::API::OpenGL: return new OpenGLTexture2D(path);
+            case RendererAPI::API::OpenGL: return std::dynamic_pointer_cast<
+                    Texture2D>(std::make_shared<OpenGLTexture2D>(path));
             default: BANANA_CORE_ASSERT(false, "RendererAPI::None is currently not supported!");
                 return nullptr;
         }

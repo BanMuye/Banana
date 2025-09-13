@@ -7,6 +7,7 @@
 #include "Banana/Core/Layer.h"
 #include "Banana/Core/OrthographicCameraController.h"
 #include "Banana/Renderer/Shader.h"
+#include "Banana/Renderer/Texture.h"
 #include "Banana/Renderer/VertexArray.h"
 
 
@@ -32,6 +33,8 @@ private:
     // Temp
     Banana::Ref<Banana::VertexArray> m_SquareVA;
     Banana::Ref<Banana::Shader> m_FlatColorShader;
+
+    Banana::Ref<Banana::Texture2D> m_Texture;
 
     glm::vec4 m_SquareColor{0.2f, 0.2f, 0.5f, 1.0f};
 };
