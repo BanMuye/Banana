@@ -48,11 +48,6 @@ namespace Banana {
         ImGui::DestroyContext();
     }
 
-    void ImGuiLayer::OnImGuiRender() {
-        static bool show = true;
-        ImGui::ShowDemoWindow(&show);
-    }
-
     void ImGuiLayer::Begin() {
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
@@ -63,7 +58,8 @@ namespace Banana {
         ImGuiIO &io = ImGui::GetIO();
         Application &app = Application::Get();
 
-        io.DisplaySize = ImVec2(static_cast<float>(app.GetWindow().GetWidth()), static_cast<float>(app.GetWindow().GetHeight()));
+        io.DisplaySize = ImVec2(static_cast<float>(app.GetWindow().GetWidth()),
+                                static_cast<float>(app.GetWindow().GetHeight()));
 
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
