@@ -24,19 +24,23 @@ namespace Banana {
     }
 
     MacOSWindow::MacOSWindow(const WindowProps &props) {
+        BANANA_PROFILE_FUNCTION();
         Init(props);
     }
 
     MacOSWindow::~MacOSWindow() {
+        BANANA_PROFILE_FUNCTION();
         Shutdown();
     }
 
     void MacOSWindow::OnUpdate() {
+        BANANA_PROFILE_FUNCTION();
         glfwPollEvents();
         m_Context->SwapBuffers();
     }
 
     void MacOSWindow::SetVSync(bool enabled) {
+        BANANA_PROFILE_FUNCTION();
         if (enabled) {
             glfwSwapInterval(1);
         } else {
@@ -51,6 +55,7 @@ namespace Banana {
     }
 
     void MacOSWindow::Init(const WindowProps &props) {
+        BANANA_PROFILE_FUNCTION();
         m_WindowData.Title = props.Title;
         m_WindowData.Width = props.Width;
         m_WindowData.Height = props.Height;
@@ -145,6 +150,7 @@ namespace Banana {
     }
 
     void MacOSWindow::Shutdown() {
+        BANANA_PROFILE_FUNCTION();
         glfwDestroyWindow(m_Window);
         if (s_GLFWWindowCount == 0) {
             glfwTerminate();

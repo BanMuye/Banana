@@ -7,13 +7,19 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 #include "Banana/Core/Assert.h"
+#include "Banana/Debug/Instrumentor.h"
 #include "glad/glad.h"
 
 namespace Banana {
     OpenGLTexture2D::OpenGLTexture2D(const std::string &path) : m_Path(path) {
+        BANANA_PROFILE_FUNCTION();
         int width, height, channels;
         stbi_set_flip_vertically_on_load(1);
-        stbi_uc *data = stbi_load(path.c_str(), &width, &height, &channels, 0);
+        stbi_uc *data = nullptr;
+        {
+            BANANA_PROFILE_SCOPE("stbi_load - OpenGLTexture2D::OpenGLTexuture2D(const std::string&)");
+            data = stbi_load(path.c_str(), &width, &height, &channels, 0);
+        }
         BANANA_CORE_ASSERT(data, "Failed to load {0}", path);
 
         m_Width = width;
@@ -40,6 +46,7 @@ namespace Banana {
     }
 
     OpenGLTexture2D::OpenGLTexture2D(uint32_t width, uint32_t height) : m_Width(width), m_Height(height) {
+        BANANA_PROFILE_FUNCTION();
         m_InternalFormat = GL_RGBA8;
         m_DataFormat = GL_RGBA;
 
@@ -55,6 +62,7 @@ namespace Banana {
     }
 
     OpenGLTexture2D::~OpenGLTexture2D() {
+        BANANA_PROFILE_FUNCTION();
         glDeleteTextures(1, &m_RendererID);
     }
 
@@ -67,12 +75,14 @@ namespace Banana {
     }
 
     void OpenGLTexture2D::SetData(void *data, uint32_t size) {
+        BANANA_PROFILE_FUNCTION();
         uint32_t bpp = m_DataFormat == GL_RGBA ? 4 : 3;
         BANANA_CORE_ASSERT(size == m_Width * m_height * bpp, "Data mismatch!");
         glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, m_Width, m_Height, m_DataFormat, GL_UNSIGNED_BYTE, data);
     }
 
     void OpenGLTexture2D::Bind(uint32_t slot) const {
+        BANANA_PROFILE_FUNCTION();
         glActiveTexture(slot);
         glBindTexture(GL_TEXTURE_2D, m_RendererID);
     }

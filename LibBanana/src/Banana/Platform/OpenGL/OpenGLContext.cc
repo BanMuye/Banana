@@ -13,6 +13,7 @@ Banana::OpenGLContext::OpenGLContext(GLFWwindow *windowHandle) : m_WindowHandle(
 }
 
 void Banana::OpenGLContext::Init() {
+        BANANA_PROFILE_FUNCTION();
     glfwMakeContextCurrent(m_WindowHandle);
     int status = gladLoadGLLoader((GLADloadproc) glfwGetProcAddress);
     BANANA_CORE_ASSERT(status, "Failed to initialize");
@@ -29,5 +30,6 @@ void Banana::OpenGLContext::Init() {
 }
 
 void Banana::OpenGLContext::SwapBuffers() {
+        BANANA_PROFILE_FUNCTION();
     glfwSwapBuffers(m_WindowHandle);
 }

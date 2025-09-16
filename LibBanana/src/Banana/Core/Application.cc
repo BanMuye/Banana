@@ -18,6 +18,8 @@ namespace Banana {
     Application *Application::s_Instance = nullptr;
 
     Application::Application() {
+        BANANA_PROFILE_FUNCTION()
+        BANANA_CORE_ASSERT(!s_Instance, "Application already exists!");
         s_Instance = this;
         m_Window = std::unique_ptr<Window>(MacOSWindow::Create());
         m_Window->SetEventCallBack(BIND_EVENT_FN(OnEvent));
@@ -28,7 +30,9 @@ namespace Banana {
         PushOverlay(m_ImGuiLayer);
     }
 
-    Application::~Application() = default;
+    Application::~Application() {
+        BANANA_PROFILE_FUNCTION();
+    }
 
     void Application::Run() {
         while (m_IsRunning) {
@@ -52,6 +56,7 @@ namespace Banana {
     }
 
     void Application::OnEvent(Event &event) {
+        BANANA_PROFILE_FUNCTION();
         EventDispatcher dispatcher(event);
         dispatcher.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(OnWindowClose));
         dispatcher.Dispatch<WindowResizeEvent>(BIND_EVENT_FN(OnWindowResize));
@@ -65,11 +70,13 @@ namespace Banana {
     }
 
     void Application::PushLayer(Layer *layer) {
+        BANANA_PROFILE_FUNCTION();
         m_LayerStack.PushLayer(layer);
         layer->OnAttach();
     }
 
     void Application::PushOverlay(Layer *layer) {
+        BANANA_PROFILE_FUNCTION();
         m_LayerStack.PushOverlay(layer);
         layer->OnAttach();
     }
@@ -86,7 +93,7 @@ namespace Banana {
         }
 
         m_Minimize = false;
-        Renderer::OnWindowResize(event.GetWidth()*2, event.GetHeight()*2);
+        Renderer::OnWindowResize(event.GetWidth() * 2, event.GetHeight() * 2);
         return false;
     }
 }

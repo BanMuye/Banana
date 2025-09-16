@@ -26,22 +26,27 @@ namespace Banana {
     }
 
     OpenGLVertexArray::OpenGLVertexArray() {
+        BANANA_PROFILE_FUNCTION();
         glGenVertexArrays(1, &m_RendererID);
     }
 
     OpenGLVertexArray::~OpenGLVertexArray() {
+        BANANA_PROFILE_FUNCTION();
         glDeleteVertexArrays(1, &m_RendererID);
     }
 
     void OpenGLVertexArray::Bind() const {
+        BANANA_PROFILE_FUNCTION();
         glBindVertexArray(m_RendererID);
     }
 
     void OpenGLVertexArray::UnBind() const {
+        BANANA_PROFILE_FUNCTION();
         glBindVertexArray(0);
     }
 
     void OpenGLVertexArray::AddVertexBuffer(const std::shared_ptr<VertexBuffer> &vertexBuffer) {
+        BANANA_PROFILE_FUNCTION();
         BANANA_CORE_ASSERT(vertexBuffer->GetLayout().GetElements().size(), "Vertex buffer layout error!");
 
         glBindVertexArray(m_RendererID);
@@ -60,6 +65,7 @@ namespace Banana {
     }
 
     void OpenGLVertexArray::SetIndexBuffer(const std::shared_ptr<IndexBuffer> &indexBuffer) {
+        BANANA_PROFILE_FUNCTION();
         glBindVertexArray(m_RendererID);
         indexBuffer->Bind();
         m_IndexBuffer = indexBuffer;

@@ -17,11 +17,13 @@ Sandbox2D::Sandbox2D() : Layer("Sandbox2D"), m_CameraController(1600.0f / 900.0f
 }
 
 void Sandbox2D::OnAttach() {
+    BANANA_PROFILE_FUNCTION();
     m_Texture = Banana::Texture2D::Create(
         "/Users/zhouchunyang/Documents/Projects/Banana/Sandbox/assets/IMG_5291.JPG");
 }
 
 void Sandbox2D::OnDetach() {
+    BANANA_PROFILE_FUNCTION();
 }
 
 void Sandbox2D::OnUpdate(Banana::Timestep ts) {
@@ -44,15 +46,6 @@ void Sandbox2D::OnUpdate(Banana::Timestep ts) {
 void Sandbox2D::OnImGuiRender() {
     ImGui::Begin("Settings");
     ImGui::ColorEdit4("Square Color", glm::value_ptr(m_SquareColor));
-
-    for (auto &result: m_ProfileResults) {
-        char label[50];
-        strcpy(label, "%.3fms ");
-        strcat(label, result.Name);
-        ImGui::Text(label, result.Time);
-    }
-    m_ProfileResults.clear();
-
     ImGui::End();
 }
 

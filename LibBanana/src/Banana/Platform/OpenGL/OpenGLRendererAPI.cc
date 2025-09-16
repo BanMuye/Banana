@@ -4,10 +4,12 @@
 
 #include "OpenGLRendererAPI.h"
 
+#include "Banana/Debug/Instrumentor.h"
 #include "glad/glad.h"
 
 namespace Banana {
     void OpenGLRendererAPI::Init() {
+        BANANA_PROFILE_FUNCTION();
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 

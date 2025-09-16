@@ -14,6 +14,7 @@ namespace Banana {
     Renderer::SceneData *Renderer::s_SceneData = new Renderer::SceneData;
 
     void Renderer::Init() {
+        BANANA_PROFILE_FUNCTION();
         RenderCommand::Init();
         Renderer2D::Init();
     }
