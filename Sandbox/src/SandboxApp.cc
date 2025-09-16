@@ -7,6 +7,7 @@
 #include "Banana/Core/Input.h"
 #include "Banana/Core/KeyCodes.h"
 #include "Banana/Core/OrthographicCameraController.h"
+#include "Banana/Debug/Instrumentor.h"
 #include "Banana/Renderer/Renderer.h"
 #include "glm/gtx/transform.hpp"
 #include "spdlog/spdlog.h"
@@ -243,9 +244,16 @@ public:
 
 int main(int argc, char *argv[]) {
     Banana::Log::Init();
-    BANANA_INFO("Starting SandboxApp");
-    const auto app = new SandboxApp();
 
+	BANANA_PROFILE_BEGIN_SESSION("Startup", "BananaProfile-Startup.json");
+    const auto app = new SandboxApp();
+	BANANA_PROFILE_END_SESSION()
+
+	BANANA_PROFILE_BEGIN_SESSION("Runtime", "BananaProfile-Runtime.json");
     app->Run();
+	BANANA_PROFILE_END_SESSION()
+
+	BANANA_PROFILE_BEGIN_SESSION("Cleanup", "BananaProfile-Cleanup.json");
     delete app;
+	BANANA_PROFILE_END_SESSION()
 };

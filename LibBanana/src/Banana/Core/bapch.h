@@ -17,8 +17,10 @@
 #include <unordered_map>
 #include <unordered_set>
 
+#include "Banana/Debug/Instrumentor.h"
+
 #ifdef BANANA_PLATFORM_WINDOWS
-    #include <Windows.h>
+#include <Windows.h>
 #endif
 
 #endif //BANANA_BAPCH_H

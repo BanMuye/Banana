@@ -72,7 +72,8 @@ add_library(BananaEngine SHARED
         src/Banana/Core/OrthographicCameraController.cc
         src/Banana/Core/OrthographicCameraController.h
         src/Banana/Renderer/Renderer2D.cc
-        src/Banana/Renderer/Renderer2D.h)
+        src/Banana/Renderer/Renderer2D.h
+        src/Banana/Debug/Instrumentor.h)
 
 # 设置公共头文件目录（暴露给依赖模块）
 target_include_directories(BananaEngine PUBLIC
