@@ -13,6 +13,7 @@ namespace Banana {
     class OpenGLTexture2D : public Texture2D {
     public:
         OpenGLTexture2D(const std::string &path);
+
         OpenGLTexture2D(uint32_t width, uint32_t height);
 
         virtual ~OpenGLTexture2D();
@@ -24,6 +25,14 @@ namespace Banana {
         virtual void SetData(void *data, uint32_t size) override;
 
         virtual void Bind(uint32_t slot = 0) const override;
+
+        virtual bool operator==(const Texture &other) const override {
+            if (auto p = dynamic_cast<const OpenGLTexture2D *>(&other)) {
+                return m_RendererID == p->m_RendererID;
+            }
+
+            return false;
+        }
 
     private:
         uint32_t m_Width;

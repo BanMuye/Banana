@@ -39,9 +39,9 @@ void Sandbox2D::OnUpdate(Banana::Timestep ts) {
 
     Banana::Renderer2D::BeginScene(m_CameraController.GetCamera());
     Banana::Renderer2D::DrawQuad(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec2(1.0f, 1.0f), m_SquareColor);
-    Banana::Renderer2D::DrawQuad(glm::vec3(3.0f, 0.0f, 0.0f), glm::vec2(1.0f, 1.0f), m_SquareColor);
-    Banana::Renderer2D::DrawRotatedQuad(glm::vec3(2.0f, 0.0f, 0.0f), glm::vec2(1.0f, 1.0f), glm::radians(45.0f),
-                                        m_SquareColor);
+    // Banana::Renderer2D::DrawQuad(glm::vec3(3.0f, 0.0f, 0.0f), glm::vec2(1.0f, 1.0f), m_SquareColor);
+    // Banana::Renderer2D::DrawRotatedQuad(glm::vec3(2.0f, 0.0f, 0.0f), glm::vec2(1.0f, 1.0f), glm::radians(45.0f),
+    //                                     m_SquareColor);
     Banana::Renderer2D::DrawQuad(glm::vec3(1.0f, 0.0f, 0.0f), glm::vec2(16.0f, 9.0f), m_Texture, 10);
     Banana::Renderer2D::EndScene();
 }
