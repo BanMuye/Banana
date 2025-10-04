@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 4.0)
+cmake_minimum_required(VERSION 3.30.5)
 
 set(LIBRARY_OUTPUT_PATH ${CMAKE_CURRENT_SOURCE_DIR}/bin)
 
@@ -8,7 +8,7 @@ add_definitions(-BANANA_DEBUG_MODE)
 
 add_subdirectory(vendor)
 
-add_library(BananaEngine SHARED
+add_library(BananaEngine STATIC
         src/Banana/Core/Core.h
         src/Banana/Core/Application.cc
         src/Banana/Core/Application.h

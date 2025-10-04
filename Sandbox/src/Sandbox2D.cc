@@ -19,7 +19,7 @@ Sandbox2D::Sandbox2D() : Layer("Sandbox2D"), m_CameraController(1600.0f / 900.0f
 void Sandbox2D::OnAttach() {
     BANANA_PROFILE_FUNCTION();
     m_Texture = Banana::Texture2D::Create(
-        "/Users/zhouchunyang/Documents/Projects/Banana/Sandbox/assets/IMG_5291.JPG");
+        "D:\\Files\\S_Documents\\Projects\\Banana\\Sandbox\\assets\\IMG_5291.JPG");
 }
 
 void Sandbox2D::OnDetach() {

@@ -7,6 +7,8 @@
 #include <fstream>
 #include <string>
 #include <thread>
+#include <algorithm>
+#include <chrono>
 
 namespace Banana {
     struct ProfileResult {

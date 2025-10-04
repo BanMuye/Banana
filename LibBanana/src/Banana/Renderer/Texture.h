@@ -5,6 +5,7 @@
 #ifndef BANANA_TEXTURE_H
 #define BANANA_TEXTURE_H
 #include <cstdint>
+#include <string>
 
 #include "Banana/Core/Core.h"
 
