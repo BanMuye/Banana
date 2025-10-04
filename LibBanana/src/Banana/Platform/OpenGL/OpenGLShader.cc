@@ -53,6 +53,12 @@ namespace Banana {
         UploadUniformInt(name, value);
     }
 
+    void OpenGLShader::SetFloat(const std::string &name, float value) {
+
+        BANANA_PROFILE_FUNCTION();
+        UploadUniformFloat1(name, value);
+    }
+
     void OpenGLShader::SetFloat3(const std::string &name, const glm::vec3 &value) {
         BANANA_PROFILE_FUNCTION();
         UploadUniformFloat3(name, value);
