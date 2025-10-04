@@ -111,17 +111,17 @@ namespace Banana {
     };
 }
 
-#define BANANA_PROFILE 1
+#define BANANA_PROFILE 0
 #if BANANA_PROFILE
 #define BANANA_PROFILE_BEGIN_SESSION(name, filepath) ::Banana::Instrumentor::Get().BeginSession(name, filepath)
 #define BANANA_PROFILE_END_SESSION() ::Banana::Instrumentor::Get().EndSession();
 #define BANANA_PROFILE_SCOPE(name) ::Banana::InstrumentationTimer timer##__LINE__(name);
 #define BANANA_PROFILE_FUNCTION() BANANA_PROFILE_SCOPE(__PRETTY_FUNCTION__)
 #else
-#define BANANA_PROFILE_BEGIN_SESSION
-#define BANANA_PROFILE_END_SESSION
-#define BANANA_PROFILE_SCOPE
-#define BANANA_PROFILE_FUNCTION
+#define BANANA_PROFILE_BEGIN_SESSION(name, filepath)
+#define BANANA_PROFILE_END_SESSION()
+#define BANANA_PROFILE_SCOPE(name)
+#define BANANA_PROFILE_FUNCTION()
 #endif
 
 

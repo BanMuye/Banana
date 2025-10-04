@@ -12,11 +12,15 @@ namespace Banana {
     public:
         OpenGLVertexBuffer(float *vertices, uint32_t size);
 
+        OpenGLVertexBuffer(uint32_t size);
+
         virtual ~OpenGLVertexBuffer() override;
 
         virtual void Bind() const override;
 
         virtual void UnBind() const override;
+
+        virtual void SetData(const void *data, uint32_t size) override;
 
         virtual const BufferLayout &GetLayout() const override;
 

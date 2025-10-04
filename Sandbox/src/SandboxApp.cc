@@ -26,7 +26,7 @@ public:
         };
 
         Banana::Ref<Banana::VertexBuffer> rectangleVB;
-        rectangleVB.reset(Banana::VertexBuffer::Create(vertices, sizeof(vertices)));
+        rectangleVB = Banana::VertexBuffer::Create(vertices, sizeof(vertices));
 
         Banana::BufferLayout layout = {
             {Banana::ShaderDataType::Float4, "a_Position"},
@@ -38,7 +38,7 @@ public:
 
         Banana::Ref<Banana::IndexBuffer> rectangleIB;
         unsigned int indices[3] = {0, 1, 2};
-        rectangleIB.reset(Banana::IndexBuffer::Create(indices, sizeof(indices) / sizeof(indices[0])));
+        rectangleIB = Banana::IndexBuffer::Create(indices, sizeof(indices) / sizeof(indices[0]));
 
         m_RectangleVA->SetIndexBuffer(rectangleIB);
 
@@ -88,7 +88,7 @@ public:
             -0.5f, 0.5f, 0.0f, 0.0f, 1.0f
         };
 
-        squareVB.reset(Banana::VertexBuffer::Create(squareVertices, sizeof(squareVertices)));
+        squareVB = Banana::VertexBuffer::Create(squareVertices, sizeof(squareVertices));
 
         Banana::BufferLayout squareLayout = {
             {Banana::ShaderDataType::Float3, "a_Position"}, {Banana::ShaderDataType::Float2, "a_TexCoord"}
@@ -97,7 +97,7 @@ public:
 
         uint32_t squareIndices[6] = {0, 1, 2, 2, 3, 0};
         Banana::Ref<Banana::IndexBuffer> squareIB;
-        squareIB.reset(Banana::IndexBuffer::Create(squareIndices, 6));
+        squareIB = Banana::IndexBuffer::Create(squareIndices, 6);
         m_SquareVA->AddVertexBuffer(squareVB);
         m_SquareVA->SetIndexBuffer(squareIB);
 
@@ -143,16 +143,16 @@ public:
             -0.5f, 0.5f, 0.0f, 0.0f, 1.0f
         };
         Banana::Ref<Banana::VertexBuffer> textureVB;
-        textureVB.reset(
-            Banana::VertexBuffer::Create(textureVertices, sizeof(textureVertices)));
+        textureVB =
+                Banana::VertexBuffer::Create(textureVertices, sizeof(textureVertices));
         textureVB->SetLayout({
             {Banana::ShaderDataType::Float3, "a_Position"}, {Banana::ShaderDataType::Float2, "a_TexCoord"}
         });
 
         Banana::Ref<Banana::IndexBuffer> textureIB;
         unsigned int textureIndices[6] = {0, 1, 2, 2, 3, 0};
-        textureIB.reset(
-            Banana::IndexBuffer::Create(textureIndices, sizeof(textureIndices) / sizeof(textureIndices[0])));
+        textureIB =
+                Banana::IndexBuffer::Create(textureIndices, sizeof(textureIndices) / sizeof(textureIndices[0]));
         m_TextureVA->AddVertexBuffer(textureVB);
         m_TextureVA->SetIndexBuffer(textureIB);
 
@@ -245,15 +245,15 @@ public:
 int main(int argc, char *argv[]) {
     Banana::Log::Init();
 
-	BANANA_PROFILE_BEGIN_SESSION("Startup", "BananaProfile-Startup.json");
+    BANANA_PROFILE_BEGIN_SESSION("Startup", "BananaProfile-Startup.json");
     const auto app = new SandboxApp();
-	BANANA_PROFILE_END_SESSION()
+    BANANA_PROFILE_END_SESSION()
 
-	BANANA_PROFILE_BEGIN_SESSION("Runtime", "BananaProfile-Runtime.json");
+    BANANA_PROFILE_BEGIN_SESSION("Runtime", "BananaProfile-Runtime.json");
     app->Run();
-	BANANA_PROFILE_END_SESSION()
+    BANANA_PROFILE_END_SESSION()
 
-	BANANA_PROFILE_BEGIN_SESSION("Cleanup", "BananaProfile-Cleanup.json");
+    BANANA_PROFILE_BEGIN_SESSION("Cleanup", "BananaProfile-Cleanup.json");
     delete app;
-	BANANA_PROFILE_END_SESSION()
+    BANANA_PROFILE_END_SESSION()
 };
