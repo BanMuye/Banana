@@ -20,8 +20,14 @@ Sandbox2D::Sandbox2D() : Layer("Sandbox2D"), m_CameraController(1600.0f / 900.0f
 
 void Sandbox2D::OnAttach() {
     BANANA_PROFILE_FUNCTION();
+
     m_Texture = Banana::Texture2D::Create(
         "D:\\Files\\S_Documents\\Projects\\Banana\\Sandbox\\assets\\IMG_5291.JPG");
+
+    Banana::FramebufferSpecification fbSpec;
+    fbSpec.Width = 400;
+    fbSpec.Height = 300;
+    m_Framebuffer = Banana::Framebuffer::Create(fbSpec);
 }
 
 void Sandbox2D::OnDetach() {
@@ -37,6 +43,9 @@ void Sandbox2D::OnUpdate(Banana::Timestep ts) {
     }
 
     Banana::Renderer2D::ResetStats();
+
+    m_Framebuffer->Bind();
+
     Banana::RenderCommand::SetClearColor({0.1f, 0.2f, 0.3f, 1.0f});
     Banana::RenderCommand::Clear();
 
@@ -44,13 +53,14 @@ void Sandbox2D::OnUpdate(Banana::Timestep ts) {
     Banana::Renderer2D::DrawQuad(glm::vec3(9.0f, 0.0f, 0.0f), glm::vec2(1.0f, 1.0f), m_SquareColor);
     Banana::Renderer2D::DrawQuad(glm::vec3(3.0f, 0.0f, 0.0f), glm::vec2(1.0f, 1.0f), m_SquareColor);
     Banana::Renderer2D::DrawRotatedQuad(glm::vec3(2.0f, 0.0f, 0.0f), glm::vec2(1.0f, 1.0f), 45,
-    m_SquareColor);
+                                        m_SquareColor);
     Banana::Renderer2D::DrawQuad(glm::vec3(1.0f, 0.0f, 0.0f), glm::vec2(16.0f, 9.0f), m_Texture, 10);
     Banana::Renderer2D::EndScene();
+
+    m_Framebuffer->Unbind();
 }
 
 void Sandbox2D::OnImGuiRender() {
-
     static bool dockingEnabled = true;
     if (dockingEnabled) {
         static bool dockspaceOpen = true;
@@ -61,14 +71,15 @@ void Sandbox2D::OnImGuiRender() {
 
         ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
         if (opt_fullscreen) {
-            ImGuiViewport* viewport = ImGui::GetMainViewport();
+            ImGuiViewport *viewport = ImGui::GetMainViewport();
             ImGui::SetNextWindowPos(viewport->Pos);
             ImGui::SetNextWindowSize(viewport->Size);
             ImGui::SetNextWindowViewport(viewport->ID);
             ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
             ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
 
-            window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
+            window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize |
+                    ImGuiWindowFlags_NoMove;
             window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
         }
 
@@ -85,7 +96,7 @@ void Sandbox2D::OnImGuiRender() {
         }
 
         // DockSpace
-        ImGuiIO& io = ImGui::GetIO();
+        ImGuiIO &io = ImGui::GetIO();
         if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable) {
             ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
             ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
@@ -114,12 +125,14 @@ void Sandbox2D::OnImGuiRender() {
 
         ImGui::ColorEdit4("Square Color", glm::value_ptr(m_SquareColor));
 
-        uint32_t textureID = m_Texture->GetRendererID();
-        ImGui::Image(textureID, ImVec2{ 256.0f, 256.0f });
+        uint32_t textureID = m_Framebuffer->GetColorAttachmentRendererID();
+        ImVec2 uv0 = ImVec2(0.0f, 1.0f); // 左下角 -> 正常左上角
+        ImVec2 uv1 = ImVec2(1.0f, 0.0f); // 右上角 -> 正常右下角
+        ImGui::Image(textureID, ImVec2{400, 300}, uv0, uv1);
         ImGui::End();
 
         ImGui::End();
-    }else {
+    } else {
         auto statistics = Banana::Renderer2D::GetStats();
         ImGui::Text("Renderer0D Stats:");
         ImGui::Text("Draw Calls: %d", statistics.DrawCalls);

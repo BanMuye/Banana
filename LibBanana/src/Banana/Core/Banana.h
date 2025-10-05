@@ -10,6 +10,7 @@
 #include "Log.h"
 #include "Layer.h"
 #include "Banana/Renderer/Texture.h"
+#include "Banana/Renderer/Framebuffer.h"
 
 
 #endif //BANANA_BANANA_H

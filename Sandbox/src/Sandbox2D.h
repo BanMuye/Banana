@@ -6,6 +6,7 @@
 #define BANANA_SANDBOX2D_H
 #include "Banana/Core/Layer.h"
 #include "Banana/Core/OrthographicCameraController.h"
+#include "Banana/Renderer/Framebuffer.h"
 #include "Banana/Renderer/Shader.h"
 #include "Banana/Renderer/Texture.h"
 #include "Banana/Renderer/VertexArray.h"
@@ -33,6 +34,7 @@ private:
     // Temp
     Banana::Ref<Banana::VertexArray> m_SquareVA;
     Banana::Ref<Banana::Shader> m_FlatColorShader;
+    Banana::Ref<Banana::Framebuffer> m_Framebuffer;
 
     Banana::Ref<Banana::Texture2D> m_Texture;
 
