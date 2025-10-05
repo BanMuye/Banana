@@ -40,6 +40,8 @@ namespace Banana {
         uint32_t TextureSlotIndex = 1;
 
         glm::vec4 QuadVertexPosition[4];
+
+        Renderer2D::Statistics Stats;
     };
 
     static Renderer2DData s_Data;
@@ -133,7 +135,18 @@ namespace Banana {
             s_Data.TextureSlots[i]->Bind(i);
         }
         RenderCommand::DrawIndexed(s_Data.QuadVertexArray, s_Data.QuadIndexCount);
+        s_Data.Stats.DrawCalls++;
     }
+
+    void Renderer2D::FlushAndReset() {
+        EndScene();
+        s_Data.QuadIndexCount = 0;
+        // reset vertex buffer point to base
+        s_Data.QuadVertexBufferPtr = s_Data.QuadVertexBufferBase;
+        // reset texture slot index to 1
+        s_Data.TextureSlotIndex = 1;
+    }
+
 
     void Renderer2D::DrawQuad(const glm::vec2 &position, const glm::vec2 &size, const glm::vec4 &color) {
         DrawQuad({position.x, position.y, 0.0f}, size, color);
@@ -141,6 +154,10 @@ namespace Banana {
 
     void Renderer2D::DrawQuad(const glm::vec3 &position, const glm::vec2 &size, const glm::vec4 &color) {
         BANANA_PROFILE_FUNCTION();
+
+        if (s_Data.QuadIndexCount >= s_Data.MaxIndices) {
+            FlushAndReset();
+        }
 
         constexpr float textureIndex = 0.0f; // use white texture
         constexpr float tilingFactor = 1.0f;
@@ -177,6 +194,8 @@ namespace Banana {
         s_Data.QuadVertexBufferPtr++;
 
         s_Data.QuadIndexCount += 6;
+
+        s_Data.Stats.QuadCount++;
     }
 
     void Renderer2D::DrawQuad(const glm::vec2 &position, const glm::vec2 &size, const Ref<Texture2D> &texture,
@@ -187,6 +206,10 @@ namespace Banana {
     void Renderer2D::DrawQuad(const glm::vec3 &position, const glm::vec2 &size, const Ref<Texture2D> &texture,
                               float tilingFactor, const glm::vec4 &tintColor) {
         BANANA_PROFILE_FUNCTION();
+
+        if (s_Data.QuadIndexCount >= s_Data.MaxIndices) {
+            FlushAndReset();
+        }
 
         float textureIndex = 0.0f;
         for (uint32_t i = 1; i < s_Data.TextureSlotIndex; i++) {
@@ -234,6 +257,8 @@ namespace Banana {
         s_Data.QuadVertexBufferPtr++;
 
         s_Data.QuadIndexCount += 6;
+
+        s_Data.Stats.QuadCount++;
     }
 
     void Renderer2D::DrawRotatedQuad(const glm::vec2 &position, const glm::vec2 &size, float rotation,
@@ -244,6 +269,10 @@ namespace Banana {
     void Renderer2D::DrawRotatedQuad(const glm::vec3 &position, const glm::vec2 &size, float rotation,
                                      const glm::vec4 &color) {
         BANANA_PROFILE_FUNCTION();
+
+        if (s_Data.QuadIndexCount >= s_Data.MaxIndices) {
+            FlushAndReset();
+        }
 
         const float textureIndex = 0.0f; // White Texture
         const float tilingFactor = 1.0f;
@@ -281,6 +310,8 @@ namespace Banana {
         s_Data.QuadVertexBufferPtr++;
 
         s_Data.QuadIndexCount += 6;
+
+        s_Data.Stats.QuadCount++;
     }
 
     void Renderer2D::DrawRotatedQuad(const glm::vec2 &position, const glm::vec2 &size, float rotation,
@@ -294,6 +325,9 @@ namespace Banana {
                                      float tilingFactor, const glm::vec4 &tintColor) {
         BANANA_PROFILE_FUNCTION();
 
+        if (s_Data.QuadIndexCount >= s_Data.MaxIndices) {
+            FlushAndReset();
+        }
         constexpr glm::vec4 color = {1.0f, 1.0f, 1.0f, 1.0f};
 
         float textureIndex = 0.0f;
@@ -343,5 +377,15 @@ namespace Banana {
         s_Data.QuadVertexBufferPtr++;
 
         s_Data.QuadIndexCount += 6;
+
+        s_Data.Stats.QuadCount++;
+    }
+
+    void Renderer2D::ResetStats() {
+        memset(&s_Data.Stats, 0, sizeof(s_Data.Stats));
+    }
+
+    Renderer2D::Statistics Renderer2D::GetStats() {
+        return s_Data.Stats;
     }
 }

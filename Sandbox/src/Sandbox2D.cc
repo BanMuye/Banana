@@ -34,21 +34,39 @@ void Sandbox2D::OnUpdate(Banana::Timestep ts) {
         m_CameraController.OnUpdate(ts);
     }
 
+    Banana::Renderer2D::ResetStats();
     Banana::RenderCommand::SetClearColor({0.1f, 0.2f, 0.3f, 1.0f});
     Banana::RenderCommand::Clear();
 
     Banana::Renderer2D::BeginScene(m_CameraController.GetCamera());
-    Banana::Renderer2D::DrawQuad(glm::vec3(9.0f, 0.0f, 0.0f), glm::vec2(1.0f, 1.0f), m_SquareColor);
-    Banana::Renderer2D::DrawQuad(glm::vec3(3.0f, 0.0f, 0.0f), glm::vec2(1.0f, 1.0f), m_SquareColor);
-    Banana::Renderer2D::DrawRotatedQuad(glm::vec3(2.0f, 0.0f, 0.0f), glm::vec2(1.0f, 1.0f), 45,
-    m_SquareColor);
-    Banana::Renderer2D::DrawQuad(glm::vec3(1.0f, 0.0f, 0.0f), glm::vec2(16.0f, 9.0f), m_Texture, 10);
+    // Banana::Renderer2D::DrawQuad(glm::vec3(9.0f, 0.0f, 0.0f), glm::vec2(1.0f, 1.0f), m_SquareColor);
+    // Banana::Renderer2D::DrawQuad(glm::vec3(3.0f, 0.0f, 0.0f), glm::vec2(1.0f, 1.0f), m_SquareColor);
+    // Banana::Renderer2D::DrawRotatedQuad(glm::vec3(2.0f, 0.0f, 0.0f), glm::vec2(1.0f, 1.0f), 45,
+    // m_SquareColor);
+    // Banana::Renderer2D::DrawQuad(glm::vec3(1.0f, 0.0f, 0.0f), glm::vec2(16.0f, 9.0f), m_Texture, 10);
+    Banana::Renderer2D::EndScene();
+
+    // test batch rendering
+    Banana::Renderer2D::BeginScene(m_CameraController.GetCamera());
+    for (float y = -5.0f; y < 5.0f; y += 0.05f) {
+        for (float x = -5.0f; x < 5.0f; x += 0.05f) {
+            glm::vec4 color = {(x+5.0f)/10.0f, 0.4f, (y+5.0f)/10.0f, 1.0f};
+            Banana::Renderer2D::DrawQuad({x, y}, {0.045f, 0.045f}, color);
+        }
+    }
     Banana::Renderer2D::EndScene();
 }
 
 void Sandbox2D::OnImGuiRender() {
     ImGui::Begin("Settings");
     ImGui::ColorEdit4("Square Color", glm::value_ptr(m_SquareColor));
+
+    auto statistics = Banana::Renderer2D::GetStats();
+    ImGui::Text("Renderer2D Stats:");
+    ImGui::Text("Draw Calls: %d", statistics.DrawCalls);
+    ImGui::Text("Quads: %d", statistics.QuadCount);
+    ImGui::Text("Vertices: %d", statistics.GetTotalVertexCount());
+    ImGui::Text("Indices: %d", statistics.GetTotalIndexCount());
     ImGui::End();
 }
 
