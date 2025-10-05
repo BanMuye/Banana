@@ -8,3 +8,4 @@ bin
 /.vs/Banana/v17
 /out/build/x64-Debug
 /.vs
+/CMakeSettings.json
