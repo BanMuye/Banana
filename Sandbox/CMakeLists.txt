@@ -7,6 +7,4 @@ add_executable(SandboxApp
         src/Sandbox2D.cc
         src/Sandbox2D.h)
 
-add_library(SandboxLib STATIC src/SandboxApp.cc)
-
 target_link_libraries(SandboxApp PRIVATE BananaEngine)

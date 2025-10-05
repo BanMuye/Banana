@@ -43,38 +43,38 @@ public:
         m_RectangleVA->SetIndexBuffer(rectangleIB);
 
         std::string vertexSrc = R"(
-			#version 330 core
+            #version 330 core
 
-			layout(location = 0) in vec4 a_Position;
+            layout(location = 0) in vec4 a_Position;
             layout(location = 1) in vec4 a_Color;
 
-			uniform mat4 u_ViewProjection;
-			uniform mat4 u_Transform;
+            uniform mat4 u_ViewProjection;
+            uniform mat4 u_Transform;
 
-			out vec4 v_Position;
+            out vec4 v_Position;
             out vec4 v_Color;
 
-			void main()
-			{
-				v_Position = a_Position;
-				gl_Position = u_ViewProjection * u_Transform * a_Position;
+            void main()
+            {
+                v_Position = a_Position;
+                gl_Position = u_ViewProjection * u_Transform * a_Position;
                 v_Color = a_Color;
-			}
-		)";
+            }
+        )";
 
         std::string fragmentSrc = R"(
-			#version 330 core
+            #version 330 core
 
-			layout(location = 0) out vec4 color;
+            layout(location = 0) out vec4 color;
 
-			in vec3 v_Position;
+            in vec3 v_Position;
             in vec4 v_Color;
 
-			void main()
-			{
+            void main()
+            {
                 color = v_Color;
-			}
-		)";
+            }
+        )";
 
         m_RectangleShader = Banana::Shader::Create("rectangleShader", vertexSrc, fragmentSrc);
 
@@ -102,36 +102,36 @@ public:
         m_SquareVA->SetIndexBuffer(squareIB);
 
         std::string blueShaderVertexSrc = R"(
-			#version 330 core
+            #version 330 core
 
-			layout(location = 0) in vec3 a_Position;
+            layout(location = 0) in vec3 a_Position;
 
-			uniform mat4 u_ViewProjection;
-			uniform mat4 u_Transform;
+            uniform mat4 u_ViewProjection;
+            uniform mat4 u_Transform;
 
-			out vec3 v_Position;
+            out vec3 v_Position;
 
-			void main()
-			{
-				v_Position = a_Position;
-				gl_Position = u_ViewProjection * u_Transform * vec4(a_Position, 1.0);
-			}
-		)";
+            void main()
+            {
+                v_Position = a_Position;
+                gl_Position = u_ViewProjection * u_Transform * vec4(a_Position, 1.0);
+            }
+        )";
 
         std::string blueShaderFragmentSrc = R"(
-			#version 330 core
+            #version 330 core
 
-			layout(location = 0) out vec4 color;
+            layout(location = 0) out vec4 color;
 
-			in vec3 v_Position;
+            in vec3 v_Position;
 
-			uniform vec3 u_Color;
+            uniform vec3 u_Color;
 
-			void main()
-			{
-				color = vec4(u_Color, 1.0);
-			}
-		)";
+            void main()
+            {
+                color = vec4(u_Color, 1.0);
+            }
+        )";
 
         m_SquareShader = Banana::Shader::Create("squareShader", blueShaderVertexSrc, blueShaderFragmentSrc);
 
