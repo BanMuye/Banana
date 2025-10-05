@@ -81,6 +81,11 @@ namespace Banana {
         layer->OnAttach();
     }
 
+    void Application::Close() {
+        m_IsRunning = false;
+    }
+
+
     bool Application::OnWindowClose(WindowCloseEvent &event) {
         m_IsRunning = false;
         return true;

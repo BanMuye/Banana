@@ -13,6 +13,8 @@
 
 #include <chrono>
 
+#include "Banana/Core/Application.h"
+
 Sandbox2D::Sandbox2D() : Layer("Sandbox2D"), m_CameraController(1600.0f / 900.0f, true) {
 }
 
@@ -39,35 +41,93 @@ void Sandbox2D::OnUpdate(Banana::Timestep ts) {
     Banana::RenderCommand::Clear();
 
     Banana::Renderer2D::BeginScene(m_CameraController.GetCamera());
-    // Banana::Renderer2D::DrawQuad(glm::vec3(9.0f, 0.0f, 0.0f), glm::vec2(1.0f, 1.0f), m_SquareColor);
-    // Banana::Renderer2D::DrawQuad(glm::vec3(3.0f, 0.0f, 0.0f), glm::vec2(1.0f, 1.0f), m_SquareColor);
-    // Banana::Renderer2D::DrawRotatedQuad(glm::vec3(2.0f, 0.0f, 0.0f), glm::vec2(1.0f, 1.0f), 45,
-    // m_SquareColor);
-    // Banana::Renderer2D::DrawQuad(glm::vec3(1.0f, 0.0f, 0.0f), glm::vec2(16.0f, 9.0f), m_Texture, 10);
-    Banana::Renderer2D::EndScene();
-
-    // test batch rendering
-    Banana::Renderer2D::BeginScene(m_CameraController.GetCamera());
-    for (float y = -5.0f; y < 5.0f; y += 0.05f) {
-        for (float x = -5.0f; x < 5.0f; x += 0.05f) {
-            glm::vec4 color = {(x+5.0f)/10.0f, 0.4f, (y+5.0f)/10.0f, 1.0f};
-            Banana::Renderer2D::DrawQuad({x, y}, {0.045f, 0.045f}, color);
-        }
-    }
+    Banana::Renderer2D::DrawQuad(glm::vec3(9.0f, 0.0f, 0.0f), glm::vec2(1.0f, 1.0f), m_SquareColor);
+    Banana::Renderer2D::DrawQuad(glm::vec3(3.0f, 0.0f, 0.0f), glm::vec2(1.0f, 1.0f), m_SquareColor);
+    Banana::Renderer2D::DrawRotatedQuad(glm::vec3(2.0f, 0.0f, 0.0f), glm::vec2(1.0f, 1.0f), 45,
+    m_SquareColor);
+    Banana::Renderer2D::DrawQuad(glm::vec3(1.0f, 0.0f, 0.0f), glm::vec2(16.0f, 9.0f), m_Texture, 10);
     Banana::Renderer2D::EndScene();
 }
 
 void Sandbox2D::OnImGuiRender() {
-    ImGui::Begin("Settings");
-    ImGui::ColorEdit4("Square Color", glm::value_ptr(m_SquareColor));
 
-    auto statistics = Banana::Renderer2D::GetStats();
-    ImGui::Text("Renderer2D Stats:");
-    ImGui::Text("Draw Calls: %d", statistics.DrawCalls);
-    ImGui::Text("Quads: %d", statistics.QuadCount);
-    ImGui::Text("Vertices: %d", statistics.GetTotalVertexCount());
-    ImGui::Text("Indices: %d", statistics.GetTotalIndexCount());
-    ImGui::End();
+    static bool dockingEnabled = true;
+    if (dockingEnabled) {
+        static bool dockspaceOpen = true;
+        static bool opt_fullscreen_persistant = true;
+        bool opt_fullscreen = opt_fullscreen_persistant;
+        // bool opt_fullscreen = false;
+        static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;
+
+        ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
+        if (opt_fullscreen) {
+            ImGuiViewport* viewport = ImGui::GetMainViewport();
+            ImGui::SetNextWindowPos(viewport->Pos);
+            ImGui::SetNextWindowSize(viewport->Size);
+            ImGui::SetNextWindowViewport(viewport->ID);
+            ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
+            ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
+
+            window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
+            window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
+        }
+
+        if (dockspace_flags & ImGuiDockNodeFlags_PassthruCentralNode) {
+            window_flags |= ImGuiWindowFlags_NoBackground;
+        }
+
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
+        ImGui::Begin("DockSpace Demo", &dockspaceOpen, window_flags);
+        ImGui::PopStyleVar();
+
+        if (opt_fullscreen) {
+            ImGui::PopStyleVar(2);
+        }
+
+        // DockSpace
+        ImGuiIO& io = ImGui::GetIO();
+        if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable) {
+            ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
+            ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
+        }
+
+        if (ImGui::BeginMenuBar()) {
+            if (ImGui::BeginMenu("File")) {
+                if (ImGui::MenuItem("Exit")) {
+                    Banana::Application::Get().Close();
+                }
+
+                ImGui::EndMenu();
+            }
+
+            ImGui::EndMenuBar();
+        }
+
+        ImGui::Begin("Settings");
+
+        auto stats = Banana::Renderer2D::GetStats();
+        ImGui::Text("Renderer2D Stats:");
+        ImGui::Text("Draw Calls: %d", stats.DrawCalls);
+        ImGui::Text("Quads: %d", stats.QuadCount);
+        ImGui::Text("Vertices: %d", stats.GetTotalVertexCount());
+        ImGui::Text("Indices: %d", stats.GetTotalIndexCount());
+
+        ImGui::ColorEdit4("Square Color", glm::value_ptr(m_SquareColor));
+
+        uint32_t textureID = m_Texture->GetRendererID();
+        ImGui::Image(textureID, ImVec2{ 256.0f, 256.0f });
+        ImGui::End();
+
+        ImGui::End();
+    }else {
+        auto statistics = Banana::Renderer2D::GetStats();
+        ImGui::Text("Renderer0D Stats:");
+        ImGui::Text("Draw Calls: %d", statistics.DrawCalls);
+        ImGui::Text("Quads: %d", statistics.QuadCount);
+        ImGui::Text("Vertices: %d", statistics.GetTotalVertexCount());
+        ImGui::Text("Indices: %d", statistics.GetTotalIndexCount());
+        ImGui::End();
+    }
 }
 
 void Sandbox2D::OnEvent(Banana::Event &event) {
