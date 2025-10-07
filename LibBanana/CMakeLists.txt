@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.30.5)
 
 set(LIBRARY_OUTPUT_PATH ${CMAKE_CURRENT_SOURCE_DIR}/bin)
+set(CMAKE_CXX_STANDARD 20)
 
 add_definitions(-BANANA_PLATFORM_MAC)
 add_definitions(-BANANA_BUILD_DLL)
@@ -34,7 +35,6 @@ add_library(BananaEngine STATIC
         src/Banana/Core/LayerStack.cc
         src/Banana/Core/LayerStack.h
         src/Banana/Core/Input.h
-        src/Banana/Platform/MacOS/MacOSInput.h
         src/Banana/ImGui/ImGuiLayer.cc
         src/Banana/ImGui/ImGuiLayer.h
         src/Banana/Renderer/GraphicsContext.h

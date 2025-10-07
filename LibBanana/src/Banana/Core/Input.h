@@ -11,26 +11,15 @@
 namespace Banana {
     class API_EXPORT Input {
     public:
-        inline static bool IsKeyPressed(int key) { return s_Instance->IsKeyPressedImpl(key); }
+        static bool IsKeyPressed(int key);
 
-        inline static bool IsMouseButtonPressed(int button) { return s_Instance->IsMouseButtonPressedImpl(button); }
-        inline static std::pair<float, float> GetMousePosition() { return s_Instance->GetMousePositionImpl(); }
-        inline static float GetMouseX() { return s_Instance->GetMouseXImpl(); }
-        inline static float GetMouseY() { return s_Instance->GetMouseYImpl(); }
+        static bool IsMouseButtonPressed(int button);
 
-    protected:
-        virtual bool IsKeyPressedImpl(int key) =0;
+        static std::pair<float, float> GetMousePosition();
 
-        virtual bool IsMouseButtonPressedImpl(int button) =0;
+        static float GetMouseX();
 
-        virtual std::pair<float, float> GetMousePositionImpl() =0;
-
-        virtual float GetMouseXImpl() =0;
-
-        virtual float GetMouseYImpl() =0;
-
-    private:
-        static Input *s_Instance;
+        static float GetMouseY();
     };
 }
 

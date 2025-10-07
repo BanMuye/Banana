@@ -14,6 +14,8 @@ namespace Banana {
                 return nullptr;
             case RendererAPI::API::OpenGL: return std::dynamic_pointer_cast<Texture2D>(
                     std::make_shared<OpenGLTexture2D>(width, height));
+            default: BANANA_CORE_ASSERT(false, "RendererAPI::None is currently not supported!");
+                return nullptr;
         }
     }
 
