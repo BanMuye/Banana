@@ -1,69 +1,74 @@
-//
-// Created by cyzho on 2025/10/7.
-//
-
 #include "EditorLayer.h"
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 #include "imgui.h"
 #include "Banana/Core/Application.h"
 #include "Banana/Renderer/RenderCommand.h"
 #include "Banana/Renderer/Renderer2D.h"
-#include "glm/gtc/type_ptr.hpp"
 
-Banana::EditorLayer::EditorLayer() : Layer("EditorLayer"), m_CameraController(1280.0f / 720.0f),
-                                     m_SquareColor({0.2f, 0.3f, 0.8f, 1.0f}) {
-}
-
-Banana::EditorLayer::~EditorLayer() {
-}
-
-void Banana::EditorLayer::OnAttach() {
-    BANANA_PROFILE_FUNCTION();
-
-    m_CheckerboardTexture = Banana::Texture2D::Create("assets\\textures\\Checkerboard.png");
-
-    Banana::FramebufferSpecification fbSpec;
-    fbSpec.Width = 1280;
-    fbSpec.Height = 720;
-    m_Framebuffer = Banana::Framebuffer::Create(fbSpec);
-}
-
-void Banana::EditorLayer::OnDetach() {
-    BANANA_PROFILE_FUNCTION();
-}
-
-void Banana::EditorLayer::OnUpdate(Timestep ts) {
-    BANANA_PROFILE_FUNCTION();
-
-    // update
-    m_CameraController.OnUpdate(ts);
-
-    // Render
-    Banana::Renderer2D::ResetStats(); {
-        BANANA_PROFILE_SCOPE("Renderer Preparation");
-        m_Framebuffer->Bind();
-        Banana::RenderCommand::SetClearColor({0.1f, 0.1f, 0.1f, 1.0f});
-        Banana::RenderCommand::Clear();
-    } {
-        static float rotation = 0.0f;
-        // rotation += ts * 50.0f;
-
-        BANANA_PROFILE_SCOPE("Renderer Draw");
-        Banana::Renderer2D::BeginScene(m_CameraController.GetCamera());
-        // Banana::Renderer2D::DrawRotatedQuad(glm::vec3(0.0f, 0.0f, 1.0f), glm::vec2(1.0f), rotation, m_SquareColor);
-        Banana::Renderer2D::DrawQuad(glm::vec3(0.0f, 0.0f, 1.0f), glm::vec2(1.0f), m_SquareColor);
-        Banana::Renderer2D::EndScene();
-
-        m_Framebuffer->Unbind();
+namespace Banana {
+    EditorLayer::EditorLayer()
+        : Layer("EditorLayer"), m_CameraController(1280.0f / 720.0f), m_SquareColor({0.2f, 0.3f, 0.8f, 1.0f}) {
     }
-}
 
-void Banana::EditorLayer::OnImGuiRender() {
-    BANANA_PROFILE_FUNCTION();
+    void EditorLayer::OnAttach() {
+        BANANA_PROFILE_FUNCTION();
 
-    // Note: Switch this to true to enable dockspace
-    static bool dockingEnabled = true;
-    if (dockingEnabled) {
+        m_CheckerboardTexture = Banana::Texture2D::Create("assets\\textures\\Checkerboard.png");
+
+        Banana::FramebufferSpecification fbSpec;
+        fbSpec.Width = 1280;
+        fbSpec.Height = 720;
+        m_Framebuffer = Banana::Framebuffer::Create(fbSpec);
+    }
+
+    void EditorLayer::OnDetach() {
+        BANANA_PROFILE_FUNCTION();
+    }
+
+    void EditorLayer::OnUpdate(Banana::Timestep ts) {
+        BANANA_PROFILE_FUNCTION();
+
+        // Update
+        m_CameraController.OnUpdate(ts);
+
+        // Render
+        Banana::Renderer2D::ResetStats(); {
+            BANANA_PROFILE_SCOPE("Renderer Prep");
+            m_Framebuffer->Bind();
+            Banana::RenderCommand::SetClearColor({0.1f, 0.1f, 0.1f, 1});
+            Banana::RenderCommand::Clear();
+        } {
+            static float rotation = 0.0f;
+            rotation += ts * 50.0f;
+
+            BANANA_PROFILE_SCOPE("Renderer Draw");
+            Banana::Renderer2D::BeginScene(m_CameraController.GetCamera());
+            Banana::Renderer2D::DrawRotatedQuad({1.0f, 0.0f}, {0.8f, 0.8f}, -45.0f, {0.8f, 0.2f, 0.3f, 1.0f});
+            Banana::Renderer2D::DrawQuad({-1.0f, 0.0f}, {0.8f, 0.8f}, {0.8f, 0.2f, 0.3f, 1.0f});
+            Banana::Renderer2D::DrawQuad({0.5f, -0.5f}, {0.5f, 0.75f}, m_SquareColor);
+            Banana::Renderer2D::DrawQuad({0.0f, 0.0f, -0.1f}, {20.0f, 20.0f}, m_CheckerboardTexture, 10.0f);
+            Banana::Renderer2D::DrawRotatedQuad({-2.0f, 0.0f, 0.0f}, {1.0f, 1.0f}, rotation, m_CheckerboardTexture,
+                                                20.0f);
+            Banana::Renderer2D::EndScene();
+
+            Banana::Renderer2D::BeginScene(m_CameraController.GetCamera());
+            for (float y = -5.0f; y < 5.0f; y += 0.5f) {
+                for (float x = -5.0f; x < 5.0f; x += 0.5f) {
+                    glm::vec4 color = {(x + 5.0f) / 10.0f, 0.4f, (y + 5.0f) / 10.0f, 0.7f};
+                    Banana::Renderer2D::DrawQuad({x, y}, {0.45f, 0.45f}, color);
+                }
+            }
+            Banana::Renderer2D::EndScene();
+            m_Framebuffer->Unbind();
+        }
+    }
+
+    void EditorLayer::OnImGuiRender() {
+        BANANA_PROFILE_FUNCTION();
+
+        // Note: Switch this to true to enable dockspace
         static bool dockspaceOpen = true;
         static bool opt_fullscreen_persistant = true;
         bool opt_fullscreen = opt_fullscreen_persistant;
@@ -131,29 +136,31 @@ void Banana::EditorLayer::OnImGuiRender() {
 
         ImGui::ColorEdit4("Square Color", glm::value_ptr(m_SquareColor));
 
+        ImGui::End();
+
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{0, 0});
+        ImGui::Begin("Viewport");
+
+        m_ViewportFocused = ImGui::IsWindowFocused();
+        m_ViewportHovered = ImGui::IsWindowHovered();
+        Application::Get().GetImGuiLayer()->BlockEvents(!m_ViewportHovered || !m_ViewportFocused);
+
+        ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
+        if (m_ViewportSize != *((glm::vec2 *) &viewportPanelSize)) {
+            m_Framebuffer->Resize((uint32_t) viewportPanelSize.x, (uint32_t) viewportPanelSize.y);
+            m_ViewportSize = {viewportPanelSize.x, viewportPanelSize.y};
+
+            m_CameraController.OnResize(viewportPanelSize.x, viewportPanelSize.y);
+        }
         uint32_t textureID = m_Framebuffer->GetColorAttachmentRendererID();
-        ImGui::Image((void *) textureID, ImVec2{1280, 720}, ImVec2{0, 1}, ImVec2{1, 0});
+        ImGui::Image((void *) textureID, ImVec2{m_ViewportSize.x, m_ViewportSize.y}, ImVec2{0, 1}, ImVec2{1, 0});
         ImGui::End();
+        ImGui::PopStyleVar();
 
-        ImGui::End();
-    } else {
-        ImGui::Begin("Settings");
-
-        auto stats = Banana::Renderer2D::GetStats();
-        ImGui::Text("Renderer2D Stats:");
-        ImGui::Text("Draw Calls: %d", stats.DrawCalls);
-        ImGui::Text("Quads: %d", stats.QuadCount);
-        ImGui::Text("Vertices: %d", stats.GetTotalVertexCount());
-        ImGui::Text("Indices: %d", stats.GetTotalIndexCount());
-
-        ImGui::ColorEdit4("Square Color", glm::value_ptr(m_SquareColor));
-
-        uint32_t textureID = m_CheckerboardTexture->GetRendererID();
-        ImGui::Image((void *) textureID, ImVec2{1280, 720}, ImVec2{0, 1}, ImVec2{1, 0});
         ImGui::End();
     }
-}
 
-void Banana::EditorLayer::OnEvent(Event &event) {
-    m_CameraController.OnEvent(event);
+    void EditorLayer::OnEvent(Banana::Event &e) {
+        m_CameraController.OnEvent(e);
+    }
 }

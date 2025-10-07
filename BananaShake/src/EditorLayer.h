@@ -17,17 +17,17 @@ namespace Banana {
     public:
         EditorLayer();
 
-        virtual ~EditorLayer();
+        ~EditorLayer() override = default;
 
-        virtual void OnAttach() override;
+        void OnAttach() override;
 
-        virtual void OnDetach() override;
+        void OnDetach() override;
 
-        virtual void OnUpdate(Timestep ts) override;
+        void OnUpdate(Timestep ts) override;
 
-        virtual void OnImGuiRender() override;
+        void OnImGuiRender() override;
 
-        virtual void OnEvent(Event &event) override;
+        void OnEvent(Event &event) override;
 
     private:
         Banana::OrthographicCameraController m_CameraController;
@@ -38,6 +38,8 @@ namespace Banana {
 
         Ref<Framebuffer> m_Framebuffer;
         Ref<Texture2D> m_CheckerboardTexture;
+
+        bool m_ViewportFocused = false, m_ViewportHovered = false;
 
         glm::vec2 m_ViewportSize = {0.0f, 0.0f};
         glm::vec4 m_SquareColor = {0.2f, 0.3f, 0.8f, 1.0f};
