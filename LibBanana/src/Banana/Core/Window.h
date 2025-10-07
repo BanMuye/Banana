@@ -13,10 +13,10 @@
 namespace Banana {
     struct WindowProps {
         std::string Title;
-        unsigned int Width, Height;
+        uint32_t Width, Height;
 
-        WindowProps(const std::string &title = "Banana Engine", unsigned int width = 1600,
-                    unsigned int height = 900) : Title(title), Width(width), Height(height) {
+        WindowProps(const std::string &title = "Banana Engine", uint32_t width = 1600,
+                    uint32_t height = 900) : Title(title), Width(width), Height(height) {
         }
     };
 
@@ -29,9 +29,9 @@ namespace Banana {
 
         virtual void OnUpdate() = 0;
 
-        virtual unsigned int GetWidth() const = 0;
+        virtual uint32_t GetWidth() const = 0;
 
-        virtual unsigned int GetHeight() const = 0;
+        virtual uint32_t GetHeight() const = 0;
 
         virtual void SetEventCallBack(const EventCallbackFn &callback) = 0;
 
@@ -39,7 +39,7 @@ namespace Banana {
 
         virtual bool IsVSync() const = 0;
 
-        virtual void * GetNativeWindow() const = 0;
+        virtual void *GetNativeWindow() const = 0;
 
         static Window *Create(const WindowProps &props = WindowProps());
     };

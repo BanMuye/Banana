@@ -17,13 +17,12 @@ namespace Banana {
 
     Application *Application::s_Instance = nullptr;
 
-    Application::Application() {
+    Application::Application(const std::string &name) {
         BANANA_PROFILE_FUNCTION()
         BANANA_CORE_ASSERT(!s_Instance, "Application already exists!");
         s_Instance = this;
-        m_Window = std::unique_ptr<Window>(MacOSWindow::Create());
+        m_Window = std::unique_ptr<Window>(MacOSWindow::Create(name));
         m_Window->SetEventCallBack(BIND_EVENT_FN(OnEvent));
-
         Renderer::Init();
 
         m_ImGuiLayer = new ImGuiLayer();

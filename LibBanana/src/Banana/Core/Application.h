@@ -20,7 +20,7 @@
 namespace Banana {
     class API_EXPORT Application {
     public:
-        Application();
+        Application(const std::string &name = "Banana App");
 
         virtual ~Application();
 
