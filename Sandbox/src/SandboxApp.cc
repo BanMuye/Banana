@@ -1,7 +1,6 @@
 //
 // Created by 周春阳 on 2025/8/18.
 //
-#include "EditorLayer.h"
 #include "imgui.h"
 #include "Sandbox2D.h"
 #include "Banana/Core/Banana.h"
@@ -18,7 +17,7 @@
 class SandboxApp : public Banana::Application {
 public:
     SandboxApp() {
-        PushLayer(new Banana::EditorLayer());
+        PushLayer(new Sandbox2D());
     } ;
 
     ~SandboxApp() override = default;

@@ -6,7 +6,6 @@ add_executable(SandboxApp
         src/SandboxApp.cc
         src/Sandbox2D.cc
         src/Sandbox2D.h
-        src/EditorLayer.cc
-        src/EditorLayer.h)
+)
 
 target_link_libraries(SandboxApp PRIVATE BananaEngine)
