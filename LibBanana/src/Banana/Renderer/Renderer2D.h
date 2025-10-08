@@ -4,6 +4,7 @@
 
 #ifndef BANANA_RENDERER2D_H
 #define BANANA_RENDERER2D_H
+#include "Camera.h"
 #include "OrthographicCamera.h"
 #include "Texture.h"
 #include "Banana/Core/Core.h"
@@ -14,6 +15,8 @@ namespace Banana {
         static void Init();
 
         static void Shutdown();
+
+        static void BeginScene(const Camera &camera, const glm::mat4 &transform);
 
         static void BeginScene(const OrthographicCamera &camera);
 

@@ -5,6 +5,7 @@
 #ifndef COMPONENT_H
 #define COMPONENT_H
 
+#include "Banana/Renderer/Camera.h"
 #include "glm/glm.hpp"
 
 namespace Banana {
@@ -41,6 +42,18 @@ namespace Banana {
         SpriteRendererComponent(const SpriteRendererComponent &) = default;
 
         SpriteRendererComponent(const glm::vec4 &color): Color(color) {
+        }
+    };
+
+    struct CameraComponent {
+        Camera Camera;
+        bool Primary = true;
+
+        CameraComponent() = default;
+
+        CameraComponent(const CameraComponent &) = default;
+
+        CameraComponent(const glm::mat4 &projection): Camera(projection) {
         }
     };
 }
