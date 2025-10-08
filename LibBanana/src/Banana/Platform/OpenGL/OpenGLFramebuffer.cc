@@ -7,58 +7,67 @@
 #include "Banana/Core/Assert.h"
 #include "glad/glad.h"
 
-Banana::OpenGLFramebuffer::OpenGLFramebuffer(const FramebufferSpecification &spec) : m_Specification(spec) {
-    Invalidate();
-}
+namespace Banana {
+    static const uint32_t s_MaxFramebufferSize = 8192;
 
-Banana::OpenGLFramebuffer::~OpenGLFramebuffer() {
-    glDeleteFramebuffers(1, &m_RendererID);
-    glDeleteTextures(1, &m_ColorAttachment);
-    glDeleteTextures(1, &m_DepthAttachment);
-}
+    OpenGLFramebuffer::OpenGLFramebuffer(const FramebufferSpecification &spec) : m_Specification(spec) {
+        Invalidate();
+    }
 
-void Banana::OpenGLFramebuffer::Invalidate() {
-    if (m_RendererID) {
+    OpenGLFramebuffer::~OpenGLFramebuffer() {
         glDeleteFramebuffers(1, &m_RendererID);
         glDeleteTextures(1, &m_ColorAttachment);
         glDeleteTextures(1, &m_DepthAttachment);
     }
 
-    glGenFramebuffers(1, &m_RendererID);
-    glBindFramebuffer(GL_FRAMEBUFFER, m_RendererID);
+    void OpenGLFramebuffer::Invalidate() {
+        if (m_RendererID) {
+            glDeleteFramebuffers(1, &m_RendererID);
+            glDeleteTextures(1, &m_ColorAttachment);
+            glDeleteTextures(1, &m_DepthAttachment);
+        }
 
-    glGenTextures(1, &m_ColorAttachment);
-    glBindTexture(GL_TEXTURE_2D, m_ColorAttachment);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, m_Specification.Width, m_Specification.Height, 0, GL_RGBA,
-                 GL_UNSIGNED_BYTE, nullptr);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glGenFramebuffers(1, &m_RendererID);
+        glBindFramebuffer(GL_FRAMEBUFFER, m_RendererID);
 
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_ColorAttachment, 0);
+        glGenTextures(1, &m_ColorAttachment);
+        glBindTexture(GL_TEXTURE_2D, m_ColorAttachment);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, m_Specification.Width, m_Specification.Height, 0, GL_RGBA,
+                     GL_UNSIGNED_BYTE, nullptr);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-    glGenTextures(1, &m_DepthAttachment);
-    glBindTexture(GL_TEXTURE_2D, m_DepthAttachment);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, m_Specification.Width, m_Specification.Height, 0,
-                 GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, nullptr);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, m_DepthAttachment, 0);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_ColorAttachment, 0);
 
-    BANANA_CORE_ASSERT(glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE,
-                       "Framebuffer is not complete!");
+        glGenTextures(1, &m_DepthAttachment);
+        glBindTexture(GL_TEXTURE_2D, m_DepthAttachment);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, m_Specification.Width, m_Specification.Height, 0,
+                     GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, nullptr);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, m_DepthAttachment, 0);
 
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
-}
+        BANANA_CORE_ASSERT(glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE,
+                           "Framebuffer is not complete!");
 
-void Banana::OpenGLFramebuffer::Bind() {
-    glBindFramebuffer(GL_FRAMEBUFFER, m_RendererID);
-    glViewport(0, 0, m_Specification.Width, m_Specification.Height);
-}
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    }
 
-void Banana::OpenGLFramebuffer::Unbind() {
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
-}
+    void OpenGLFramebuffer::Bind() {
+        glBindFramebuffer(GL_FRAMEBUFFER, m_RendererID);
+        glViewport(0, 0, m_Specification.Width, m_Specification.Height);
+    }
 
-void Banana::OpenGLFramebuffer::Resize(uint32_t width, uint32_t height) {
-    m_Specification.Width = width;
-    m_Specification.Height = height;
-    Invalidate();
+    void OpenGLFramebuffer::Unbind() {
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    }
+
+    void OpenGLFramebuffer::Resize(uint32_t width, uint32_t height) {
+        if (width == 0 || height == 0 || width > s_MaxFramebufferSize || height > s_MaxFramebufferSize) {
+            BANANA_CORE_ERROR("Framebuffer size too large! width={0}, height={1}", width, height);
+            return;
+        }
+        m_Specification.Width = width;
+        m_Specification.Height = height;
+
+        Invalidate();
+    }
 }

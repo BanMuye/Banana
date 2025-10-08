@@ -12,5 +12,8 @@
 #include "Banana/Renderer/Texture.h"
 #include "Banana/Renderer/Framebuffer.h"
 
+#include "Banana/Scene/Scene.h"
+#include "Banana/Scene/Component.h"
+
 
 #endif //BANANA_BANANA_H

@@ -77,7 +77,10 @@ add_library(BananaEngine STATIC
         src/Banana/Renderer/Framebuffer.cc
         src/Banana/Renderer/Framebuffer.h
         src/Banana/Platform/OpenGL/OpenGLFramebuffer.cc
-        src/Banana/Platform/OpenGL/OpenGLFramebuffer.h)
+        src/Banana/Platform/OpenGL/OpenGLFramebuffer.h
+        src/Banana/Scene/Scene.cc
+        src/Banana/Scene/Scene.h
+        src/Banana/Scene/Component.h)
 
 # 设置公共头文件目录（暴露给依赖模块）
 target_include_directories(BananaEngine PUBLIC
@@ -109,3 +112,11 @@ target_link_libraries(BananaEngine PUBLIC glm)
 target_link_libraries(BananaEngine PUBLIC glad)
 target_link_libraries(BananaEngine PUBLIC imgui)
 target_link_libraries(BananaEngine PUBLIC stb)
+
+include(FetchContent)
+FetchContent_Declare(EnTT
+        GIT_REPOSITORY https://github.com/skypjack/entt.git
+        GIT_TAG v3.15.0
+        GIT_SHALLOW    TRUE)
+FetchContent_MakeAvailable(EnTT)
+target_link_libraries(BananaEngine PUBLIC EnTT)
