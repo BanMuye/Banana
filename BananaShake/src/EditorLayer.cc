@@ -25,13 +25,11 @@ namespace Banana {
 
         m_ActiveScene = std::make_shared<Scene>();
 
-        auto square = m_ActiveScene->CreateEntity();
-        m_ActiveScene->Reg().emplace<TransformComponent>(square);
-        m_ActiveScene->Reg().emplace<SpriteRendererComponent>(square, glm::vec4(0.5f, 1.0f, 1.0f, 1.0f));
+        auto square = m_ActiveScene->CreateEntity("Green Square");
+        square.AddComponent<SpriteRendererComponent>(glm::vec4{0.0f, 1.0f, 0.0f, 1.0f});
 
         m_SquareEntity = square;
     }
-
     void EditorLayer::OnDetach() {
         BANANA_PROFILE_FUNCTION();
     }

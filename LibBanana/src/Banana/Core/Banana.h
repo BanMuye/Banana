@@ -14,6 +14,7 @@
 
 #include "Banana/Scene/Scene.h"
 #include "Banana/Scene/Component.h"
+#include "Banana/Scene/Entity.h"
 
 
 #endif //BANANA_BANANA_H

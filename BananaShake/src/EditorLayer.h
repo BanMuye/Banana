@@ -10,6 +10,7 @@
 #include "Banana/Renderer/Shader.h"
 #include "Banana/Renderer/Texture.h"
 #include "Banana/Renderer/VertexArray.h"
+#include "Banana/Scene/Entity.h"
 #include "Banana/Scene/Scene.h"
 
 
@@ -40,7 +41,7 @@ namespace Banana {
         Ref<Framebuffer> m_Framebuffer;
 
         Ref<Scene> m_ActiveScene;
-        entt::entity m_SquareEntity;
+        Entity m_SquareEntity;
 
         Ref<Texture2D> m_CheckerboardTexture;
 
