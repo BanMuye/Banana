@@ -83,7 +83,8 @@ add_library(BananaEngine STATIC
         src/Banana/Scene/Component.h
         src/Banana/Scene/Entity.cc
         src/Banana/Scene/Entity.h
-        src/Banana/Renderer/Camera.h)
+        src/Banana/Renderer/Camera.h
+        src/Banana/Scene/ScriptableEntity.h)
 
 # 设置公共头文件目录（暴露给依赖模块）
 target_include_directories(BananaEngine PUBLIC

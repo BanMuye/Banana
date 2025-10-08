@@ -4,6 +4,8 @@
 
 #include "imgui.h"
 #include "Banana/Core/Application.h"
+#include "Banana/Core/Input.h"
+#include "Banana/Core/KeyCodes.h"
 #include "Banana/Renderer/RenderCommand.h"
 #include "Banana/Renderer/Renderer2D.h"
 #include "Banana/Scene/Component.h"
@@ -37,6 +39,31 @@ namespace Banana {
         auto &secondCameraComponent = m_SecondCamera.AddComponent<CameraComponent>(
             glm::ortho(-1.0f, 1.0f, -1.0f, 1.0f, -1.0f, 1.0f));
         secondCameraComponent.Primary = false;
+
+        class CameraController : public ScriptableEntity {
+        public:
+            void OnCreate() {
+            }
+
+            void OnDestroy() {
+            }
+
+            void OnUpdate(Timestep ts) {
+                auto &transform = GetComponent<TransformComponent>().Transform;
+                float speed = 5.0f;
+
+                if (Input::IsKeyPressed(KeyCode::A))
+                    transform[3][0] -= speed * ts;
+                if (Input::IsKeyPressed(KeyCode::D))
+                    transform[3][0] += speed * ts;
+                if (Input::IsKeyPressed(KeyCode::W))
+                    transform[3][1] += speed * ts;
+                if (Input::IsKeyPressed(KeyCode::S))
+                    transform[3][1] -= speed * ts;
+            }
+        };
+
+        m_CameraEntity.AddComponent<NativeScriptComponent>().Bind<CameraController>();
     }
 
     void EditorLayer::OnDetach() {

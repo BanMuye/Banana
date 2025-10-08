@@ -26,7 +26,7 @@ namespace Banana {
 
     class KeyPressedEvent : public KeyEvent {
     public:
-        KeyPressedEvent(const int keycode, bool isRepeat = false) : KeyEvent(keycode), m_IsRepeat(isRepeat) {
+        KeyPressedEvent(const KeyCode keycode, bool isRepeat = false) : KeyEvent(keycode), m_IsRepeat(isRepeat) {
         }
 
         bool IsRepeat() const { return m_IsRepeat; }

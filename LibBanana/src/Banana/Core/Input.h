@@ -5,15 +5,17 @@
 #ifndef BANANA_INPUT_H
 #define BANANA_INPUT_H
 
+#include "KeyCodes.h"
+#include "MouseCodes.h"
 #include "Banana/Core/bapch.h"
 #include "Banana/Core/Core.h"
 
 namespace Banana {
     class API_EXPORT Input {
     public:
-        static bool IsKeyPressed(int key);
+        static bool IsKeyPressed(KeyCode key);
 
-        static bool IsMouseButtonPressed(int button);
+        static bool IsMouseButtonPressed(MouseCode button);
 
         static std::pair<float, float> GetMousePosition();
 

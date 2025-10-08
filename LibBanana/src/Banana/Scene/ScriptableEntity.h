@@ -1,0 +1,23 @@
+//
+// Created by cyzho on 2025/10/8.
+//
+
+#ifndef SCRIPTABLEENTITY_H
+#define SCRIPTABLEENTITY_H
+#include "Entity.h"
+
+namespace Banana {
+    class ScriptableEntity {
+    public:
+        template<typename T>
+        T &GetComponent() {
+            return m_Entity.GetComponent<T>();
+        }
+
+    private:
+        Entity m_Entity;
+        friend class Scene;
+    };
+}
+
+#endif //SCRIPTABLEENTITY_H
