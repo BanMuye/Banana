@@ -5,6 +5,7 @@
 #ifndef COMPONENT_H
 #define COMPONENT_H
 
+#include "SceneCamera.h"
 #include "ScriptableEntity.h"
 #include "Banana/Renderer/Camera.h"
 #include "glm/glm.hpp"
@@ -47,15 +48,13 @@ namespace Banana {
     };
 
     struct CameraComponent {
-        Camera Camera;
+        SceneCamera Camera;
         bool Primary = true;
+        bool FixedAspectRatio = false;
 
         CameraComponent() = default;
 
         CameraComponent(const CameraComponent &) = default;
-
-        CameraComponent(const glm::mat4 &projection): Camera(projection) {
-        }
     };
 
     struct NativeScriptComponent {

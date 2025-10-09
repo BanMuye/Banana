@@ -10,13 +10,17 @@
 namespace Banana {
     class Camera {
     public:
+        Camera() = default;
+
         Camera(const glm::mat4 &projection): m_Projection(projection) {
         }
 
-        const glm::mat4 &GetProject() const { return m_Projection; }
+        virtual ~Camera() = default;
 
-    private:
-        glm::mat4 m_Projection;
+        const glm::mat4 &GetProjection() const { return m_Projection; }
+
+    protected:
+        glm::mat4 m_Projection{1.0f};
     };
 }
 

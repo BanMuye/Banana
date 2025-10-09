@@ -8,6 +8,7 @@
 #include "Banana/Renderer/Renderer2D.h"
 #include "glm/glm.hpp"
 #include "Banana/Scene/Entity.h"
+#include "glm/ext/matrix_clip_space.hpp"
 
 namespace Banana {
     static void DoMatch(const glm::mat4 &transform) {
@@ -26,19 +27,16 @@ namespace Banana {
         Entity entity = {m_Registry.create(), this};
 
         entity.AddComponent<TransformComponent>();
-        auto & tag = entity.AddComponent<TagComponent>();
-        tag.Tag = name.empty()? "Entity":name;
+        auto &tag = entity.AddComponent<TagComponent>();
+        tag.Tag = name.empty() ? "Entity" : name;
         return entity;
     }
 
-    void Scene::OnUpdate(Timestep ts) {
-
-        {
-            m_Registry.view<NativeScriptComponent>().each([=](entt::entity entity, NativeScriptComponent& nsc) {
-
+    void Scene::OnUpdate(Timestep ts) { {
+            m_Registry.view<NativeScriptComponent>().each([=](entt::entity entity, NativeScriptComponent &nsc) {
                 if (!nsc.Instance) {
                     nsc.InstantiateFunction();
-                    nsc.Instance->m_Entity = Entity {entity, this};
+                    nsc.Instance->m_Entity = Entity{entity, this};
 
                     if (nsc.OnCreateFunction) {
                         nsc.OnCreateFunction(nsc.Instance);
@@ -52,11 +50,10 @@ namespace Banana {
         }
 
         Camera *mainCamera = nullptr;
-        glm::mat4* cameraTransform = nullptr;
-        {
+        glm::mat4 *cameraTransform = nullptr; {
             auto group = m_Registry.view<TransformComponent, CameraComponent>();
             for (auto entity: group) {
-                const auto& [transform, camera]  = group.get<TransformComponent, CameraComponent>(entity);
+                const auto &[transform, camera] = group.get<TransformComponent, CameraComponent>(entity);
 
                 if (camera.Primary) {
                     mainCamera = &camera.Camera;
@@ -67,7 +64,7 @@ namespace Banana {
         }
 
         if (mainCamera) {
-           Renderer2D::BeginScene(mainCamera->GetProject(), *cameraTransform);
+            Renderer2D::BeginScene(*mainCamera, *cameraTransform);
         }
 
         auto group = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
@@ -78,5 +75,18 @@ namespace Banana {
         }
 
         Renderer2D::EndScene();
+    }
+
+    void Scene::OnViewportResize(uint32_t width, uint32_t height) {
+        m_ViewportWidth = width;
+        m_ViewportHeight = height;
+
+        const auto& view = m_Registry.view<CameraComponent>();
+        for (auto entity: view) {
+            auto& cameraComponent = view.get<CameraComponent>(entity);
+            if (!cameraComponent.FixedAspectRatio) {
+                cameraComponent.Camera.SetViewportSize(width, height);
+            }
+        }
     }
 }

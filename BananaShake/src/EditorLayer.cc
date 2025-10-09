@@ -33,11 +33,10 @@ namespace Banana {
         m_SquareEntity = square;
 
         m_CameraEntity = m_ActiveScene->CreateEntity("Camera Entity");
-        m_CameraEntity.AddComponent<CameraComponent>(glm::ortho(-16.0f, 16.0f, -9.0f, 9.0f, -1.0f, 1.0f));
+        m_CameraEntity.AddComponent<CameraComponent>();
 
         m_SecondCamera = m_ActiveScene->CreateEntity("Second Camera Entity");
-        auto &secondCameraComponent = m_SecondCamera.AddComponent<CameraComponent>(
-            glm::ortho(-1.0f, 1.0f, -1.0f, 1.0f, -1.0f, 1.0f));
+        auto &secondCameraComponent = m_SecondCamera.AddComponent<CameraComponent>();
         secondCameraComponent.Primary = false;
 
         class CameraController : public ScriptableEntity {
@@ -73,25 +72,33 @@ namespace Banana {
     void EditorLayer::OnUpdate(Timestep ts) {
         BANANA_PROFILE_FUNCTION();
 
+        // Resize
+        if (FramebufferSpecification specification = m_Framebuffer->GetSpecification();
+            m_ViewportSize.x > 0.0f && m_ViewportSize.y > 0.0f && (
+                specification.Width != m_ViewportSize.x || specification.Height != m_ViewportSize.y)) {
+            m_Framebuffer->Resize(uint32_t(m_ViewportSize.x), uint32_t(m_ViewportSize.y));
+            m_CameraController.OnResize(m_ViewportSize.x, m_ViewportSize.y);
+            m_ActiveScene->OnViewportResize(uint32_t(m_ViewportSize.x), uint32_t(m_ViewportSize.y));
+        }
+
         // Update
-        m_CameraController.OnUpdate(ts);
+        if (m_ViewportFocused)
+            m_CameraController.OnUpdate(ts);
 
         // Render
         Renderer2D::ResetStats(); {
             BANANA_PROFILE_SCOPE("Renderer Prep");
             m_Framebuffer->Bind();
-            RenderCommand::SetClearColor({0.1f, 0.1f, 0.1f, 1});
+            RenderCommand::SetClearColor({0.1f, 0.3f, 0.5f, 1});
             RenderCommand::Clear();
         } {
             static float rotation = 0.0f;
             rotation += ts * 50.0f;
 
             BANANA_PROFILE_SCOPE("Renderer Draw");
-            Renderer2D::BeginScene(m_CameraController.GetCamera());
 
             m_ActiveScene->OnUpdate(ts);
 
-            Renderer2D::EndScene();
             m_Framebuffer->Unbind();
         }
     }
@@ -191,12 +198,8 @@ namespace Banana {
         Application::Get().GetImGuiLayer()->BlockEvents(!m_ViewportHovered || !m_ViewportFocused);
 
         ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
-        if (m_ViewportSize != *((glm::vec2 *) &viewportPanelSize)) {
-            m_Framebuffer->Resize((uint32_t) viewportPanelSize.x, (uint32_t) viewportPanelSize.y);
-            m_ViewportSize = {viewportPanelSize.x, viewportPanelSize.y};
+        m_ViewportSize = {viewportPanelSize.x, viewportPanelSize.y};
 
-            m_CameraController.OnResize(viewportPanelSize.x, viewportPanelSize.y);
-        }
         uint32_t textureID = m_Framebuffer->GetColorAttachmentRendererID();
         ImGui::Image((void *) textureID, ImVec2{m_ViewportSize.x, m_ViewportSize.y}, ImVec2{0, 1}, ImVec2{1, 0});
         ImGui::End();
