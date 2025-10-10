@@ -21,7 +21,6 @@ namespace Banana {
 
         float GetOrthoGraphicSize() const { return m_OrthographicSize; }
         void SetOrthographicSize(float size) { m_OrthographicSize = size; }
-        float GetAspectRatio() {return m_AspectRatio;}
 
     private:
         void RecalculateProjection();
