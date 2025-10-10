@@ -19,7 +19,7 @@ namespace Banana {
     protected:
         virtual void OnCreate() {}
         virtual void OnDestroy() {}
-        virtual void OnUpdate() {}
+        virtual void OnUpdate(Timestep) {}
 
     private:
         Entity m_Entity;
