@@ -26,15 +26,13 @@ namespace Banana {
 
         void OnViewportResize(uint32_t width, uint32_t height);
 
-        // todo @Banmuye delete
-        entt::registry &GetRegistry() { return m_Registry; }
-
     private:
         entt::registry m_Registry;
 
         uint32_t m_ViewportWidth, m_ViewportHeight;
 
         friend class Entity;
+        friend class SceneHierarchyPanel;
     };
 }
 
