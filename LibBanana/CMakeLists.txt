@@ -86,7 +86,9 @@ add_library(BananaEngine STATIC
         src/Banana/Renderer/Camera.h
         src/Banana/Scene/ScriptableEntity.h
         src/Banana/Scene/SceneCamera.cc
-        src/Banana/Scene/SceneCamera.h)
+        src/Banana/Scene/SceneCamera.h
+        src/Banana/Scene/SceneSerializer.cc
+        src/Banana/Scene/SceneSerializer.h)
 
 # 设置公共头文件目录（暴露给依赖模块）
 target_include_directories(BananaEngine PUBLIC
@@ -94,23 +96,23 @@ target_include_directories(BananaEngine PUBLIC
 
 include(FetchContent)
 FetchContent_Declare(spdlog
-    GIT_REPOSITORY https://github.com/gabime/spdlog.git
-    GIT_TAG v1.15.3
-    GIT_SHALLOW    TRUE)
+        GIT_REPOSITORY https://github.com/gabime/spdlog.git
+        GIT_TAG v1.15.3
+        GIT_SHALLOW TRUE)
 FetchContent_MakeAvailable(spdlog)
 target_link_libraries(BananaEngine PUBLIC spdlog::spdlog)
 
 FetchContent_Declare(glfw
         GIT_REPOSITORY https://github.com/glfw/glfw
         GIT_TAG 3.4
-        GIT_SHALLOW    TRUE)
+        GIT_SHALLOW TRUE)
 FetchContent_MakeAvailable(glfw)
 target_link_libraries(BananaEngine PUBLIC glfw)
 
 FetchContent_Declare(glm
         GIT_REPOSITORY https://github.com/g-truc/glm.git
         GIT_TAG 1.0.1
-        GIT_SHALLOW    glm)
+        GIT_SHALLOW glm)
 FetchContent_MakeAvailable(glm)
 target_link_libraries(BananaEngine PUBLIC glm)
 
@@ -123,6 +125,14 @@ include(FetchContent)
 FetchContent_Declare(EnTT
         GIT_REPOSITORY https://github.com/skypjack/entt.git
         GIT_TAG v3.15.0
-        GIT_SHALLOW    TRUE)
+        GIT_SHALLOW TRUE)
 FetchContent_MakeAvailable(EnTT)
 target_link_libraries(BananaEngine PUBLIC EnTT)
+
+include(FetchContent)
+FetchContent_Declare(yaml-cpp
+        GIT_REPOSITORY https://github.com/jbeder/yaml-cpp.git
+        GIT_TAG 0.8.0
+        GIT_SHALLOW TRUE)
+FetchContent_MakeAvailable(yaml-cpp)
+target_link_libraries(BananaEngine PUBLIC yaml-cpp)

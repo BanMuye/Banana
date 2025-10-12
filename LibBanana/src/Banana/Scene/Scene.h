@@ -37,6 +37,7 @@ namespace Banana {
 
         friend class Entity;
         friend class SceneHierarchyPanel;
+        friend class SceneSerializer;
     };
 }
 

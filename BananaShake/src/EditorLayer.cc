@@ -9,6 +9,7 @@
 #include "Banana/Renderer/RenderCommand.h"
 #include "Banana/Renderer/Renderer2D.h"
 #include "Banana/Scene/Component.h"
+#include "Banana/Scene/SceneSerializer.h"
 
 namespace Banana {
     EditorLayer::EditorLayer()
@@ -163,6 +164,18 @@ namespace Banana {
                 // Disabling fullscreen would allow the window to be moved to the front of other windows,
                 // which we can't undo at the moment without finer window depth/z control.
                 //ImGui::MenuItem("Fullscreen", NULL, &opt_fullscreen_persistant);
+
+                if (ImGui::MenuItem("Serialize"))
+                {
+                    SceneSerializer serializer(m_ActiveScene);
+                    serializer.Serialize(R"(D:\Files\S_Documents\Projects\Banana\BananaShake\assets\scenes\Example.banana)");
+                }
+
+                if (ImGui::MenuItem("Deserialize"))
+                {
+                    SceneSerializer serializer(m_ActiveScene);
+                    serializer.Deserialize(R"(D:\Files\S_Documents\Projects\Banana\BananaShake\assets\scenes\Example.banana)");
+                }
 
                 if (ImGui::MenuItem("Exit")) Application::Get().Close();
                 ImGui::EndMenu();
