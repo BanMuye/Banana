@@ -31,7 +31,7 @@ namespace Banana {
         float GetPerspectiveFarClip() const {return m_PerspectiveFar;}
         void SetPerspectiveFarClip(float farClip) {m_PerspectiveFar = farClip;RecalculateProjection();}
 
-        float GetOrthoGraphicSize() const { return m_OrthographicSize; }
+        float GetOrthographicSize() const { return m_OrthographicSize; }
 
         void SetOrthographicSize(float size) { m_OrthographicSize = size; RecalculateProjection();}
         float GetOrthographicNearClip() const { return m_OrthographicNear; }
