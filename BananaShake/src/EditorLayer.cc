@@ -10,6 +10,7 @@
 #include "Banana/Renderer/Renderer2D.h"
 #include "Banana/Scene/Component.h"
 #include "Banana/Scene/SceneSerializer.h"
+#include "Banana/Utils/PlatformUtils.h"
 
 namespace Banana {
     EditorLayer::EditorLayer()
@@ -165,16 +166,16 @@ namespace Banana {
                 // which we can't undo at the moment without finer window depth/z control.
                 //ImGui::MenuItem("Fullscreen", NULL, &opt_fullscreen_persistant);
 
-                if (ImGui::MenuItem("Serialize"))
-                {
-                    SceneSerializer serializer(m_ActiveScene);
-                    serializer.Serialize(R"(D:\Files\S_Documents\Projects\Banana\BananaShake\assets\scenes\Example.banana)");
+                if (ImGui::MenuItem("New", "Ctrl+N")) {
+                    NewScene();
                 }
 
-                if (ImGui::MenuItem("Deserialize"))
-                {
-                    SceneSerializer serializer(m_ActiveScene);
-                    serializer.Deserialize(R"(D:\Files\S_Documents\Projects\Banana\BananaShake\assets\scenes\Example.banana)");
+                if (ImGui::MenuItem("Open...", "Ctrl+O")) {
+                    OpenScene();
+                }
+
+                if (ImGui::MenuItem("Save As...", "Ctrl+Shift+S")) {
+                    SaveSceneAs();
                 }
 
                 if (ImGui::MenuItem("Exit")) Application::Get().Close();
@@ -218,5 +219,64 @@ namespace Banana {
 
     void EditorLayer::OnEvent(Event &e) {
         m_CameraController.OnEvent(e);
+        EventDispatcher dispatcher(e);
+        dispatcher.Dispatch<KeyPressedEvent>(BANANA_BIND_EVENT_FN(EditorLayer::OnKeyPressed));
+    }
+
+    bool EditorLayer::OnKeyPressed(KeyPressedEvent &e) {
+        if (e.GetRepeatCount() > 0) {
+            return false;
+        }
+
+        bool control = Input::IsKeyPressed(KeyCode::LeftControl) || Input::IsKeyPressed(KeyCode::RightControl);
+        bool shift = Input::IsKeyPressed(KeyCode::LeftShift) || Input::IsKeyPressed(KeyCode::RightShift);
+
+        switch (e.GetKeyCode()) {
+            case KeyCode::W: {
+                if (control) {
+                    NewScene();
+                }
+                break;
+            }
+            case KeyCode::O: {
+                if (control) {
+                    OpenScene();
+                }
+                break;
+            }
+            case KeyCode::S: {
+                if (control && shift) {
+                    SaveSceneAs();
+                }
+                break;
+            }
+        }
+        return false;
+    }
+
+    void EditorLayer::NewScene() {
+        m_ActiveScene = std::make_shared<Scene>();
+        m_ActiveScene->OnViewportResize((uint32_t) m_ViewportSize.x, (uint32_t) m_ViewportSize.y);
+        m_SceneHierarchyPanel.SetContext(m_ActiveScene);
+    }
+
+    void EditorLayer::OpenScene() {
+        std::string filepath = FileDialogs::OpenFile("Scene Files (*.banana)\0*.banana\0");
+        if (!filepath.empty()) {
+            m_ActiveScene = std::make_shared<Scene>();
+            m_ActiveScene->OnViewportResize((uint32_t) m_ViewportSize.x, (uint32_t) m_ViewportSize.y);
+            m_SceneHierarchyPanel.SetContext(m_ActiveScene);
+
+            SceneSerializer serializer(m_ActiveScene);
+            serializer.Deserialize(filepath);
+        }
+    }
+
+    void EditorLayer::SaveSceneAs() {
+        std::string filepath = FileDialogs::OpenFile("Scene Files (*.banana)\0*.banana\0");
+        if (!filepath.empty()) {
+            SceneSerializer serializer(m_ActiveScene);
+            serializer.Serialize(filepath);
+        }
     }
 }

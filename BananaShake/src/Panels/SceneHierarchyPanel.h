@@ -18,7 +18,7 @@ namespace Banana {
 
         ~SceneHierarchyPanel() = default;
 
-        void SetContext(const Ref<Scene> &scene) { m_Context = scene; }
+        void SetContext(const Ref<Scene> &scene);
 
         void OnImGuiRender();
 

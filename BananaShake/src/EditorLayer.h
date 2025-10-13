@@ -6,6 +6,7 @@
 #define EDITORLAYER_H
 #include "Banana/Core/Layer.h"
 #include "Banana/Core/OrthographicCameraController.h"
+#include "Banana/Events/KeyEvent.h"
 #include "Banana/Renderer/Framebuffer.h"
 #include "Banana/Renderer/Shader.h"
 #include "Banana/Renderer/Texture.h"
@@ -31,6 +32,13 @@ namespace Banana {
         void OnImGuiRender() override;
 
         void OnEvent(Event &event) override;
+
+    private:
+        bool OnKeyPressed(KeyPressedEvent& e);
+
+        void NewScene();
+        void OpenScene();
+        void SaveSceneAs();
 
     private:
         Banana::OrthographicCameraController m_CameraController;

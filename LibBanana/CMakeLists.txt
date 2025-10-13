@@ -88,7 +88,9 @@ add_library(BananaEngine STATIC
         src/Banana/Scene/SceneCamera.cc
         src/Banana/Scene/SceneCamera.h
         src/Banana/Scene/SceneSerializer.cc
-        src/Banana/Scene/SceneSerializer.h)
+        src/Banana/Scene/SceneSerializer.h
+        src/Banana/Utils/PlatformUtils.h
+        src/Banana/Platform/Windows/windowsPlatformUtils.cc)
 
 # 设置公共头文件目录（暴露给依赖模块）
 target_include_directories(BananaEngine PUBLIC

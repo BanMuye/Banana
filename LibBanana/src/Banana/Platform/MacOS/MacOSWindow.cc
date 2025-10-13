@@ -103,7 +103,7 @@ namespace Banana {
             WindowData &data = *(WindowData *) glfwGetWindowUserPointer(window);
             switch (action) {
                 case GLFW_PRESS: {
-                    KeyPressedEvent event(static_cast<KeyCode>(key), false);
+                    KeyPressedEvent event(static_cast<KeyCode>(key), 0);
                     data.EventCallBack(event);
                     break;
                 }
@@ -113,7 +113,7 @@ namespace Banana {
                     break;
                 }
                 case GLFW_REPEAT: {
-                    KeyPressedEvent event(static_cast<KeyCode>(key), true);
+                    KeyPressedEvent event(static_cast<KeyCode>(key), 1);
                     data.EventCallBack(event);
                     break;
                 }
