@@ -6,6 +6,7 @@
 #define SCENE_H
 
 #include "Banana/Core/Timestep.h"
+#include "Banana/Renderer/EditorCamera.h"
 #include "entt/entt.hpp"
 
 namespace Banana {
@@ -23,7 +24,8 @@ namespace Banana {
         // TEMP
         entt::registry &Reg() { return m_Registry; }
 
-        void OnUpdate(Timestep ts);
+        void OnUpdateRuntime(Timestep ts);
+        void OnUpdateEditor(Timestep ts, EditorCamera& camera);
 
         void OnViewportResize(uint32_t width, uint32_t height);
 

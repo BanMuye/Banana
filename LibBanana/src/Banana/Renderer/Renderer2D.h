@@ -5,6 +5,7 @@
 #ifndef BANANA_RENDERER2D_H
 #define BANANA_RENDERER2D_H
 #include "Camera.h"
+#include "EditorCamera.h"
 #include "OrthographicCamera.h"
 #include "Texture.h"
 #include "Banana/Core/Core.h"
@@ -20,7 +21,11 @@ namespace Banana {
 
         static void BeginScene(const OrthographicCamera &camera);
 
+        static void BeginScene(const EditorCamera& camera);
+
         static void EndScene();
+
+        static void StartBatch();
 
         static void Flush();
 

@@ -26,7 +26,7 @@ namespace Banana {
         return entity;
     }
 
-    void Scene::OnUpdate(Timestep ts) { {
+    void Scene::OnUpdateRuntime(Timestep ts) { {
             m_Registry.view<NativeScriptComponent>().each([=](entt::entity entity, NativeScriptComponent &nsc) {
                 if (!nsc.Instance) {
                     nsc.Instance = nsc.InstantiateScript();
@@ -65,6 +65,18 @@ namespace Banana {
 
             Renderer2D::EndScene();
         }
+    }
+
+    void Scene::OnUpdateEditor(Timestep ts, EditorCamera &camera) {
+        Renderer2D::BeginScene(camera);
+
+        auto group = m_Registry.view<TransformComponent, SpriteRendererComponent>();
+        for (auto entity: group) {
+            auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
+            Renderer2D::DrawQuad(transform.GetTransform(), sprite.Color);
+        }
+
+        Renderer2D::EndScene();
     }
 
     void Scene::OnViewportResize(uint32_t width, uint32_t height) {

@@ -92,7 +92,9 @@ add_library(BananaEngine STATIC
         src/Banana/Utils/PlatformUtils.h
         src/Banana/Platform/Windows/windowsPlatformUtils.cc
         src/Banana/Math/Math.cc
-        src/Banana/Math/Math.h)
+        src/Banana/Math/Math.h
+        src/Banana/Renderer/EditorCamera.cc
+        src/Banana/Renderer/EditorCamera.h)
 
 # 设置公共头文件目录（暴露给依赖模块）
 target_include_directories(BananaEngine PUBLIC
