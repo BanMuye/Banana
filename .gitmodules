@@ -4,3 +4,6 @@
 [submodule "LibBanana/vendor/stb"]
 	path = LibBanana/vendor/stb
 	url = https://github.com/nothings/stb.git
+[submodule "LibBanana/vendor/ImGuizmo"]
+	path = LibBanana/vendor/ImGuizmo
+	url = https://github.com/CedricGuillemet/ImGuizmo.git

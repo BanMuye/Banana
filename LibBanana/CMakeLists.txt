@@ -90,7 +90,9 @@ add_library(BananaEngine STATIC
         src/Banana/Scene/SceneSerializer.cc
         src/Banana/Scene/SceneSerializer.h
         src/Banana/Utils/PlatformUtils.h
-        src/Banana/Platform/Windows/windowsPlatformUtils.cc)
+        src/Banana/Platform/Windows/windowsPlatformUtils.cc
+        src/Banana/Math/Math.cc
+        src/Banana/Math/Math.h)
 
 # 设置公共头文件目录（暴露给依赖模块）
 target_include_directories(BananaEngine PUBLIC
@@ -122,6 +124,7 @@ target_link_libraries(BananaEngine PUBLIC glm)
 target_link_libraries(BananaEngine PUBLIC glad)
 target_link_libraries(BananaEngine PUBLIC imgui)
 target_link_libraries(BananaEngine PUBLIC stb)
+target_link_libraries(BananaEngine PUBLIC ImGuizmo)
 
 include(FetchContent)
 FetchContent_Declare(EnTT

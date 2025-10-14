@@ -35,3 +35,20 @@ target_link_libraries(imgui PUBLIC glfw)
 
 add_library(stb INTERFACE)
 target_include_directories(stb INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}/stb")
+
+add_library(ImGuizmo STATIC ImGuizmo/GraphEditor.cpp
+        ImGuizmo/GraphEditor.h
+        ImGuizmo/ImCurveEdit.cpp
+        ImGuizmo/ImCurveEdit.h
+        ImGuizmo/ImGradient.cpp
+        ImGuizmo/ImGradient.h
+        ImGuizmo/ImGuizmo.cpp
+        ImGuizmo/ImGuizmo.h
+        ImGuizmo/ImSequencer.cpp
+        ImGuizmo/ImSequencer.h
+        ImGuizmo/ImSequencer.cpp
+        ImGuizmo/ImSequencer.h
+        ImGuizmo/ImZoomSlider.h
+)
+target_include_directories(ImGuizmo PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/ImGuizmo")
+target_link_libraries(ImGuizmo PUBLIC imgui)
