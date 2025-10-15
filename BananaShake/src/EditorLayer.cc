@@ -68,6 +68,8 @@ namespace Banana {
             m_Framebuffer->Bind();
             RenderCommand::SetClearColor({0.1f, 0.3f, 0.5f, 1});
             RenderCommand::Clear();
+            // m_Framebuffer->ClearAttachment(1, 0);
+            // todo @BanMuye can't support currently
         } {
             static float rotation = 0.0f;
             rotation += ts * 50.0f;

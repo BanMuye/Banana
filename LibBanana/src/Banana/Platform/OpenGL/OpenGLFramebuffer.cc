@@ -4,6 +4,8 @@
 
 #include "OpenGLFramebuffer.h"
 
+#include <winsock2.h>
+
 #include "Banana/Core/Assert.h"
 #include "glad/glad.h"
 
@@ -30,7 +32,7 @@ namespace Banana {
             if (multisampled) {
                 glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, samples, internalFormat, width, height, GL_FALSE);
             } else {
-                glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, format, GL_UNSIGNED_BYTE, nullptr);
+                glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, format, GL_UNSIGNED_INT, nullptr);
 
                 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
                 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -64,6 +66,16 @@ namespace Banana {
             switch (format) {
                 case FramebufferTextureFormat::DEPTH24STENCIL8: return true;
                 default: return false;
+            }
+        }
+
+        static GLenum BananaFBTextureFormatToGL(FramebufferTextureFormat format) {
+            switch (format) {
+                case FramebufferTextureFormat::RGBA8: return GL_RGBA8;
+                case FramebufferTextureFormat::RED_INTEGER: return GL_RED_INTEGER;
+                default:
+                    BANANA_CORE_ASSERT(false);
+                    return 0;
             }
         }
     }
@@ -172,5 +184,13 @@ namespace Banana {
         int pixelData;
         glReadPixels(x, y, 1, 1, GL_RED_INTEGER, GL_INT, &pixelData);
         return pixelData;
+    }
+
+    void OpenGLFramebuffer::ClearAttachment(uint32_t attachmentIndex, int value) {
+        BANANA_CORE_ASSERT(attachmentIndex < m_ColorAttachments.size());
+
+        auto &spec = m_ColorAttachmentSpecifications[attachmentIndex];
+        glClearTexImage(m_ColorAttachments[attachmentIndex], 0, Utils::BananaFBTextureFormatToGL(spec.TextureFormat),
+                        GL_UNSIGNED_INT, &value);
     }
 }
