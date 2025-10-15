@@ -60,8 +60,6 @@ namespace Banana {
         dispatcher.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(OnWindowClose));
         dispatcher.Dispatch<WindowResizeEvent>(BIND_EVENT_FN(OnWindowResize));
 
-        BANANA_CORE_TRACE("{0}", event.ToString());
-
         for (auto it = m_LayerStack.end(); it != m_LayerStack.begin();) {
             (*--it)->OnEvent(event);
             if (event.Handled)break;
