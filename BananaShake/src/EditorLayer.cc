@@ -27,6 +27,7 @@ namespace Banana {
         FramebufferSpecification fbSpec;
         fbSpec.Width = 1280;
         fbSpec.Height = 720;
+        fbSpec.Attachments = {FramebufferTextureFormat::RGBA8, FramebufferTextureFormat::Depth};
         m_Framebuffer = Framebuffer::Create(fbSpec);
 
         m_ActiveScene = std::make_shared<Scene>();
