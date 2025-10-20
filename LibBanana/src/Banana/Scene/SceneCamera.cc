@@ -5,6 +5,7 @@
 #include "Banana/Core/bapch.h"
 #include "SceneCamera.h"
 
+#include "Banana/Core/Assert.h"
 #include "glm/glm.hpp"
 #include "glm/ext/matrix_clip_space.hpp"
 
@@ -30,6 +31,7 @@ namespace Banana {
     }
 
     void SceneCamera::SetViewportSize(uint32_t width, uint32_t height) {
+        BANANA_CORE_ASSERT(width > 0 && height > 0);
         m_AspectRatio = (float) width / (float) height;
         RecalculateProjection();
     }

@@ -94,7 +94,12 @@ add_library(BananaEngine STATIC
         src/Banana/Math/Math.cc
         src/Banana/Math/Math.h
         src/Banana/Renderer/EditorCamera.cc
-        src/Banana/Renderer/EditorCamera.h)
+        src/Banana/Renderer/EditorCamera.h
+        src/Banana/Core/Timer.h
+        src/Banana/Renderer/UniformBuffer.cc
+        src/Banana/Renderer/UniformBuffer.h
+        src/Banana/Platform/OpenGL/OpenGLUniformBuffer.cc
+        src/Banana/Platform/OpenGL/OpenGLUniformBuffer.h)
 
 # 设置公共头文件目录（暴露给依赖模块）
 target_include_directories(BananaEngine PUBLIC

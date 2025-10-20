@@ -6,7 +6,7 @@
 namespace Banana {
     class BananaShake : public Application {
     public:
-        BananaShake() : Application("Banana Shake") {
+        BananaShake(ApplicationCommandLineArgs args) : Application("Banana Shake", args) {
             PushLayer(new EditorLayer());
         }
 
@@ -18,7 +18,7 @@ int main(int argc, char *argv[]) {
     Banana::Log::Init();
 
     BANANA_PROFILE_BEGIN_SESSION("Startup", "BananaProfile-Startup.json");
-    const auto app = new Banana::BananaShake();
+    const auto app = new Banana::BananaShake({argc, argv});
     BANANA_PROFILE_END_SESSION()
 
     BANANA_PROFILE_BEGIN_SESSION("Runtime", "BananaProfile-Runtime.json");

@@ -7,6 +7,7 @@
 
 #include "Renderer.h"
 #include "Shader.h"
+#include "UniformBuffer.h"
 #include "VertexArray.h"
 #include "Banana/Core/Core.h"
 #include "Banana/Platform/OpenGL/OpenGLShader.h"
@@ -45,6 +46,13 @@ namespace Banana {
         glm::vec4 QuadVertexPosition[4];
 
         Renderer2D::Statistics Stats;
+
+        struct CameraData {
+            glm::mat4 ViewProjection;
+        };
+
+        CameraData CameraBuffer;
+        Ref<UniformBuffer> CameraUniformBuffer;
     };
 
     static Renderer2DData s_Data;
@@ -100,8 +108,6 @@ namespace Banana {
                                               "D:\\Files\\S_Documents\\Projects\\Banana\\BananaShake\\assets\\shaders\\texture_fragment_shader.glsl",
                                               "D:\\Files\\S_Documents\\Projects\\Banana\\BananaShake\\assets\\shaders\\texture_geometry_shader.glsl"
         );
-        s_Data.TextureShader->Bind();
-        s_Data.TextureShader->SetIntArray("u_Textures", samplers, Renderer2DData::MaxTextureSlots);
         s_Data.TextureSlots[0] = s_Data.WhiteTexture;
 
         // initialize quad position
@@ -109,6 +115,8 @@ namespace Banana {
         s_Data.QuadVertexPosition[1] = {0.5f, -0.5f, 0.0f, 1.0f};
         s_Data.QuadVertexPosition[2] = {0.5f, 0.5f, 0.0f, 1.0f};
         s_Data.QuadVertexPosition[3] = {-0.5f, 0.5f, 0.0f, 1.0f};
+
+        s_Data.CameraUniformBuffer = UniformBuffer::Create(sizeof(Renderer2DData::CameraData), 0);
     }
 
     void Renderer2D::Shutdown() {
@@ -120,16 +128,17 @@ namespace Banana {
 
         glm::mat4 viewProjection = camera.GetProjection() * glm::inverse(transform);
 
-        s_Data.TextureShader->Bind();
-        s_Data.TextureShader->SetMat4("u_ViewProjection", viewProjection);
+        s_Data.CameraBuffer.ViewProjection = viewProjection;
+        s_Data.CameraUniformBuffer->SetData(&s_Data.CameraBuffer, sizeof(Renderer2DData::CameraData));
 
         StartBatch();
     }
 
     void Renderer2D::BeginScene(const OrthographicCamera &camera) {
         BANANA_PROFILE_FUNCTION();
-        s_Data.TextureShader->Bind();
-        s_Data.TextureShader->SetMat4("u_ViewProjection", camera.GetViewProjectionMatrix());
+
+        s_Data.CameraBuffer.ViewProjection = camera.GetViewProjectionMatrix();
+        s_Data.CameraUniformBuffer->SetData(&s_Data.CameraBuffer, sizeof(Renderer2DData::CameraData));
 
         StartBatch();
     }
@@ -148,9 +157,6 @@ namespace Banana {
     void Renderer2D::EndScene() {
         BANANA_PROFILE_FUNCTION();
 
-        uint32_t dataSize = (uint8_t *) s_Data.QuadVertexBufferPtr - (uint8_t *) s_Data.QuadVertexBufferBase;
-        s_Data.QuadVertexBuffer->SetData(s_Data.QuadVertexBufferBase, dataSize);
-
         Flush();
     }
 
@@ -161,9 +167,17 @@ namespace Banana {
     }
 
     void Renderer2D::Flush() {
+
+        if (s_Data.QuadIndexCount == 0) return;
+
+        uint32_t dataSize = (int32_t) ((uint8_t *)s_Data.QuadVertexBufferPtr - (uint8_t *) s_Data.QuadVertexBufferBase);
+        s_Data.QuadVertexBuffer->SetData(s_Data.QuadVertexBufferBase, dataSize);
+
+
         for (uint32_t i = 0; i < s_Data.TextureSlotIndex; i++) {
             s_Data.TextureSlots[i]->Bind(i);
         }
+        s_Data.TextureShader->Bind();
         RenderCommand::DrawIndexed(s_Data.QuadVertexArray, s_Data.QuadIndexCount);
         s_Data.Stats.DrawCalls++;
     }

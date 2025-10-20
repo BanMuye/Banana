@@ -18,9 +18,20 @@
 #include "Banana/Core/Timestep.h"
 
 namespace Banana {
+    struct ApplicationCommandLineArgs {
+        int Count = 0;
+        char **Args = nullptr;
+
+        const char *operator[](int index) const {
+            BANANA_CORE_ASSERT(index <Count);
+            return Args[index];
+        }
+    };
+
+
     class API_EXPORT Application {
     public:
-        Application(const std::string &name = "Banana App");
+        Application(const std::string &name = "Banana App", ApplicationCommandLineArgs args = {});
 
         virtual ~Application();
 
@@ -36,9 +47,11 @@ namespace Banana {
 
         void Close();
 
-        ImGuiLayer* GetImGuiLayer() {return m_ImGuiLayer;}
+        ImGuiLayer *GetImGuiLayer() { return m_ImGuiLayer; }
 
         inline static Application &Get() { return *s_Instance; }
+
+        ApplicationCommandLineArgs GetCommandLineArgs() const { return m_CommonLineArgs; };
 
     private:
         bool OnWindowClose(WindowCloseEvent &event);
@@ -46,6 +59,7 @@ namespace Banana {
         bool OnWindowResize(WindowResizeEvent &event);
 
     private:
+        ApplicationCommandLineArgs m_CommonLineArgs;
         std::unique_ptr<Window> m_Window;
 
         bool m_IsRunning = true;
