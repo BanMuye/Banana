@@ -51,6 +51,10 @@ namespace Banana {
         m_SelectionContext = {};
     }
 
+    void SceneHierarchyPanel::SetSelectedEntity(const Entity &entity) {
+        m_SelectionContext = entity;
+    }
+
     void SceneHierarchyPanel::DrawEntityNode(Entity entity) {
         auto &tag = entity.GetComponent<TagComponent>().Tag;
         ImGuiTreeNodeFlags flags = ((m_SelectionContext == entity) ? ImGuiTreeNodeFlags_Selected : 0) |

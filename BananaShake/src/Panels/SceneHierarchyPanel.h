@@ -23,6 +23,7 @@ namespace Banana {
         void OnImGuiRender();
 
         Entity GetSelectedEntity() const { return m_SelectionContext; };
+        void SetSelectedEntity(const Entity &entity);
 
     private:
         void DrawEntityNode(Entity entity);
