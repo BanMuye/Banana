@@ -19,6 +19,9 @@ namespace Banana {
         glm::vec2 TexCoord;
         float TexIndex;
         float TilingFactor;
+
+        // Editor-only
+        int EntityID;
     };
 
     struct Renderer2DData {
@@ -56,7 +59,8 @@ namespace Banana {
             {ShaderDataType::Float4, "a_Color"},
             {ShaderDataType::Float2, "a_TexCoord"},
             {ShaderDataType::Float, "a_TexIndex"},
-            {ShaderDataType::Float, "a_TilingFactor"}
+            {ShaderDataType::Float, "a_TilingFactor"},
+            {ShaderDataType::Int, "a_EntityID"}
         });
 
         s_Data.QuadVertexArray->AddVertexBuffer(s_Data.QuadVertexBuffer);
@@ -92,9 +96,9 @@ namespace Banana {
         }
 
         s_Data.TextureShader = Shader::Create("TextureShader",
-                                              "D:\\Files\\S_Documents\\Projects\\Banana\\Sandbox\\assets\\shaders\\texture_vertex_shader.glsl",
-                                              "D:\\Files\\S_Documents\\Projects\\Banana\\Sandbox\\assets\\shaders\\texture_fragment_shader.glsl",
-                                              "D:\\Files\\S_Documents\\Projects\\Banana\\Sandbox\\assets\\shaders\\texture_geometry_shader.glsl"
+                                              "D:\\Files\\S_Documents\\Projects\\Banana\\BananaShake\\assets\\shaders\\texture_vertex_shader.glsl",
+                                              "D:\\Files\\S_Documents\\Projects\\Banana\\BananaShake\\assets\\shaders\\texture_fragment_shader.glsl",
+                                              "D:\\Files\\S_Documents\\Projects\\Banana\\BananaShake\\assets\\shaders\\texture_geometry_shader.glsl"
         );
         s_Data.TextureShader->Bind();
         s_Data.TextureShader->SetIntArray("u_Textures", samplers, Renderer2DData::MaxTextureSlots);
@@ -201,7 +205,7 @@ namespace Banana {
         DrawQuad(transform, texture, tilingFactor, tintColor);
     }
 
-    void Renderer2D::DrawQuad(const glm::mat4 &transform, const glm::vec4 &color) {
+    void Renderer2D::DrawQuad(const glm::mat4 &transform, const glm::vec4 &color, int entityID) {
         BANANA_PROFILE_FUNCTION();
 
         constexpr size_t quadVertexCount = 4;
@@ -219,6 +223,7 @@ namespace Banana {
             s_Data.QuadVertexBufferPtr->TexCoord = textureCoords[i];
             s_Data.QuadVertexBufferPtr->TexIndex = textureIndex;
             s_Data.QuadVertexBufferPtr->TilingFactor = tilingFactor;
+            s_Data.QuadVertexBufferPtr->EntityID = entityID;
             s_Data.QuadVertexBufferPtr++;
         }
 
@@ -227,7 +232,7 @@ namespace Banana {
     }
 
     void Renderer2D::DrawQuad(const glm::mat4 &transform, const Ref<Texture2D> &texture, float tilingFactor,
-                              const glm::vec4 tintColor) {
+                              const glm::vec4 tintColor, int entityID) {
         BANANA_PROFILE_FUNCTION();
 
         constexpr size_t quadVertexCount = 4;
@@ -259,6 +264,7 @@ namespace Banana {
             s_Data.QuadVertexBufferPtr->TexCoord = textureCoords[i];
             s_Data.QuadVertexBufferPtr->TexIndex = textureIndex;
             s_Data.QuadVertexBufferPtr->TilingFactor = tilingFactor;
+            s_Data.QuadVertexBufferPtr->EntityID = entityID;
             s_Data.QuadVertexBufferPtr++;
         }
 
@@ -385,6 +391,10 @@ namespace Banana {
         s_Data.QuadIndexCount += 6;
 
         s_Data.Stats.QuadCount++;
+    }
+
+    void Renderer2D::DrawSprite(const glm::mat4 &transform, SpriteRendererComponent &src, int entityID) {
+        DrawQuad(transform, src.Color, entityID);
     }
 
     void Renderer2D::ResetStats() {

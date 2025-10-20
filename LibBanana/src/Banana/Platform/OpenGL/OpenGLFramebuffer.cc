@@ -191,6 +191,6 @@ namespace Banana {
 
         auto &spec = m_ColorAttachmentSpecifications[attachmentIndex];
         glClearTexImage(m_ColorAttachments[attachmentIndex], 0, Utils::BananaFBTextureFormatToGL(spec.TextureFormat),
-                        GL_UNSIGNED_INT, &value);
+                        GL_INT, &value);
     }
 }
