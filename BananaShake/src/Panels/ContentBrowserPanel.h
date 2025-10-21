@@ -6,6 +6,9 @@
 #define CONTENTBROWERPANEL_H
 #include <filesystem>
 
+#include "Banana/Core/Core.h"
+#include "Banana/Renderer/Texture.h"
+
 
 namespace Banana {
     class ContentBrowserPanel {
@@ -16,6 +19,9 @@ namespace Banana {
 
     private:
         std::filesystem::path m_CurrentDirectory;
+
+        Ref<Texture2D> m_DirectoryIcon;
+        Ref<Texture2D> m_FileIcon;
     };
 }
 
