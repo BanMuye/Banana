@@ -15,6 +15,7 @@
 #include "Banana/Renderer/VertexArray.h"
 #include "Banana/Scene/Entity.h"
 #include "Banana/Scene/Scene.h"
+#include "Panels/ContentBrowserPanel.h"
 #include "Panels/SceneHierarchyPanel.h"
 
 
@@ -78,6 +79,7 @@ namespace Banana {
         int m_GizmoType = ImGuizmo::OPERATION::TRANSLATE;
 
         SceneHierarchyPanel m_SceneHierarchyPanel;
+        ContentBrowserPanel m_ContentBrowserPanel;
     };
 }
 

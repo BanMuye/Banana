@@ -8,6 +8,8 @@ add_executable(BananaShake
         src/EditorLayer.cc
         src/Panels/SceneHierarchyPanel.cc
         src/Panels/SceneHierarchyPanel.h
+        src/Panels/ContentBrowserPanel.cc
+        src/Panels/ContentBrowserPanel.h
 )
 
 target_link_libraries(BananaShake PUBLIC BananaEngine)
