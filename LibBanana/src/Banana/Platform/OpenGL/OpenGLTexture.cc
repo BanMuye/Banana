@@ -15,8 +15,7 @@ namespace Banana {
         BANANA_PROFILE_FUNCTION();
         int width, height, channels;
         stbi_set_flip_vertically_on_load(1);
-        stbi_uc* data = nullptr;
-        {
+        stbi_uc *data = nullptr; {
             BANANA_PROFILE_SCOPE("stbi_load - OpenGLTexture2D::OpenGLTexture2D(const std::string&)");
             data = stbi_load(path.c_str(), &width, &height, &channels, 0);
         }
@@ -25,13 +24,10 @@ namespace Banana {
         m_Height = height;
 
         GLenum internalFormat = 0, dataFormat = 0;
-        if (channels == 4)
-        {
+        if (channels == 4) {
             internalFormat = GL_RGBA8;
             dataFormat = GL_RGBA;
-        }
-        else if (channels == 3)
-        {
+        } else if (channels == 3) {
             internalFormat = GL_RGB8;
             dataFormat = GL_RGB;
         }
@@ -45,7 +41,7 @@ namespace Banana {
         glTextureStorage2D(m_RendererID, 1, internalFormat, m_Width, m_Height);
 
         glTextureParameteri(m_RendererID, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTextureParameteri(m_RendererID, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTextureParameteri(m_RendererID, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
         glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_S, GL_REPEAT);
         glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -64,7 +60,7 @@ namespace Banana {
         glTextureStorage2D(m_RendererID, 1, m_InternalFormat, m_Width, m_Height);
 
         glTextureParameteri(m_RendererID, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTextureParameteri(m_RendererID, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTextureParameteri(m_RendererID, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
         glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_S, GL_REPEAT);
         glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_T, GL_REPEAT);
