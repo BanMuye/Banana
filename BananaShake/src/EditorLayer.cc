@@ -15,7 +15,7 @@
 #include "Banana/Utils/PlatformUtils.h"
 
 namespace Banana {
-    extern const std::filesystem::path g_AssetPath;
+    extern const std::filesystem::path g_AssetsPath;
 
     EditorLayer::EditorLayer()
         : Layer("EditorLayer"), m_CameraController(1280.0f / 720.0f), m_SquareColor({0.2f, 0.3f, 0.8f, 1.0f}) {
@@ -24,7 +24,7 @@ namespace Banana {
     void EditorLayer::OnAttach() {
         BANANA_PROFILE_FUNCTION();
 
-        m_CheckerboardTexture = Texture2D::Create("assets\\textures\\Checkerboard.png");
+        m_CheckerboardTexture = Texture2D::Create(R"(D:\Files\S_Documents\Projects\Banana\BananaShake\assets\textures\Checkerboard.png)");
 
         FramebufferSpecification fbSpec;
         fbSpec.Width = 1280;
@@ -225,7 +225,7 @@ namespace Banana {
         if (ImGui::BeginDragDropTarget()) {
             if (const ImGuiPayload *payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM")) {
                 const wchar_t *path = (const wchar_t *) payload->Data;
-                OpenScene(std::filesystem::path(g_AssetPath) / path);
+                OpenScene(std::filesystem::path(g_AssetsPath) / path);
             }
 
             ImGui::EndDragDropTarget();

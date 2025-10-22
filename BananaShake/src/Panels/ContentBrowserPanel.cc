@@ -8,9 +8,9 @@
 #include "imgui.h"
 
 namespace Banana {
-    extern const std::filesystem::path g_AssetPath = R"(D:\Files\S_Documents\Projects\Banana\BananaShake\assets)";
+    extern const std::filesystem::path g_AssetsPath = R"(D:\Files\S_Documents\Projects\Banana\BananaShake\assets)";
 
-    ContentBrowserPanel::ContentBrowserPanel() : m_CurrentDirectory(g_AssetPath) {
+    ContentBrowserPanel::ContentBrowserPanel() : m_CurrentDirectory(g_AssetsPath) {
         m_DirectoryIcon = Texture2D::Create(
             R"(D:\Files\S_Documents\Projects\Banana\BananaShake\Resources\Icons\ContentBrowser\DirectoryIcon.png)");
         m_FileIcon = Texture2D::Create(
@@ -20,7 +20,7 @@ namespace Banana {
     void ContentBrowserPanel::OnImGuiRender() {
         ImGui::Begin("Content Browser");
 
-        if (m_CurrentDirectory != std::filesystem::path(g_AssetPath)) {
+        if (m_CurrentDirectory != std::filesystem::path(g_AssetsPath)) {
             if (ImGui::Button("<-")) {
                 m_CurrentDirectory = m_CurrentDirectory.parent_path();
             }
@@ -41,7 +41,7 @@ namespace Banana {
 
         for (auto &directoryEntry: std::filesystem::directory_iterator(m_CurrentDirectory)) {
             const auto &path = directoryEntry.path();
-            auto relativePath = std::filesystem::relative(path, g_AssetPath);
+            auto relativePath = std::filesystem::relative(path, g_AssetsPath);
             std::string fileNameString = relativePath.filename().string();
 
             ImGui::PushID(fileNameString.c_str());

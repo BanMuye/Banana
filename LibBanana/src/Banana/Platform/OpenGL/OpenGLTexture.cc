@@ -86,13 +86,12 @@ namespace Banana {
     void OpenGLTexture2D::SetData(void *data, uint32_t size) {
         BANANA_PROFILE_FUNCTION();
         uint32_t bpp = m_DataFormat == GL_RGBA ? 4 : 3;
-        BANANA_CORE_ASSERT(size == m_Width * m_height * bpp, "Data mismatch!");
-        glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, m_Width, m_Height, m_DataFormat, GL_UNSIGNED_BYTE, data);
+        BANANA_CORE_ASSERT(size == m_Width * m_Height * bpp, "Data must be entire texture!");
+        glTextureSubImage2D(m_RendererID, 0, 0, 0, m_Width, m_Height, m_DataFormat, GL_UNSIGNED_BYTE, data);
     }
 
     void OpenGLTexture2D::Bind(uint32_t slot) const {
         BANANA_PROFILE_FUNCTION();
-        glActiveTexture(GL_TEXTURE0 + slot);
-        glBindTexture(GL_TEXTURE_2D, m_RendererID);
+        glBindTextureUnit(slot, m_RendererID);
     }
 }

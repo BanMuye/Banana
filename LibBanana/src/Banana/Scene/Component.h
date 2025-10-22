@@ -11,6 +11,7 @@
 #include "glm/glm.hpp"
 #include "glm/gtx/quaternion.hpp"
 #include "glm/gtx/rotate_vector.hpp"
+#include "Banana/Renderer/Texture.h"
 
 namespace Banana {
     struct TagComponent {
@@ -44,6 +45,9 @@ namespace Banana {
 
     struct SpriteRendererComponent {
         glm::vec4 Color{1.0f, 1.0f, 1.0f, 1.0f};
+
+        Ref<Texture2D> Texture;
+        float TilingFactor = 1.0f;
 
         SpriteRendererComponent() = default;
 

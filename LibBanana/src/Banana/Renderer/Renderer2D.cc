@@ -96,18 +96,22 @@ namespace Banana {
 
         s_Data.WhiteTexture = Texture2D::Create(1, 1);
         uint32_t whiteTextureData = 0xffffffff;
-        s_Data.WhiteTexture->SetData(&whiteTextureData, sizeof(whiteTextureData));
+        s_Data.WhiteTexture->SetData(&whiteTextureData, sizeof(uint32_t));
 
-        int32_t samplers[s_Data.MaxTextureSlots];
-        for (uint32_t i = 0; i < s_Data.MaxTextureSlots; i++) {
+        int32_t samplers[Renderer2DData::MaxTextureSlots];
+        for (uint32_t i = 0; i < Renderer2DData::MaxTextureSlots; i++) {
             samplers[i] = i;
         }
 
         s_Data.TextureShader = Shader::Create("TextureShader",
-                                              "D:\\Files\\S_Documents\\Projects\\Banana\\BananaShake\\assets\\shaders\\texture_vertex_shader.glsl",
-                                              "D:\\Files\\S_Documents\\Projects\\Banana\\BananaShake\\assets\\shaders\\texture_fragment_shader.glsl",
-                                              "D:\\Files\\S_Documents\\Projects\\Banana\\BananaShake\\assets\\shaders\\texture_geometry_shader.glsl"
+                                              R"(D:\Files\S_Documents\Projects\Banana\BananaShake\assets\shaders\texture_vertex_shader.glsl)",
+                                              R"(D:\Files\S_Documents\Projects\Banana\BananaShake\assets\shaders\texture_fragment_shader.glsl)",
+                                              R"(D:\Files\S_Documents\Projects\Banana\BananaShake\assets\shaders\texture_geometry_shader.glsl)"
         );
+
+        s_Data.TextureShader->Bind();
+        s_Data.TextureShader->SetIntArray("u_Textures", samplers, Renderer2DData::MaxTextureSlots);
+
         s_Data.TextureSlots[0] = s_Data.WhiteTexture;
 
         // initialize quad position
@@ -167,10 +171,10 @@ namespace Banana {
     }
 
     void Renderer2D::Flush() {
-
         if (s_Data.QuadIndexCount == 0) return;
 
-        uint32_t dataSize = (int32_t) ((uint8_t *)s_Data.QuadVertexBufferPtr - (uint8_t *) s_Data.QuadVertexBufferBase);
+        uint32_t dataSize = (int32_t) ((uint8_t *) s_Data.QuadVertexBufferPtr - (uint8_t *) s_Data.
+                                       QuadVertexBufferBase);
         s_Data.QuadVertexBuffer->SetData(s_Data.QuadVertexBufferBase, dataSize);
 
 
@@ -178,6 +182,7 @@ namespace Banana {
             s_Data.TextureSlots[i]->Bind(i);
         }
         s_Data.TextureShader->Bind();
+
         RenderCommand::DrawIndexed(s_Data.QuadVertexArray, s_Data.QuadIndexCount);
         s_Data.Stats.DrawCalls++;
     }
@@ -408,7 +413,11 @@ namespace Banana {
     }
 
     void Renderer2D::DrawSprite(const glm::mat4 &transform, SpriteRendererComponent &src, int entityID) {
-        DrawQuad(transform, src.Color, entityID);
+        if (src.Texture) {
+            DrawQuad(transform, src.Texture, src.TilingFactor, src.Color, entityID);
+        } else {
+            DrawQuad(transform, src.Color, entityID);
+        }
     }
 
     void Renderer2D::ResetStats() {
