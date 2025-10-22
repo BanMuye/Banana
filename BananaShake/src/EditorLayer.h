@@ -49,6 +49,12 @@ namespace Banana {
 
         void SaveSceneAs();
 
+        void OnScenePlay();
+
+        void OnSceneStop();
+
+        void UI_Toolbar();
+
     private:
         Banana::OrthographicCameraController m_CameraController;
 
@@ -81,8 +87,16 @@ namespace Banana {
 
         int m_GizmoType = ImGuizmo::OPERATION::TRANSLATE;
 
+        enum class SceneState {
+            Edit = 0, Play = 1
+        };
+
+        SceneState m_SceneState = SceneState::Edit;
+
         SceneHierarchyPanel m_SceneHierarchyPanel;
         ContentBrowserPanel m_ContentBrowserPanel;
+
+        Ref<Texture2D> m_IconPlay, m_IconStop;
     };
 }
 
