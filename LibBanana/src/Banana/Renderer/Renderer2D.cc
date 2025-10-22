@@ -150,11 +150,8 @@ namespace Banana {
     void Renderer2D::BeginScene(const EditorCamera &camera) {
         BANANA_PROFILE_FUNCTION();
 
-        glm::mat4 viewProjection = camera.GetViewProjection();
-
-        s_Data.TextureShader->Bind();
-        s_Data.TextureShader->SetMat4("u_ViewProjection", viewProjection);
-
+        s_Data.CameraBuffer.ViewProjection = camera.GetViewProjection();
+        s_Data.CameraUniformBuffer->SetData(&s_Data.CameraBuffer, sizeof(Renderer2DData::CameraData));
         StartBatch();
     }
 

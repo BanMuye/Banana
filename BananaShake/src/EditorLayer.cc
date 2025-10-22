@@ -249,19 +249,28 @@ namespace Banana {
             ImGuizmo::SetOrthographic(false);
             ImGuizmo::SetDrawlist();
 
-            float windowWidth = ImGui::GetWindowWidth();
-            float windowHeight = ImGui::GetWindowHeight();
-            ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, windowWidth, windowHeight);
+            ImGuizmo::SetRect(m_ViewportBounds[0].x, m_ViewportBounds[0].y,
+                              m_ViewportBounds[1].x - m_ViewportBounds[0].x,
+                              m_ViewportBounds[1].y - m_ViewportBounds[0].y);
 
             // Camera
-            // auto cameraEntity = m_ActiveScene->GetPrimaryCameraEntity();
-            // const auto &camera = cameraEntity.GetComponent<CameraComponent>().Camera;
-            // const glm::mat4 &cameraProjection = camera.GetProjection();
-            // glm::mat4 cameraView = glm::inverse(cameraEntity.GetComponent<TransformComponent>().GetTransform());
+            const glm::mat4 *cameraProjection = nullptr;
+            glm::mat4 cameraView = {};
 
-            // Editor Camera
-            const glm::mat4 &cameraProjection = m_EditorCamera.GetProjection();
-            glm::mat4 cameraView = m_EditorCamera.GetViewMatrix();
+            switch (m_SceneState) {
+                case SceneState::Edit: {
+                    cameraProjection = &m_EditorCamera.GetProjection();
+                    cameraView = m_EditorCamera.GetViewMatrix();
+                    break;
+                }
+                case SceneState::Play: {
+                    auto cameraEntity = m_ActiveScene->GetPrimaryCameraEntity();
+                    const auto &camera = cameraEntity.GetComponent<CameraComponent>().Camera;
+                    cameraProjection = &camera.GetProjection();
+                    cameraView = glm::inverse(cameraEntity.GetComponent<TransformComponent>().GetTransform());
+                    break;
+                }
+            }
 
             // Entity transform
             auto &tc = selectedEntity.GetComponent<TransformComponent>();
@@ -276,7 +285,7 @@ namespace Banana {
 
             float snapValues[3] = {snapValue, snapValue, snapValue};
 
-            ImGuizmo::Manipulate(glm::value_ptr(cameraView), glm::value_ptr(cameraProjection),
+            ImGuizmo::Manipulate(glm::value_ptr(cameraView), glm::value_ptr(*cameraProjection),
                                  (ImGuizmo::OPERATION) m_GizmoType, ImGuizmo::LOCAL, glm::value_ptr(transform), nullptr,
                                  snap ? snapValues : nullptr);
             if (ImGuizmo::IsUsing()) {
@@ -402,12 +411,18 @@ namespace Banana {
     }
 
     void EditorLayer::OpenScene(const std::filesystem::path &path) {
-        m_ActiveScene = std::make_shared<Scene>();
-        m_ActiveScene->OnViewportResize((uint32_t) m_ViewportSize.x, (uint32_t) m_ViewportSize.y);
-        m_SceneHierarchyPanel.SetContext(m_ActiveScene);
+        if (path.extension().string() != ".banana") {
+            BANANA_WARN("Could not load {0} - not a scene file", path.filename().string());
+            return;
+        }
 
-        SceneSerializer serializer(m_ActiveScene);
-        serializer.Deserialize(path.string());
+        Ref<Scene> newScene = std::make_shared<Scene>();
+        SceneSerializer serializer(newScene);
+        if (serializer.Deserialize(path.string())) {
+            m_ActiveScene = newScene;
+            m_ActiveScene->OnViewportResize((uint32_t) m_ViewportSize.x, (uint32_t) m_ViewportSize.y);
+            m_SceneHierarchyPanel.SetContext(m_ActiveScene);
+        }
     }
 
     void EditorLayer::SaveSceneAs() {
@@ -418,14 +433,11 @@ namespace Banana {
         }
     }
 
-    void EditorLayer::OnScenePlay()
-    {
+    void EditorLayer::OnScenePlay() {
         m_SceneState = SceneState::Play;
     }
 
-    void EditorLayer::OnSceneStop()
-    {
+    void EditorLayer::OnSceneStop() {
         m_SceneState = SceneState::Edit;
-
     }
 }

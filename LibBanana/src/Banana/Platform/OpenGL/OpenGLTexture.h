@@ -30,6 +30,8 @@ namespace Banana {
 
         virtual void Bind(uint32_t slot = 0) const override;
 
+        bool IsLoaded() const override { return m_IsLoaded; }
+
         virtual bool operator==(const Texture &other) const override {
             if (auto p = dynamic_cast<const OpenGLTexture2D *>(&other)) {
                 return m_RendererID == p->m_RendererID;
@@ -39,6 +41,7 @@ namespace Banana {
         }
 
     private:
+        bool m_IsLoaded = false;
         uint32_t m_Width;
         uint32_t m_Height;
         std::string m_Path;
