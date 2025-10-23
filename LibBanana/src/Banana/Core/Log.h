@@ -7,6 +7,9 @@
 
 #include <memory>
 
+#define GLM_ENABLE_EXPERIMENTAL
+#include "glm/gtx/string_cast.hpp"
+
 #include "Core.h"
 #include "spdlog/logger.h"
 #include "spdlog/spdlog.h"
