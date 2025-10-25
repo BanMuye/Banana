@@ -8,6 +8,7 @@
 #include <cstdint>
 
 #include "Banana/Core/Timestep.h"
+#include "Banana/Core/UUID.h"
 #include "Banana/Renderer/EditorCamera.h"
 #include "box2d/b2_world.h"
 #include "entt/entt.hpp"
@@ -18,9 +19,12 @@ namespace Banana {
     class Scene {
     public:
         Scene();
+
         ~Scene();
 
         Entity CreateEntity(const std::string &name = std::string());
+
+        Entity CreateEntityWithUUID(UUID uuid, const std::string &name = std::string());
 
         void DestroyEntity(Entity entity);
 

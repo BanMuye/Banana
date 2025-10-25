@@ -18,10 +18,8 @@
 
 namespace YAML {
     template<>
-    struct convert<glm::vec2>
-    {
-        static Node encode(const glm::vec2& rhs)
-        {
+    struct convert<glm::vec2> {
+        static Node encode(const glm::vec2 &rhs) {
             Node node;
             node.push_back(rhs.x);
             node.push_back(rhs.y);
@@ -29,8 +27,7 @@ namespace YAML {
             return node;
         }
 
-        static bool decode(const Node& node, glm::vec2& rhs)
-        {
+        static bool decode(const Node &node, glm::vec2 &rhs) {
             if (!node.IsSequence() || node.size() != 2)
                 return false;
 
@@ -89,12 +86,12 @@ namespace YAML {
 }
 
 namespace Banana {
-    YAML::Emitter& operator<<(YAML::Emitter& out, const glm::vec2& v)
-    {
+    YAML::Emitter &operator<<(YAML::Emitter &out, const glm::vec2 &v) {
         out << YAML::Flow;
         out << YAML::BeginSeq << v.x << v.y << YAML::EndSeq;
         return out;
-    } 
+    }
+
     YAML::Emitter &operator<<(YAML::Emitter &out, const glm::vec3 &v) {
         out << YAML::Flow;
         out << YAML::BeginSeq << v.x << v.y << v.z << YAML::EndSeq;
@@ -106,12 +103,11 @@ namespace Banana {
         out << YAML::BeginSeq << v.x << v.y << v.z << v.w << YAML::EndSeq;
         return out;
     }
-    static std::string RigidBody2DBodyTypeToString(RigidBody2DComponent::BodyType bodyType)
-    {
-        switch (bodyType)
-        {
-            case RigidBody2DComponent::BodyType::Static:    return "Static";
-            case RigidBody2DComponent::BodyType::Dynamic:   return "Dynamic";
+
+    static std::string RigidBody2DBodyTypeToString(RigidBody2DComponent::BodyType bodyType) {
+        switch (bodyType) {
+            case RigidBody2DComponent::BodyType::Static: return "Static";
+            case RigidBody2DComponent::BodyType::Dynamic: return "Dynamic";
             case RigidBody2DComponent::BodyType::Kinematic: return "Kinematic";
         }
 
@@ -119,21 +115,23 @@ namespace Banana {
         return {};
     }
 
-    static RigidBody2DComponent::BodyType RigidBody2DBodyTypeFromString(const std::string& bodyTypeString)
-    {
-        if (bodyTypeString == "Static")    return RigidBody2DComponent::BodyType::Static;
-        if (bodyTypeString == "Dynamic")   return RigidBody2DComponent::BodyType::Dynamic;
+    static RigidBody2DComponent::BodyType RigidBody2DBodyTypeFromString(const std::string &bodyTypeString) {
+        if (bodyTypeString == "Static") return RigidBody2DComponent::BodyType::Static;
+        if (bodyTypeString == "Dynamic") return RigidBody2DComponent::BodyType::Dynamic;
         if (bodyTypeString == "Kinematic") return RigidBody2DComponent::BodyType::Kinematic;
-	
+
         BANANA_CORE_ASSERT(false, "Unknown body type");
         return RigidBody2DComponent::BodyType::Static;
     }
+
     SceneSerializer::SceneSerializer(const Ref<Scene> &scene) : m_Scene(scene) {
     }
 
     static void SerializeEntity(YAML::Emitter &out, Entity &entity) {
+        BANANA_CORE_ASSERT(entity.HasComponent<IDComponent>());
+
         out << YAML::BeginMap;
-        out << YAML::Key << "Entity" << YAML::Value << "11341234123423";
+        out << YAML::Key << "Entity" << YAML::Value << entity.GetUUID();
         // todo @BanMuye replace with real uuid in the future
 
         if (entity.HasComponent<TagComponent>()) {
@@ -191,24 +189,22 @@ namespace Banana {
             out << YAML::EndMap; // SpriteRendererComponent
         }
 
-        if (entity.HasComponent<RigidBody2DComponent>())
-        {
+        if (entity.HasComponent<RigidBody2DComponent>()) {
             out << YAML::Key << "RigidBody2DComponent";
             out << YAML::BeginMap; // RigidBody2DComponent
 
-            auto& rb2dComponent = entity.GetComponent<RigidBody2DComponent>();
+            auto &rb2dComponent = entity.GetComponent<RigidBody2DComponent>();
             out << YAML::Key << "BodyType" << YAML::Value << RigidBody2DBodyTypeToString(rb2dComponent.Type);
             out << YAML::Key << "FixedRotation" << YAML::Value << rb2dComponent.FixedRotation;
 
             out << YAML::EndMap; // RigidBody2DComponent
         }
 
-        if (entity.HasComponent<BoxCollider2DComponent>())
-        {
+        if (entity.HasComponent<BoxCollider2DComponent>()) {
             out << YAML::Key << "BoxCollider2DComponent";
             out << YAML::BeginMap; // BoxCollider2DComponent
 
-            auto& bc2dComponent = entity.GetComponent<BoxCollider2DComponent>();
+            auto &bc2dComponent = entity.GetComponent<BoxCollider2DComponent>();
             out << YAML::Key << "Offset" << YAML::Value << bc2dComponent.Offset;
             out << YAML::Key << "Size" << YAML::Value << bc2dComponent.Size;
             out << YAML::Key << "Density" << YAML::Value << bc2dComponent.Density;
@@ -263,7 +259,7 @@ namespace Banana {
         if (entities) {
             for (YAML::iterator it = entities.begin(); it != entities.end(); ++it) {
                 auto entity = *it;
-                uint64_t uuid = entity["Entity"].as<uint64_t>(); // TODO
+                uint64_t uuid = entity["Entity"].as<uint64_t>();
 
                 std::string name;
                 auto tagComponent = entity["TagComponent"];
@@ -272,7 +268,7 @@ namespace Banana {
 
                 BANANA_CORE_TRACE("Deserialized entity with ID = {0}, name = {1}", uuid, name);
 
-                Entity deserializedEntity = m_Scene->CreateEntity(name);
+                Entity deserializedEntity = m_Scene->CreateEntityWithUUID(uuid, name);
 
                 auto transformComponent = entity["TransformComponent"];
                 if (transformComponent) {
@@ -309,17 +305,15 @@ namespace Banana {
                 }
 
                 auto rigidbody2DComponent = entity["RigidBody2DComponent"];
-                if (rigidbody2DComponent)
-                {
-                    auto& rb2d = deserializedEntity.AddComponent<RigidBody2DComponent>();
+                if (rigidbody2DComponent) {
+                    auto &rb2d = deserializedEntity.AddComponent<RigidBody2DComponent>();
                     rb2d.Type = RigidBody2DBodyTypeFromString(rigidbody2DComponent["BodyType"].as<std::string>());
                     rb2d.FixedRotation = rigidbody2DComponent["FixedRotation"].as<bool>();
                 }
 
                 auto boxCollider2DComponent = entity["BoxCollider2DComponent"];
-                if (boxCollider2DComponent)
-                {
-                    auto& bc2d = deserializedEntity.AddComponent<BoxCollider2DComponent>();
+                if (boxCollider2DComponent) {
+                    auto &bc2d = deserializedEntity.AddComponent<BoxCollider2DComponent>();
                     bc2d.Offset = boxCollider2DComponent["Offset"].as<glm::vec2>();
                     bc2d.Size = boxCollider2DComponent["Size"].as<glm::vec2>();
                     bc2d.Density = boxCollider2DComponent["Density"].as<float>();

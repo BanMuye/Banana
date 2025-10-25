@@ -14,6 +14,7 @@
 #include "glm/ext/matrix_clip_space.hpp"
 #include "box2d/b2_polygon_shape.h"
 #include "box2d/b2_fixture.h"
+#include "ScriptableEntity.h"
 
 namespace Banana {
     static b2BodyType RigidBody2DTypeToBox2DBody(RigidBody2DComponent::BodyType bodyType) {
@@ -63,7 +64,7 @@ namespace Banana {
                 fixtureDef.friction = bc2d.Friction;
                 fixtureDef.restitution = bc2d.Restitution;
                 fixtureDef.restitutionThreshold = bc2d.RestitutionThreshold;
-                body->CreateFixture(&fixtureDef);
+                bc2d.RuntimeFixture = body->CreateFixture(&fixtureDef);
             }
         }
     }
@@ -74,8 +75,13 @@ namespace Banana {
     }
 
     Entity Scene::CreateEntity(const std::string &name) {
+        return CreateEntityWithUUID(UUID(), name);
+    }
+
+    Entity Scene::CreateEntityWithUUID(UUID uuid, const std::string &name) {
         Entity entity = {m_Registry.create(), this};
 
+        entity.AddComponent<IDComponent>(uuid);
         entity.AddComponent<TransformComponent>();
         auto &tag = entity.AddComponent<TagComponent>();
         tag.Tag = name.empty() ? "Entity" : name;
@@ -187,6 +193,11 @@ namespace Banana {
     template<typename T>
     void Scene::OnComponentAdded(Entity entity, T &component) {
         static_assert(false);
+    }
+
+    template<>
+    void Scene::OnComponentAdded<IDComponent>(Entity entity, IDComponent& component) {
+
     }
 
     template<>

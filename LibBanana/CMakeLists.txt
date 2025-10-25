@@ -97,7 +97,9 @@ add_library(BananaEngine STATIC
         src/Banana/Renderer/UniformBuffer.cc
         src/Banana/Renderer/UniformBuffer.h
         src/Banana/Platform/OpenGL/OpenGLUniformBuffer.cc
-        src/Banana/Platform/OpenGL/OpenGLUniformBuffer.h)
+        src/Banana/Platform/OpenGL/OpenGLUniformBuffer.h
+        src/Banana/Core/UUID.cc
+        src/Banana/Core/UUID.h)
 
 # 设置公共头文件目录（暴露给依赖模块）
 target_include_directories(BananaEngine PUBLIC

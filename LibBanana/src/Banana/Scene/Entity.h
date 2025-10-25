@@ -5,10 +5,13 @@
 #ifndef ENTITY_H
 #define ENTITY_H
 #include "Banana/Core/Assert.h"
+#include "Banana/Core/UUID.h"
 #include "Banana/Scene/Scene.h"
+#include "Component.h"
 
 
 namespace Banana {
+
     class Entity {
     public:
         Entity() = default;
@@ -41,6 +44,8 @@ namespace Banana {
             BANANA_CORE_ASSERT(HasComponent<T>(), "Entity does not have such component!");
             m_Scene->m_Registry.remove<T>(m_EntityHandle);
         }
+
+        UUID GetUUID() { return GetComponent<IDComponent>().ID; }
 
         operator bool() const { return m_EntityHandle != entt::null; }
         operator uint32_t() const { return (uint32_t) m_EntityHandle; }

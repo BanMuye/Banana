@@ -6,14 +6,24 @@
 #define COMPONENT_H
 
 #include "SceneCamera.h"
-#include "ScriptableEntity.h"
-#include "Banana/Renderer/Camera.h"
+#include "Banana/Core/UUID.h"
 #include "glm/glm.hpp"
 #include "glm/gtx/quaternion.hpp"
 #include "glm/gtx/rotate_vector.hpp"
 #include "Banana/Renderer/Texture.h"
 
 namespace Banana {
+
+    struct IDComponent {
+        UUID ID;
+
+        IDComponent() = default;
+
+        IDComponent(UUID& id) : ID(id) {}
+
+        IDComponent(const IDComponent &) = default;
+    };
+
     struct TagComponent {
         std::string Tag;
 
@@ -66,6 +76,8 @@ namespace Banana {
 
         CameraComponent(const CameraComponent &) = default;
     };
+
+    class ScriptableEntity;
 
     struct NativeScriptComponent {
         ScriptableEntity *Instance = nullptr;
