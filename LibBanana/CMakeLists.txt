@@ -1,13 +1,11 @@
 cmake_minimum_required(VERSION 3.30.5)
+project(Banana)
 
-set(LIBRARY_OUTPUT_PATH ${CMAKE_CURRENT_SOURCE_DIR}/bin)
 set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_VERBOSE_MAKEFILE ON)
 
-add_definitions(-BANANA_PLATFORM_MAC)
-add_definitions(-BANANA_BUILD_DLL)
-add_definitions(-BANANA_DEBUG_MODE)
 
-add_subdirectory(vendor)
+set(CMAKE_CXX_STANDARD 20)
 
 add_library(BananaEngine STATIC
         src/Banana/Core/Core.h
@@ -105,46 +103,15 @@ add_library(BananaEngine STATIC
 target_include_directories(BananaEngine PUBLIC
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>)
 
-include(FetchContent)
-FetchContent_Declare(spdlog
-        GIT_REPOSITORY https://github.com/gabime/spdlog.git
-        GIT_TAG v1.15.3
-        GIT_SHALLOW TRUE)
-FetchContent_MakeAvailable(spdlog)
-target_link_libraries(BananaEngine PUBLIC spdlog::spdlog)
 
-FetchContent_Declare(glfw
-        GIT_REPOSITORY https://github.com/glfw/glfw
-        GIT_TAG 3.4
-        GIT_SHALLOW TRUE)
-FetchContent_MakeAvailable(glfw)
-target_link_libraries(BananaEngine PUBLIC glfw)
-
-FetchContent_Declare(glm
-        GIT_REPOSITORY https://github.com/g-truc/glm.git
-        GIT_TAG 1.0.1
-        GIT_SHALLOW glm)
-FetchContent_MakeAvailable(glm)
-target_link_libraries(BananaEngine PUBLIC glm)
-
-
-target_link_libraries(BananaEngine PUBLIC glad)
-target_link_libraries(BananaEngine PUBLIC imgui)
-target_link_libraries(BananaEngine PUBLIC stb)
-target_link_libraries(BananaEngine PUBLIC ImGuizmo)
-
-include(FetchContent)
-FetchContent_Declare(EnTT
-        GIT_REPOSITORY https://github.com/skypjack/entt.git
-        GIT_TAG v3.15.0
-        GIT_SHALLOW TRUE)
-FetchContent_MakeAvailable(EnTT)
-target_link_libraries(BananaEngine PUBLIC EnTT)
-
-include(FetchContent)
-FetchContent_Declare(yaml-cpp
-        GIT_REPOSITORY https://github.com/jbeder/yaml-cpp.git
-        GIT_TAG 0.8.0
-        GIT_SHALLOW TRUE)
-FetchContent_MakeAvailable(yaml-cpp)
-target_link_libraries(BananaEngine PUBLIC yaml-cpp)
+target_link_libraries(BananaEngine PRIVATE
+        spdlog::spdlog
+        glfw
+        glm::glm
+        glad::glad
+        imgui::imgui
+        imguizmo::imguizmo
+        EnTT::EnTT
+        yaml-cpp::yaml-cpp
+        box2d::box2d
+)

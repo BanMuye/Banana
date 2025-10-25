@@ -13,7 +13,7 @@
 #include "Core.h"
 #include "spdlog/logger.h"
 #include "spdlog/spdlog.h"
-#include "spdlog/sinks/stdout_color_sinks-inl.h"
+#include "spdlog/sinks/stdout_color_sinks.h"
 
 namespace Banana {
     class API_EXPORT Log {

@@ -231,7 +231,7 @@ namespace Banana {
         m_ViewportSize = {viewportPanelSize.x, viewportPanelSize.y};
 
         uint64_t textureID = m_Framebuffer->GetColorAttachmentRendererID();
-        ImGui::Image(reinterpret_cast<void *>(textureID), ImVec2{m_ViewportSize.x, m_ViewportSize.y}, ImVec2{0, 1},
+        ImGui::Image(textureID, ImVec2{m_ViewportSize.x, m_ViewportSize.y}, ImVec2{0, 1},
                      ImVec2{1, 0});
 
         if (ImGui::BeginDragDropTarget()) {
@@ -435,9 +435,11 @@ namespace Banana {
 
     void EditorLayer::OnScenePlay() {
         m_SceneState = SceneState::Play;
+        m_ActiveScene->OnRuntimeStart();
     }
 
     void EditorLayer::OnSceneStop() {
         m_SceneState = SceneState::Edit;
+        m_ActiveScene->OnRuntimeStop();
     }
 }

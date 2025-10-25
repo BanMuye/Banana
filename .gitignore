@@ -9,3 +9,4 @@ bin
 /out/build/x64-Debug
 /.vs
 /CMakeSettings.json
+vcpkg_installed

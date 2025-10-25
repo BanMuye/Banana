@@ -1,0 +1,30 @@
+{
+  "name": "banana",
+  "version": "1.0.0",
+  "dependencies": [
+    "box2d",
+    "glfw3",
+    {
+      "name": "imgui",
+      "features": ["docking-experimental", "glfw-binding", "opengl3-binding"]
+    },
+    "spdlog",
+    {
+      "name": "spdlog",
+      "features": []
+    },
+    "glm",
+    "glad",
+    "stb",
+    "imguizmo",
+    "entt",
+    "yaml-cpp"
+  ],
+  "builtin-baseline": "c941d5e450738629213a60ab8911fd26efca7c6e",
+  "overrides": [
+    {
+      "name": "box2d",
+      "version": "2.4.1"
+    }
+  ]
+}
