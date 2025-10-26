@@ -8,10 +8,10 @@
 #include "Banana/Core/UUID.h"
 #include "Banana/Scene/Scene.h"
 #include "Component.h"
+#include "Banana/Core/KeyCodes.h"
 
 
 namespace Banana {
-
     class Entity {
     public:
         Entity() = default;
@@ -26,6 +26,14 @@ namespace Banana {
             T &compoennt = m_Scene->m_Registry.emplace<T>(m_EntityHandle, std::forward<Args>(args)...);
             m_Scene->OnComponentAdded<T>(*this, compoennt);
             return compoennt;
+        }
+
+        template<typename T, typename... Args>
+        T &AddOrReplaceComponent(Args &&... args) {
+            T &component = m_Scene->m_Registry.emplace_or_replace<T>(m_EntityHandle, std::forward<Args>(args)...);
+
+            m_Scene->OnComponentAdded<T>(*this, component);
+            return component;
         }
 
         template<typename T>
@@ -46,6 +54,7 @@ namespace Banana {
         }
 
         UUID GetUUID() { return GetComponent<IDComponent>().ID; }
+        const std::string &GetName() { return GetComponent<TagComponent>().Tag; }
 
         operator bool() const { return m_EntityHandle != entt::null; }
         operator uint32_t() const { return (uint32_t) m_EntityHandle; }

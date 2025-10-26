@@ -21,25 +21,27 @@ namespace Banana {
     void SceneHierarchyPanel::OnImGuiRender() {
         ImGui::Begin("Scene Hierarchy");
 
-        const auto &view = m_Context->m_Registry.view<TagComponent>();
-        for (auto entity: view) {
-            Entity currentEntity{entity, m_Context.get()};
-            DrawEntityNode(currentEntity);
+        if (m_Context) {
+            const auto &view = m_Context->m_Registry.view<TagComponent>();
+            for (auto entity: view) {
+                Entity currentEntity{entity, m_Context.get()};
+                DrawEntityNode(currentEntity);
+            }
+
+            if (ImGui::IsMouseDown(0) && ImGui::IsWindowHovered()) {
+                m_SelectionContext = {};
+            }
+
+            // Right-click on blank space
+            if (ImGui::BeginPopupContextWindow(0, ImGuiPopupFlags_MouseButtonRight | ImGuiPopupFlags_NoOpenOverItems)) {
+                if (ImGui::MenuItem("Create Empty Entity"))
+                    m_Context->CreateEntity("Empty Entity");
+
+                ImGui::EndPopup();
+            }
+
+            ImGui::End();
         }
-
-        if (ImGui::IsMouseDown(0) && ImGui::IsWindowHovered()) {
-            m_SelectionContext = {};
-        }
-
-        // Right-click on blank space
-        if (ImGui::BeginPopupContextWindow(0, ImGuiPopupFlags_MouseButtonRight | ImGuiPopupFlags_NoOpenOverItems)) {
-            if (ImGui::MenuItem("Create Empty Entity"))
-                m_Context->CreateEntity("Empty Entity");
-
-            ImGui::EndPopup();
-        }
-
-        ImGui::End();
 
         ImGui::Begin("Properties");
         if (m_SelectionContext) {
@@ -218,7 +220,6 @@ namespace Banana {
         }
 
         if (ImGui::BeginPopup("AddComponent")) {
-
             if (!m_SelectionContext.HasComponent<CameraComponent>()) {
                 if (ImGui::MenuItem("Camera")) {
                     m_SelectionContext.AddComponent<CameraComponent>();
@@ -322,10 +323,10 @@ namespace Banana {
                     const wchar_t *path = (const wchar_t *) payload->Data;
                     std::filesystem::path texturePath = std::filesystem::path(g_AssetsPath) / path;
                     Ref<Texture2D> texture = Texture2D::Create(texturePath.string());
-                if (texture->IsLoaded())
-                    component.Texture = texture;
-                else
-                    BANANA_WARN("Could not load texture {0}", texturePath.filename().string());
+                    if (texture->IsLoaded())
+                        component.Texture = texture;
+                    else
+                        BANANA_WARN("Could not load texture {0}", texturePath.filename().string());
                 }
                 ImGui::EndDragDropTarget();
             }
@@ -334,16 +335,15 @@ namespace Banana {
         });
 
         DrawComponent<RigidBody2DComponent>("Rigidbody2D", entity, [](auto &component) {
-
-            const char* bodyTypeStrings[] = {"Static", "Dynamic", "Kinematic"};
-            const char* currentBodyTypeString = bodyTypeStrings[(int) component.Type];
+            const char *bodyTypeStrings[] = {"Static", "Dynamic", "Kinematic"};
+            const char *currentBodyTypeString = bodyTypeStrings[(int) component.Type];
 
             if (ImGui::BeginCombo("Body Type", currentBodyTypeString)) {
-                for (int i = 0;i<2;i++) {
+                for (int i = 0; i < 2; i++) {
                     bool isSelected = currentBodyTypeString == bodyTypeStrings[i];
                     if (ImGui::Selectable(bodyTypeStrings[i], isSelected)) {
                         currentBodyTypeString = bodyTypeStrings[i];
-                        component.Type = (RigidBody2DComponent::BodyType)i;
+                        component.Type = (RigidBody2DComponent::BodyType) i;
                     }
 
                     if (isSelected) {
@@ -357,10 +357,9 @@ namespace Banana {
             ImGui::Checkbox("Fixed Rotation", &component.FixedRotation);
         });
 
-        DrawComponent<BoxCollider2DComponent>("Box Collider 2D", entity, [](auto& component)
-        {
+        DrawComponent<BoxCollider2DComponent>("Box Collider 2D", entity, [](auto &component) {
             ImGui::DragFloat2("Offset", glm::value_ptr(component.Offset));
-            ImGui::DragFloat2("Size", glm::value_ptr(component.Offset));
+            ImGui::DragFloat2("Size", glm::value_ptr(component.Size));
             ImGui::DragFloat("Density", &component.Density, 0.01f, 0.0f, 1.0f);
             ImGui::DragFloat("Friction", &component.Friction, 0.01f, 0.0f, 1.0f);
             ImGui::DragFloat("Restitution", &component.Restitution, 0.01f, 0.0f, 1.0f);
