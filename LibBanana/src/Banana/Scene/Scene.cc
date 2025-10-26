@@ -197,7 +197,8 @@ namespace Banana {
                 for (auto entity: group) {
                     const auto &[transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
 
-                    Renderer2D::DrawSprite(transform.GetTransform(), sprite, (int) entity);
+                    // Renderer2D::DrawSprite(transform.GetTransform(), sprite, (int) entity);
+                    Renderer2D::DrawRect(transform.GetTransform(), sprite.Color, (int) entity);
                 }
             }
 
