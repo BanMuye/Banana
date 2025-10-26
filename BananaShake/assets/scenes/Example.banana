@@ -4,9 +4,9 @@ Entities:
     TagComponent:
       Tag: quad
     TransformComponent:
-      Translation: [0, 0, -14.1000004]
+      Translation: [-0.552287817, 2.57582307, -14.1000004]
       Rotation: [0, 0, 0]
-      Scale: [1, 1, 1]
+      Scale: [5.19999981, 1.39999998, 1]
     SpriteRendererComponent:
       Color: [0.972972989, 0, 0, 1]
     RigidBody2DComponent:
@@ -41,9 +41,9 @@ Entities:
     TagComponent:
       Tag: ground
     TransformComponent:
-      Translation: [0, -1.89999998, -14.3999996]
-      Rotation: [0, 0, 0]
-      Scale: [58.9000015, 0.200000003, 1]
+      Translation: [-0.109167583, -5.75726938, -14.3999996]
+      Rotation: [0, 0, 0.685824633]
+      Scale: [58.900013, 0.200000003, 1]
     SpriteRendererComponent:
       Color: [1, 1, 1, 1]
     RigidBody2DComponent:
@@ -52,6 +52,46 @@ Entities:
     BoxCollider2DComponent:
       Offset: [0, 0]
       Size: [0.5, 0.5]
+      Density: 1
+      Friction: 0.5
+      Restitution: 0
+      RestitutionThreshold: 0.5
+  - Entity: 425050878111048078
+    TagComponent:
+      Tag: ground
+    TransformComponent:
+      Translation: [-7.04737949, 1.84808493, -14.3999996]
+      Rotation: [0, 0, -0.721492171]
+      Scale: [58.9000092, 0.200000092, 1]
+    SpriteRendererComponent:
+      Color: [1, 1, 1, 1]
+    RigidBody2DComponent:
+      BodyType: Static
+      FixedRotation: false
+    BoxCollider2DComponent:
+      Offset: [0, 0]
+      Size: [0.5, 0.5]
+      Density: 1
+      Friction: 0.5
+      Restitution: 0
+      RestitutionThreshold: 0.5
+  - Entity: 9523822653602594786
+    TagComponent:
+      Tag: Empty Entity
+    TransformComponent:
+      Translation: [7.90395641, 4.96559572, -14.1000004]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    CircleRendererComponent:
+      Color: [1, 0.926640868, 0, 1]
+      Thickness: 1
+      Fade: 0.00499999989
+    RigidBody2DComponent:
+      BodyType: Dynamic
+      FixedRotation: false
+    CircleCollider2DComponent:
+      Offset: [0, 0]
+      Radius: 0.5
       Density: 1
       Friction: 0.5
       Restitution: 0

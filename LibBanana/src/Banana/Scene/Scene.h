@@ -47,6 +47,11 @@ namespace Banana {
 
         Entity GetPrimaryCameraEntity();
 
+        template<typename... Component>
+        auto GetAllEntitiesWith() {
+            return m_Registry.view<Component...>();
+        }
+
     private:
         template<typename T>
         void OnComponentAdded(Entity entity, T &component);

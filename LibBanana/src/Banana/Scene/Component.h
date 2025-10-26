@@ -139,7 +139,7 @@ namespace Banana {
 
     struct CircleCollider2DComponent {
         glm::vec2 Offset = {0.0f, 0.0f};
-        float Radius = 1.0f;
+        float Radius = 0.5f;
 
         float Density = 1.0f;
         float Friction = 0.5f;
