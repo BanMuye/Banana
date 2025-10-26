@@ -50,7 +50,6 @@ namespace Banana {
 
     template<typename Component>
     static void CopyComponentIfExists(Entity dst, Entity src) {
-
         if (src.HasComponent<Component>()) {
             dst.AddOrReplaceComponent<Component>(src.GetComponent<Component>());
         }
@@ -62,15 +61,14 @@ namespace Banana {
         newScene->m_ViewportWidth = other->m_ViewportWidth;
         newScene->m_ViewportHeight = other->m_ViewportHeight;
 
-        auto& srcSceneRegistry = other->m_Registry;
-        auto& dstSceneRegistry = newScene->m_Registry;
+        auto &srcSceneRegistry = other->m_Registry;
+        auto &dstSceneRegistry = newScene->m_Registry;
         std::unordered_map<UUID, entt::entity> enttMap;
 
         auto idView = srcSceneRegistry.view<IDComponent>();
         for (auto e: idView) {
-
             UUID uuid = srcSceneRegistry.get<IDComponent>(e).ID;
-            const auto& name = srcSceneRegistry.get<TagComponent>(e).Tag;
+            const auto &name = srcSceneRegistry.get<TagComponent>(e).Tag;
             Entity newEntity = newScene->CreateEntityWithUUID(uuid, name);
             enttMap[uuid] = static_cast<entt::entity>(newEntity);
         }
@@ -78,6 +76,7 @@ namespace Banana {
         // Copy components (except IDComponent and TagComponent)
         CopyComponent<TransformComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
         CopyComponent<SpriteRendererComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
+        CopyComponent<CircleRendererComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
         CopyComponent<CameraComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
         CopyComponent<NativeScriptComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
         CopyComponent<RigidBody2DComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
@@ -192,11 +191,24 @@ namespace Banana {
         if (mainCamera) {
             Renderer2D::BeginScene(*mainCamera, cameraTransform);
 
-            const auto &group = m_Registry.view<TransformComponent, SpriteRendererComponent>();
-            for (auto entity: group) {
-                const auto &[transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
+            // draw sprite
+            {
+                const auto &group = m_Registry.view<TransformComponent, SpriteRendererComponent>();
+                for (auto entity: group) {
+                    const auto &[transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
 
-                Renderer2D::DrawSprite(transform.GetTransform(), sprite, (int) entity);
+                    Renderer2D::DrawSprite(transform.GetTransform(), sprite, (int) entity);
+                }
+            }
+
+            // draw circle
+            {
+                const auto &group = m_Registry.view<TransformComponent, CircleRendererComponent>();
+                for (auto entity: group) {
+                    const auto &[transform, circle] = group.get<TransformComponent, CircleRendererComponent>(entity);
+                    Renderer2D::DrawCircle(transform.GetTransform(), circle.Color, circle.Thickness, circle.Fade,
+                                           static_cast<int>(entity));
+                }
             }
 
             Renderer2D::EndScene();
@@ -206,10 +218,24 @@ namespace Banana {
     void Scene::OnUpdateEditor(Timestep ts, EditorCamera &camera) {
         Renderer2D::BeginScene(camera);
 
-        auto group = m_Registry.view<TransformComponent, SpriteRendererComponent>();
-        for (auto entity: group) {
-            auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
-            Renderer2D::DrawSprite(transform.GetTransform(), sprite, (int) entity);
+        // draw sprite
+        {
+            auto group = m_Registry.view<TransformComponent, SpriteRendererComponent>();
+            for (auto entity: group) {
+                auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
+                Renderer2D::DrawSprite(transform.GetTransform(), sprite, (int) entity);
+            }
+        }
+
+        // draw circle
+        {
+            auto group = m_Registry.view<TransformComponent, CircleRendererComponent>();
+            for (auto entity: group) {
+                auto [transform, circle] = group.get<TransformComponent, CircleRendererComponent>(entity);
+
+                Renderer2D::DrawCircle(transform.GetTransform(), circle.Color, circle.Thickness, circle.Fade,
+                                       static_cast<int>(entity));
+            }
         }
 
         Renderer2D::EndScene();
@@ -234,6 +260,7 @@ namespace Banana {
 
         CopyComponentIfExists<TransformComponent>(newEntity, entity);
         CopyComponentIfExists<SpriteRendererComponent>(newEntity, entity);
+        CopyComponentIfExists<CircleRendererComponent>(newEntity, entity);
         CopyComponentIfExists<CameraComponent>(newEntity, entity);
         CopyComponentIfExists<NativeScriptComponent>(newEntity, entity);
         CopyComponentIfExists<RigidBody2DComponent>(newEntity, entity);
@@ -285,6 +312,10 @@ namespace Banana {
 
     template<>
     void Scene::OnComponentAdded<SpriteRendererComponent>(Entity entity, SpriteRendererComponent &component) {
+    }
+
+    template<>
+    void Scene::OnComponentAdded<CircleRendererComponent>(Entity entity, CircleRendererComponent &component) {
     }
 
     template<>
