@@ -18,14 +18,12 @@ namespace Banana {
     extern const std::filesystem::path g_AssetsPath;
 
     EditorLayer::EditorLayer()
-        : Layer("EditorLayer"), m_CameraController(1280.0f / 720.0f), m_SquareColor({0.2f, 0.3f, 0.8f, 1.0f}) {
+        : Layer("EditorLayer"), m_CameraController(1280.0f / 720.0f) {
     }
 
     void EditorLayer::OnAttach() {
         BANANA_PROFILE_FUNCTION();
 
-        m_CheckerboardTexture = Texture2D::Create(
-            R"(D:\Files\S_Documents\Projects\Banana\BananaShake\assets\textures\Checkerboard.png)");
         m_IconPlay = Texture2D::Create(
             R"(D:\Files\S_Documents\Projects\Banana\BananaShake\Resources\Icons\PlayButton.png)");
         m_IconStop = Texture2D::Create(

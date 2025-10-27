@@ -1,0 +1,143 @@
+@startuml
+
+' **************** Class Definition
+
+class Application
+class ApplicationCommandLineArgs
+interface Window
+class LayerStack
+class ImGuiLayer
+
+class WindowProps
+class WindowsWindow
+class GLFWwindow
+class GraphicContext
+class WindowData
+
+interface Layer
+class EditorLayer
+
+class OrthographicCameraController
+interface Framebuffer
+class Scene
+class EditorCamera
+class SceneHierarchyPanel
+class ContentBrowserPanel
+
+class FramebufferTextureSpecification
+class FramebufferAttachmentSpecification
+class FramebufferSpecification
+class OpenGLFramebuffer
+
+class "entt::registry" as enttRegistry
+class SceneSerializer
+class b2World
+
+class "entt::entity" as enttEntity
+class OpenGLTexture2D
+
+interface Camera
+class SceneCamera
+
+class Renderer2D
+class RenderCommand
+class RendererApi
+class Renderer2DData
+
+class QuadVertex
+class CircleVertex
+class LineVertex
+
+interface VertexArray
+interface VertexBuffer
+interface Texture2D
+interface Shader
+class CameraData
+interface UniformBuffer
+class OpenGLUniformBuffer
+
+class OpenGLVertexArray
+class OpenGLVertexBuffer
+Class OpenGLShader
+
+interface IndexBuffer
+class OpenGLIndexBuffer
+class BufferElement
+class BufferLayout
+
+class ShaderLibrary
+class Statistics
+
+' **************** Class Relation 
+
+ApplicationCommandLineArgs <.. Application
+Application --* Window
+Application --* LayerStack
+Application --* ImGuiLayer
+
+WindowProps <.. Window
+Window <|-- WindowsWindow
+WindowsWindow --* GLFWwindow
+WindowsWindow --* GraphicContext
+WindowsWindow --* WindowData
+
+LayerStack --*"0..*" Layer
+Layer <|-- EditorLayer
+Layer <|-- ImGuiLayer
+
+EditorLayer --* Framebuffer
+EditorLayer --* Scene
+EditorLayer --* Entity
+EditorLayer --* EditorCamera
+EditorLayer --* SceneHierarchyPanel
+EditorLayer --* ContentBrowserPanel
+
+Framebuffer <|-- OpenGLFramebuffer
+OpenGLFramebuffer --* FramebufferSpecification
+OpenGLFramebuffer --* FramebufferTextureSpecification
+
+FramebufferSpecification --* FramebufferAttachmentSpecification
+
+Scene --* enttRegistry
+Scene --* b2World
+Scene --* SceneSerializer
+
+Entity --* enttEntity
+
+Texture2D <|-- OpenGLTexture2D
+
+Camera <|-- EditorCamera
+Camera <|-- SceneCamera
+
+Scene ..> Renderer2D
+Renderer2D ..> RenderCommand
+RenderCommand ..> RendererApi
+
+Renderer2D --* Renderer2DData
+
+Renderer2DData "1"--*"0...*" VertexArray
+Renderer2DData "1"--*"0...*" VertexBuffer
+Renderer2DData "1"--*"0...*" Shader
+Renderer2DData "1"--*"0...32" Texture2D
+Renderer2DData "1"--*"0...*" QuadVertex
+Renderer2DData "1"--*"0...*" CircleVertex
+Renderer2DData "1"--*"0...*" LineVertex
+Renderer2DData --* Statistics
+Renderer2DData --* CameraData
+Renderer2DData --* UniformBuffer
+
+VertexArray <|-- OpenGLVertexArray
+OpenGLVertexArray "1"--*"1...*" VertexBuffer 
+OpenGLVertexArray --* IndexBuffer
+
+VertexBuffer <|-- OpenGLVertexBuffer
+OpenGLVertexBuffer ..> BufferLayout
+BufferLayout "1"--*"0...*" BufferElement
+
+IndexBuffer <|-- OpenGLIndexBuffer
+
+Shader <|-- OpenGLShader
+
+UniformBuffer <|-- OpenGLUniformBuffer
+
+@enduml

@@ -1,60 +1,25 @@
 Scene: Untiled
 Entities:
-  - Entity: 16508404429266871698
+  - Entity: 9523822653602594786
     TagComponent:
-      Tag: quad
+      Tag: Empty Entity
     TransformComponent:
-      Translation: [-0.552287817, 2.57582307, -14.1000004]
-      Rotation: [0, 0, 0]
-      Scale: [5.19999981, 1.39999998, 1]
-    SpriteRendererComponent:
-      Color: [0.972972989, 0, 0, 1]
+      Translation: [1.8992275, 5.40844727, -14.1000004]
+      Rotation: [0, 0, 1.22603703]
+      Scale: [0.999999464, 0.999999464, 1]
+    CircleRendererComponent:
+      Color: [1, 0.926640868, 0, 1]
+      Thickness: 1
+      Fade: 0.00499999989
     RigidBody2DComponent:
       BodyType: Dynamic
       FixedRotation: false
-    BoxCollider2DComponent:
+    CircleCollider2DComponent:
       Offset: [0, 0]
-      Size: [0.5, 0.5]
+      Radius: 0.5
       Density: 1
       Friction: 0.5
-      Restitution: 1
-      RestitutionThreshold: 0.5
-  - Entity: 14216706820794689163
-    TagComponent:
-      Tag: Camera
-    TransformComponent:
-      Translation: [0, 0, 0.600000024]
-      Rotation: [0, 0, 0]
-      Scale: [1, 1, 1]
-    CameraComponent:
-      Camera:
-        ProjectionType: 0
-        PerspectiveFOV: 0.785398185
-        PerspectiveNear: 0.00999999978
-        PerspectiveFar: 1000
-        OrthographicSize: 10
-        OrthographicNear: -1
-        OrthographicFar: 1
-      Primary: true
-      FixedAspectRatio: false
-  - Entity: 10939478412356824814
-    TagComponent:
-      Tag: ground
-    TransformComponent:
-      Translation: [-0.109167583, -5.75726938, -14.3999996]
-      Rotation: [0, 0, 0.685824633]
-      Scale: [58.900013, 0.200000003, 1]
-    SpriteRendererComponent:
-      Color: [1, 1, 1, 1]
-    RigidBody2DComponent:
-      BodyType: Static
-      FixedRotation: false
-    BoxCollider2DComponent:
-      Offset: [0, 0]
-      Size: [0.5, 0.5]
-      Density: 1
-      Friction: 0.5
-      Restitution: 0
+      Restitution: 0.560000002
       RestitutionThreshold: 0.5
   - Entity: 425050878111048078
     TagComponent:
@@ -75,24 +40,59 @@ Entities:
       Friction: 0.5
       Restitution: 0
       RestitutionThreshold: 0.5
-  - Entity: 9523822653602594786
+  - Entity: 10939478412356824814
     TagComponent:
-      Tag: Empty Entity
+      Tag: ground
     TransformComponent:
-      Translation: [7.90395641, 4.96559572, -14.1000004]
-      Rotation: [0, 0, 0]
-      Scale: [1, 1, 1]
-    CircleRendererComponent:
-      Color: [1, 0.926640868, 0, 1]
-      Thickness: 1
-      Fade: 0.00499999989
+      Translation: [-0.109167583, -5.75726938, -14.3999996]
+      Rotation: [0, 0, 0.685824633]
+      Scale: [58.900013, 0.200000003, 1]
+    SpriteRendererComponent:
+      Color: [1, 1, 1, 1]
     RigidBody2DComponent:
-      BodyType: Dynamic
+      BodyType: Static
       FixedRotation: false
-    CircleCollider2DComponent:
+    BoxCollider2DComponent:
       Offset: [0, 0]
-      Radius: 0.5
+      Size: [0.5, 0.5]
       Density: 1
       Friction: 0.5
       Restitution: 0
+      RestitutionThreshold: 0.5
+  - Entity: 14216706820794689163
+    TagComponent:
+      Tag: Camera
+    TransformComponent:
+      Translation: [0, 0, 0.600000024]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    CameraComponent:
+      Camera:
+        ProjectionType: 0
+        PerspectiveFOV: 0.785398185
+        PerspectiveNear: 0.00999999978
+        PerspectiveFar: 1000
+        OrthographicSize: 10
+        OrthographicNear: -1
+        OrthographicFar: 1
+      Primary: true
+      FixedAspectRatio: false
+  - Entity: 16508404429266871698
+    TagComponent:
+      Tag: quad
+    TransformComponent:
+      Translation: [-1.26875603, 3.51939225, -14.1000004]
+      Rotation: [0, 0, 0.00108578452]
+      Scale: [5.20000029, 1.40000105, 1]
+    SpriteRendererComponent:
+      Color: [0.972972989, 0, 0, 1]
+    RigidBody2DComponent:
+      BodyType: Dynamic
+      FixedRotation: false
+    BoxCollider2DComponent:
+      Offset: [0, 0]
+      Size: [0.5, 0.5]
+      Density: 1
+      Friction: 0.5
+      Restitution: 0.589999974
       RestitutionThreshold: 0.5
