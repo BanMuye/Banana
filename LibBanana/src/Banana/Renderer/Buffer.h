@@ -73,7 +73,7 @@ namespace Banana {
         BufferLayout() = default;
 
         BufferLayout(const std::initializer_list<BufferElement> &elements) : m_Element(elements) {
-            CalculateOffsetsAndSride();
+            CalculateOffsetsAndStride();
         }
 
         inline uint32_t GetStride() const { return m_Stride; }
@@ -85,7 +85,7 @@ namespace Banana {
         std::vector<BufferElement>::const_iterator end() const { return m_Element.end(); }
 
     private:
-        void CalculateOffsetsAndSride() {
+        void CalculateOffsetsAndStride() {
             uint32_t offset = 0;
             m_Stride = 0;
             for (auto &element: m_Element) {

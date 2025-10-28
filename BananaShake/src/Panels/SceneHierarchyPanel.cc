@@ -241,6 +241,13 @@ namespace Banana {
                 }
             }
 
+            if (!m_SelectionContext.HasComponent<CubeRendererComponent>()) {
+                if (ImGui::MenuItem("CubeRenderer")) {
+                    m_SelectionContext.AddComponent<CubeRendererComponent>();
+                    ImGui::CloseCurrentPopup();
+                }
+            }
+
             if (!m_SelectionContext.HasComponent<RigidBody2DComponent>()) {
                 if (ImGui::MenuItem("RigidBody2D")) {
                     m_SelectionContext.AddComponent<RigidBody2DComponent>();
@@ -350,6 +357,10 @@ namespace Banana {
             ImGui::ColorEdit4("Color", glm::value_ptr(component.Color));
             ImGui::DragFloat("Thickness", &component.Thickness, 0.025f, 0.0f, 1.0f);
             ImGui::DragFloat("Fade", &component.Fade, 0.00025f, 0.0f, 1.0f);
+        });
+
+        DrawComponent<CubeRendererComponent>("Cube Render", entity, [](auto &component) {
+           ImGui::ColorEdit4("Color", glm::value_ptr(component.Color));
         });
 
         DrawComponent<RigidBody2DComponent>("Rigidbody2D", entity, [](auto &component) {

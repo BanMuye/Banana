@@ -16,6 +16,7 @@
 #include "box2d/b2_circle_shape.h"
 #include "box2d/b2_fixture.h"
 #include "ScriptableEntity.h"
+#include "Banana/Renderer/Renderer3D.h"
 
 namespace Banana {
     static b2BodyType RigidBody2DTypeToBox2DBody(RigidBody2DComponent::BodyType bodyType) {
@@ -83,6 +84,7 @@ namespace Banana {
         CopyComponent<RigidBody2DComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
         CopyComponent<BoxCollider2DComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
         CopyComponent<CircleCollider2DComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
+        CopyComponent<CubeRendererComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
 
         return newScene;
     }
@@ -230,6 +232,18 @@ namespace Banana {
             }
 
             Renderer2D::EndScene();
+
+            Renderer3D::BeginScene(*mainCamera, cameraTransform);
+            // draw cube
+            {
+                auto group = m_Registry.view<TransformComponent, CubeRendererComponent>();
+                for (auto entity: group) {
+                    auto [transform, cube] = group.get<TransformComponent, CubeRendererComponent>(entity);
+
+                    Renderer3D::DrawCube(transform.GetTransform(), cube.Color, static_cast<int>(entity));
+                }
+            }
+            Renderer3D::EndScene();
         }
     }
 
@@ -257,6 +271,18 @@ namespace Banana {
         }
 
         Renderer2D::EndScene();
+
+        Renderer3D::BeginScene(camera);
+        // draw cube
+        {
+            auto group = m_Registry.view<TransformComponent, CubeRendererComponent>();
+            for (auto entity: group) {
+                auto [transform, cube] = group.get<TransformComponent, CubeRendererComponent>(entity);
+
+                Renderer3D::DrawCube(transform.GetTransform(), cube.Color, static_cast<int>(entity));
+            }
+        }
+        Renderer3D::EndScene();
     }
 
     void Scene::OnViewportResize(uint32_t width, uint32_t height) {
@@ -284,6 +310,7 @@ namespace Banana {
         CopyComponentIfExists<RigidBody2DComponent>(newEntity, entity);
         CopyComponentIfExists<BoxCollider2DComponent>(newEntity, entity);
         CopyComponentIfExists<CircleCollider2DComponent>(newEntity, entity);
+        CopyComponentIfExists<CubeRendererComponent>(newEntity, entity);
     }
 
     Entity Scene::GetPrimaryCameraEntity() {
@@ -347,5 +374,9 @@ namespace Banana {
 
     template<>
     void Scene::OnComponentAdded<CircleCollider2DComponent>(Entity entity, CircleCollider2DComponent &component) {
+    }
+
+    template<>
+    void Scene::OnComponentAdded<CubeRendererComponent>(Entity entity, CubeRendererComponent &component) {
     }
 }

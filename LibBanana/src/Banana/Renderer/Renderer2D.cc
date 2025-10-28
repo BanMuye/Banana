@@ -293,11 +293,7 @@ namespace Banana {
 
     void Renderer2D::FlushAndReset() {
         EndScene();
-        s_Data.QuadIndexCount = 0;
-        // reset vertex buffer point to base
-        s_Data.QuadVertexBufferPtr = s_Data.QuadVertexBufferBase;
-        // reset texture slot index to 1
-        s_Data.TextureSlotIndex = 1;
+        StartBatch();
     }
 
 

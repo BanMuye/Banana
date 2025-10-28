@@ -153,6 +153,14 @@ namespace Banana {
 
         CircleCollider2DComponent(const CircleCollider2DComponent &) = default;
     };
+
+    struct CubeRendererComponent {
+        glm::vec4 Color = {1.0f, 1.0f, 1.0f, 1.0f};
+
+        CubeRendererComponent() = default;
+
+        CubeRendererComponent(const CubeRendererComponent &) = default;
+    };
 }
 
 #endif //COMPONENT_H

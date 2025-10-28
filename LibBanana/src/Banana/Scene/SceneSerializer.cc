@@ -221,8 +221,8 @@ namespace Banana {
             out << YAML::Key << "Size" << YAML::Value << bc2dComponent.Size;
             out << YAML::Key << "Density" << YAML::Value << bc2dComponent.Density;
             out << YAML::Key << "Friction" << YAML::Value << bc2dComponent.Friction;
-            out << YAML::Key << "Restitution" << YAML::Value << bc2dComponent.Restitution;
             out << YAML::Key << "RestitutionThreshold" << YAML::Value << bc2dComponent.RestitutionThreshold;
+            out << YAML::Key << "Restitution" << YAML::Value << bc2dComponent.Restitution;
 
             out << YAML::EndMap; // BoxCollider2DComponent
         }
@@ -241,6 +241,16 @@ namespace Banana {
             out << YAML::Key << "RestitutionThreshold" << YAML::Value << cc2dComponent.RestitutionThreshold;
 
             out << YAML::EndMap; // BoxCollider2DComponent
+        }
+
+        if (entity.HasComponent<CubeRendererComponent>()) {
+            out << YAML::Key << "CubeRendererComponent";
+            out << YAML::BeginMap;
+
+            auto &cube = entity.GetComponent<CubeRendererComponent>();
+            out << YAML::Key << "Color" << YAML::Value << cube.Color;
+
+            out << YAML::EndMap;
         }
 
         out << YAML::EndMap; // Entity
@@ -367,6 +377,12 @@ namespace Banana {
                     cc2d.Friction = circleCollider2DComponent["Friction"].as<float>();
                     cc2d.Restitution = circleCollider2DComponent["Restitution"].as<float>();
                     cc2d.RestitutionThreshold = circleCollider2DComponent["RestitutionThreshold"].as<float>();
+                }
+
+                auto cubeRendererComponent = entity["CubeRendererComponent"];
+                if (cubeRendererComponent) {
+                    auto &cube = deserializedEntity.AddComponent<CubeRendererComponent>();
+                    cube.Color = cubeRendererComponent["Color"].as<glm::vec4>();
                 }
             }
         }
