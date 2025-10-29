@@ -31,7 +31,6 @@ namespace Banana {
                 MouseZoom(delta.y);
             }
         }
-
         UpdateView();
     }
 
@@ -111,7 +110,7 @@ namespace Banana {
     }
 
     float EditorCamera::RotationSpeed() const {
-        return 0.0f;
+        return 1.0f;
     }
 
     float EditorCamera::ZoomSpeed() const {

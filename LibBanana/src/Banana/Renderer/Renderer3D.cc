@@ -65,53 +65,53 @@ namespace Banana {
 
         uint32_t *cubeIndices = new uint32_t[Renderer3DData::MaxIndices];
         for (uint32_t i = 0; i < Renderer3DData::MaxIndices; i += 36) {
-            cubeIndices[i] = 0;
-            cubeIndices[i + 1] = 1;
-            cubeIndices[i + 2] = 2;
+            cubeIndices[i] = (i / 36) * 8 + 0;
+            cubeIndices[i + 1] = (i / 36) * 8 + 1;
+            cubeIndices[i + 2] = (i / 36) * 8 + 2;
 
-            cubeIndices[i + 3] = 2;
-            cubeIndices[i + 4] = 3;
-            cubeIndices[i + 5] = 0;
+            cubeIndices[i + 3] = (i / 36) * 8 + 2;
+            cubeIndices[i + 4] = (i / 36) * 8 + 3;
+            cubeIndices[i + 5] = (i / 36) * 8 + 0;
 
-            cubeIndices[i + 6] = 4;
-            cubeIndices[i + 7] = 5;
-            cubeIndices[i + 8] = 6;
+            cubeIndices[i + 6] = (i / 36) * 8 + 4;
+            cubeIndices[i + 7] = (i / 36) * 8 + 5;
+            cubeIndices[i + 8] = (i / 36) * 8 + 6;
 
-            cubeIndices[i + 9] = 6;
-            cubeIndices[i + 10] = 7;
-            cubeIndices[i + 11] = 4;
+            cubeIndices[i + 9] = (i / 36) * 8 + 6;
+            cubeIndices[i + 10] = (i / 36) * 8 + 7;
+            cubeIndices[i + 11] = (i / 36) * 8 + 4;
 
-            cubeIndices[i + 12] = 4;
-            cubeIndices[i + 13] = 0;
-            cubeIndices[i + 14] = 3;
+            cubeIndices[i + 12] = (i / 36) * 8 + 4;
+            cubeIndices[i + 13] = (i / 36) * 8 + 0;
+            cubeIndices[i + 14] = (i / 36) * 8 + 3;
 
-            cubeIndices[i + 15] = 3;
-            cubeIndices[i + 16] = 7;
-            cubeIndices[i + 17] = 4;
+            cubeIndices[i + 15] = (i / 36) * 8 + 3;
+            cubeIndices[i + 16] = (i / 36) * 8 + 7;
+            cubeIndices[i + 17] = (i / 36) * 8 + 4;
 
-            cubeIndices[i + 18] = 5;
-            cubeIndices[i + 19] = 1;
-            cubeIndices[i + 20] = 2;
+            cubeIndices[i + 18] = (i / 36) * 8 + 5;
+            cubeIndices[i + 19] = (i / 36) * 8 + 1;
+            cubeIndices[i + 20] = (i / 36) * 8 + 2;
 
-            cubeIndices[i + 21] = 2;
-            cubeIndices[i + 22] = 6;
-            cubeIndices[i + 23] = 5;
+            cubeIndices[i + 21] = (i / 36) * 8 + 2;
+            cubeIndices[i + 22] = (i / 36) * 8 + 6;
+            cubeIndices[i + 23] = (i / 36) * 8 + 5;
 
-            cubeIndices[i + 24] = 4;
-            cubeIndices[i + 25] = 5;
-            cubeIndices[i + 26] = 1;
+            cubeIndices[i + 24] = (i / 36) * 8 + 4;
+            cubeIndices[i + 25] = (i / 36) * 8 + 5;
+            cubeIndices[i + 26] = (i / 36) * 8 + 1;
 
-            cubeIndices[i + 27] = 5;
-            cubeIndices[i + 28] = 1;
-            cubeIndices[i + 29] = 0;
+            cubeIndices[i + 27] = (i / 36) * 8 + 5;
+            cubeIndices[i + 28] = (i / 36) * 8 + 1;
+            cubeIndices[i + 29] = (i / 36) * 8 + 0;
 
-            cubeIndices[i + 30] = 7;
-            cubeIndices[i + 31] = 6;
-            cubeIndices[i + 32] = 2;
+            cubeIndices[i + 30] = (i / 36) * 8 + 7;
+            cubeIndices[i + 31] = (i / 36) * 8 + 6;
+            cubeIndices[i + 32] = (i / 36) * 8 + 2;
 
-            cubeIndices[i + 33] = 2;
-            cubeIndices[i + 34] = 3;
-            cubeIndices[i + 35] = 7;
+            cubeIndices[i + 33] = (i / 36) * 8 + 2;
+            cubeIndices[i + 34] = (i / 36) * 8 + 3;
+            cubeIndices[i + 35] = (i / 36) * 8 + 7;
         }
 
         Ref<IndexBuffer> cubeIndexBuffer = IndexBuffer::Create(cubeIndices, Renderer3DData::MaxIndices);
@@ -145,6 +145,7 @@ namespace Banana {
         s_Data.CameraBuffer.ViewProjection = camera.GetViewProjection();
         s_Data.CameraUniformBuffer->SetData(&s_Data.CameraBuffer, sizeof(s_Data.CameraBuffer));
 
+        ResetStats();
         StartBatch();
     }
 
@@ -154,6 +155,7 @@ namespace Banana {
         s_Data.CameraBuffer.ViewProjection = camera.GetProjection() * glm::inverse(transform);
         s_Data.CameraUniformBuffer->SetData(&s_Data.CameraBuffer, sizeof(s_Data.CameraBuffer));
 
+        ResetStats();
         StartBatch();
     }
 

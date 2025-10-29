@@ -1,6 +1,6 @@
-#include "EditorLayer.h"
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include "EditorLayer.h"
 
 #include "imgui.h"
 #include "ImGuizmo.h"
@@ -10,6 +10,7 @@
 #include "Banana/Math/Math.h"
 #include "Banana/Renderer/RenderCommand.h"
 #include "Banana/Renderer/Renderer2D.h"
+#include "Banana/Renderer/Renderer3D.h"
 #include "Banana/Scene/Component.h"
 #include "Banana/Scene/SceneSerializer.h"
 #include "Banana/Utils/PlatformUtils.h"
@@ -18,7 +19,7 @@ namespace Banana {
     extern const std::filesystem::path g_AssetsPath;
 
     EditorLayer::EditorLayer()
-        : Layer("EditorLayer"), m_CameraController(1280.0f / 720.0f) {
+        : Layer("EditorLayer") {
     }
 
     void EditorLayer::OnAttach() {
@@ -63,7 +64,6 @@ namespace Banana {
             m_ViewportSize.x > 0.0f && m_ViewportSize.y > 0.0f && (
                 specification.Width != m_ViewportSize.x || specification.Height != m_ViewportSize.y)) {
             m_Framebuffer->Resize(uint32_t(m_ViewportSize.x), uint32_t(m_ViewportSize.y));
-            m_CameraController.OnResize(m_ViewportSize.x, m_ViewportSize.y);
             m_EditorCamera.SetViewportSize(m_ViewportSize.x, m_ViewportSize.y);
             m_ActiveScene->OnViewportResize(uint32_t(m_ViewportSize.x), uint32_t(m_ViewportSize.y));
         }
@@ -84,9 +84,8 @@ namespace Banana {
             switch (m_SceneState) {
                 case SceneState::Edit: {
                     if (m_ViewportFocused) {
-                        m_CameraController.OnUpdate(ts);
+                        m_EditorCamera.OnUpdate(ts);
                     }
-                    m_EditorCamera.OnUpdate(ts);
                     m_ActiveScene->OnUpdateEditor(ts, m_EditorCamera);
                     break;
                 }
@@ -204,12 +203,19 @@ namespace Banana {
         }
         ImGui::Text("Hovered Entity: %s", name.c_str());
 
-        auto stats = Renderer2D::GetStats();
+        auto stats2D = Renderer2D::GetStats();
         ImGui::Text("Renderer2D Stats:");
-        ImGui::Text("Draw Calls: %d", stats.DrawCalls);
-        ImGui::Text("Quads: %d", stats.QuadCount);
-        ImGui::Text("Vertices: %d", stats.GetTotalVertexCount());
-        ImGui::Text("Indices: %d", stats.GetTotalIndexCount());
+        ImGui::Text("Draw Calls: %d", stats2D.DrawCalls);
+        ImGui::Text("Quads: %d", stats2D.QuadCount);
+        ImGui::Text("Vertices: %d", stats2D.GetTotalVertexCount());
+        ImGui::Text("Indices: %d", stats2D.GetTotalIndexCount());
+
+        auto stats3D = Renderer3D::GetStats();
+        ImGui::Text("Renderer3D Stats:");
+        ImGui::Text("Draw Calls: %d", stats3D.DrawCalls);
+        ImGui::Text("Quads: %d", stats3D.CubeCount);
+        ImGui::Text("Vertices: %d", stats3D.GetTotalVertexCount());
+        ImGui::Text("Indices: %d", stats3D.GetTotalIndexCount());
 
         ImGui::End();
 
@@ -341,7 +347,7 @@ namespace Banana {
 
 
     void EditorLayer::OnEvent(Event &e) {
-        m_CameraController.OnEvent(e);
+        m_EditorCamera.OnEvent(e);
         EventDispatcher dispatcher(e);
         dispatcher.Dispatch<KeyPressedEvent>(BANANA_BIND_EVENT_FN(EditorLayer::OnKeyPressed));
         dispatcher.Dispatch<MouseButtonPressedEvent>(BANANA_BIND_EVENT_FN(EditorLayer::OnMouseButtonPressed));

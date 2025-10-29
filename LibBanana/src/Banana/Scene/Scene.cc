@@ -250,6 +250,9 @@ namespace Banana {
     void Scene::OnUpdateEditor(Timestep ts, EditorCamera &camera) {
         Renderer2D::BeginScene(camera);
 
+        // camera control
+        camera.OnUpdate(ts);
+
         // draw sprite
         {
             auto group = m_Registry.view<TransformComponent, SpriteRendererComponent>();

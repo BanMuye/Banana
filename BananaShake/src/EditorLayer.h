@@ -64,7 +64,6 @@ namespace Banana {
         void UI_Toolbar();
 
     private:
-        Banana::OrthographicCameraController m_CameraController;
 
         // Temp
         Ref<Framebuffer> m_Framebuffer;
