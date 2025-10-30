@@ -248,7 +248,20 @@ namespace Banana {
             out << YAML::BeginMap;
 
             auto &cube = entity.GetComponent<CubeRendererComponent>();
-            out << YAML::Key << "Color" << YAML::Value << cube.Color;
+            out << YAML::Key << "Ambient" << YAML::Value << cube.Ambient;
+            out << YAML::Key << "Diffuse" << YAML::Value << cube.Diffuse;
+            out << YAML::Key << "Specular" << YAML::Value << cube.Specular;
+            out << YAML::Key << "Shininess" << YAML::Value << cube.Shininess;
+
+            out << YAML::EndMap;
+        }
+
+        if (entity.HasComponent<PointLightComponent>()) {
+            out << YAML::Key << "PointLightComponent";
+            out << YAML::BeginMap;
+
+            auto &light = entity.GetComponent<PointLightComponent>();
+            out << YAML::Key << "Color" << YAML::Value << light.Color;
 
             out << YAML::EndMap;
         }
@@ -382,7 +395,16 @@ namespace Banana {
                 auto cubeRendererComponent = entity["CubeRendererComponent"];
                 if (cubeRendererComponent) {
                     auto &cube = deserializedEntity.AddComponent<CubeRendererComponent>();
-                    cube.Color = cubeRendererComponent["Color"].as<glm::vec4>();
+                    cube.Ambient = cubeRendererComponent["Ambient"].as<glm::vec4>();
+                    cube.Diffuse = cubeRendererComponent["Diffuse"].as<glm::vec4>();
+                    cube.Specular = cubeRendererComponent["Specular"].as<glm::vec4>();
+                    cube.Shininess = cubeRendererComponent["Shininess"].as<float>();
+                }
+
+                auto pointLightComponent = entity["PointLightComponent"];
+                if (pointLightComponent) {
+                    auto &plComponent = deserializedEntity.AddComponent<PointLightComponent>();
+                    plComponent.Color = pointLightComponent["Color"].as<glm::vec4>();
                 }
             }
         }

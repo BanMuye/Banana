@@ -72,7 +72,7 @@ namespace Banana {
         Renderer2D::ResetStats(); {
             BANANA_PROFILE_SCOPE("Renderer Prep");
             m_Framebuffer->Bind();
-            RenderCommand::SetClearColor({0.1f, 0.3f, 0.5f, 1});
+            RenderCommand::SetClearColor({0.05f, 0.05f, 0.05f, 1});
             RenderCommand::Clear();
             m_Framebuffer->ClearAttachment(1, -1);
         } {

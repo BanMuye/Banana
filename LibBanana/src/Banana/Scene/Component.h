@@ -155,11 +155,21 @@ namespace Banana {
     };
 
     struct CubeRendererComponent {
-        glm::vec4 Color = {1.0f, 1.0f, 1.0f, 1.0f};
+        glm::vec4 Ambient = {1.0f, 1.0f, 1.0f, 1.0f};
+        glm::vec4 Diffuse = {1.0f, 1.0f, 1.0f, 1.0f};
+        glm::vec4 Specular = {1.0f, 1.0f, 1.0f, 1.0f};
+        float Shininess = 1.0f;
 
         CubeRendererComponent() = default;
 
         CubeRendererComponent(const CubeRendererComponent &) = default;
+    };
+
+    struct PointLightComponent {
+        glm::vec4 Color = {1.0f, 1.0f, 1.0f, 1.0f};
+
+        PointLightComponent() = default;
+        PointLightComponent(const PointLightComponent &) = default;
     };
 }
 

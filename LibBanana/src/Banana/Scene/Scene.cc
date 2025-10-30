@@ -240,7 +240,8 @@ namespace Banana {
                 for (auto entity: group) {
                     auto [transform, cube] = group.get<TransformComponent, CubeRendererComponent>(entity);
 
-                    Renderer3D::DrawCube(transform.GetTransform(), cube.Color, static_cast<int>(entity));
+                    Renderer3D::DrawCube(transform.GetTransform(), cube.Ambient, cube.Diffuse, cube.Specular,
+                                         cube.Shininess, static_cast<int>(entity));
                 }
             }
             Renderer3D::EndScene();
@@ -275,14 +276,25 @@ namespace Banana {
 
         Renderer2D::EndScene();
 
-        Renderer3D::BeginScene(camera);
+        // todo @Banmuye temp code, delete in the future
+        auto group = m_Registry.view<TransformComponent, PointLightComponent>();
+        if (group.begin() != group.end()) {
+            auto [lightTransform, light] = group.get<TransformComponent, PointLightComponent>(*group.begin());
+            glm::vec4 initLightPos{0.0f, 0.0f, 0.0f, 1.0f};
+            auto viewPosition = camera.GetPosition();
+            Renderer3D::BeginScene(camera, light.Color,  lightTransform.GetTransform()*initLightPos, viewPosition);
+        } else {
+            Renderer3D::BeginScene(camera);
+        }
+
         // draw cube
         {
             auto group = m_Registry.view<TransformComponent, CubeRendererComponent>();
             for (auto entity: group) {
                 auto [transform, cube] = group.get<TransformComponent, CubeRendererComponent>(entity);
 
-                Renderer3D::DrawCube(transform.GetTransform(), cube.Color, static_cast<int>(entity));
+                Renderer3D::DrawCube(transform.GetTransform(), cube.Ambient, cube.Diffuse, cube.Specular,
+                                     cube.Shininess, static_cast<int>(entity));
             }
         }
         Renderer3D::EndScene();
@@ -381,5 +393,9 @@ namespace Banana {
 
     template<>
     void Scene::OnComponentAdded<CubeRendererComponent>(Entity entity, CubeRendererComponent &component) {
+    }
+
+    template<>
+    void Scene::OnComponentAdded<PointLightComponent>(Entity entity, PointLightComponent &component) {
     }
 }

@@ -268,6 +268,13 @@ namespace Banana {
                 }
             }
 
+            if (!m_SelectionContext.HasComponent<PointLightComponent>()) {
+                if (ImGui::MenuItem("PointLight")) {
+                    m_SelectionContext.AddComponent<PointLightComponent>();
+                    ImGui::CloseCurrentPopup();
+                }
+            }
+
             ImGui::EndPopup();
         }
 
@@ -359,7 +366,14 @@ namespace Banana {
         });
 
         DrawComponent<CubeRendererComponent>("Cube Render", entity, [](auto &component) {
-           ImGui::ColorEdit4("Color", glm::value_ptr(component.Color));
+            ImGui::ColorEdit4("Ambient", glm::value_ptr(component.Ambient));
+            ImGui::ColorEdit4("Diffuse", glm::value_ptr(component.Diffuse));
+            ImGui::ColorEdit4("Specular", glm::value_ptr(component.Specular));
+            ImGui::DragFloat("Shininess", &component.Shininess, 0.125f, 0.0f, 1000.0f);
+        });
+
+        DrawComponent<PointLightComponent>("Point Light", entity, [](auto &component) {
+            ImGui::ColorEdit4("Color", glm::value_ptr(component.Color));
         });
 
         DrawComponent<RigidBody2DComponent>("Rigidbody2D", entity, [](auto &component) {

@@ -13,7 +13,16 @@
 namespace Banana {
     struct CubeVertex {
         glm::vec3 Position;
-        glm::vec4 Color;
+        glm::vec3 Normal;
+
+        struct Material {
+            glm::vec4 Ambient;
+            glm::vec4 Diffuse;
+            glm::vec4 Specular;
+            float Shininess;
+        };
+
+        Material Material;
 
         // Editor-only
         int EntityID;
@@ -21,8 +30,10 @@ namespace Banana {
 
     struct Renderer3DData {
         static constexpr uint32_t MaxCube = 10000;
-        static constexpr uint32_t MaxVertices = MaxCube * 8;
-        static constexpr uint32_t MaxIndices = MaxCube * 6 * 6;
+        static constexpr uint32_t SingleCubeVertexCount = 36;
+        static constexpr uint32_t SingleCubeIndicesCount = 36;
+        static constexpr uint32_t MaxVertices = MaxCube * SingleCubeVertexCount;
+        static constexpr uint32_t MaxIndices = MaxCube * SingleCubeIndicesCount;
 
         Ref<VertexArray> CubeVertexArray;
         Ref<VertexBuffer> CubeVertexBuffer;
@@ -33,7 +44,7 @@ namespace Banana {
         CubeVertex *CubeVertexBufferBase = nullptr;
         CubeVertex *CubeVertexBufferPtr = nullptr;
 
-        glm::vec4 CubeVertexPositions[8]{};
+        glm::vec3 CubeVertexPositions[SingleCubeVertexCount][2];
 
         Renderer3D::Statistics Stats{};
 
@@ -54,7 +65,11 @@ namespace Banana {
         s_Data.CubeVertexBuffer = VertexBuffer::Create(Renderer3DData::MaxVertices * sizeof(CubeVertex));
         s_Data.CubeVertexBuffer->SetLayout({
             {ShaderDataType::Float3, "a_Position"},
-            {ShaderDataType::Float4, "a_Color"},
+            {ShaderDataType::Float3, "a_Normal"},
+            {ShaderDataType::Float4, "a_Ambient"},
+            {ShaderDataType::Float4, "a_Diffuse"},
+            {ShaderDataType::Float4, "a_Specular"},
+            {ShaderDataType::Float, "a_Shininess"},
             {ShaderDataType::Int, "a_EntityID"}
         });
 
@@ -64,54 +79,8 @@ namespace Banana {
         s_Data.CubeVertexBufferPtr = s_Data.CubeVertexBufferBase;
 
         uint32_t *cubeIndices = new uint32_t[Renderer3DData::MaxIndices];
-        for (uint32_t i = 0; i < Renderer3DData::MaxIndices; i += 36) {
-            cubeIndices[i] = (i / 36) * 8 + 0;
-            cubeIndices[i + 1] = (i / 36) * 8 + 1;
-            cubeIndices[i + 2] = (i / 36) * 8 + 2;
-
-            cubeIndices[i + 3] = (i / 36) * 8 + 2;
-            cubeIndices[i + 4] = (i / 36) * 8 + 3;
-            cubeIndices[i + 5] = (i / 36) * 8 + 0;
-
-            cubeIndices[i + 6] = (i / 36) * 8 + 4;
-            cubeIndices[i + 7] = (i / 36) * 8 + 5;
-            cubeIndices[i + 8] = (i / 36) * 8 + 6;
-
-            cubeIndices[i + 9] = (i / 36) * 8 + 6;
-            cubeIndices[i + 10] = (i / 36) * 8 + 7;
-            cubeIndices[i + 11] = (i / 36) * 8 + 4;
-
-            cubeIndices[i + 12] = (i / 36) * 8 + 4;
-            cubeIndices[i + 13] = (i / 36) * 8 + 0;
-            cubeIndices[i + 14] = (i / 36) * 8 + 3;
-
-            cubeIndices[i + 15] = (i / 36) * 8 + 3;
-            cubeIndices[i + 16] = (i / 36) * 8 + 7;
-            cubeIndices[i + 17] = (i / 36) * 8 + 4;
-
-            cubeIndices[i + 18] = (i / 36) * 8 + 5;
-            cubeIndices[i + 19] = (i / 36) * 8 + 1;
-            cubeIndices[i + 20] = (i / 36) * 8 + 2;
-
-            cubeIndices[i + 21] = (i / 36) * 8 + 2;
-            cubeIndices[i + 22] = (i / 36) * 8 + 6;
-            cubeIndices[i + 23] = (i / 36) * 8 + 5;
-
-            cubeIndices[i + 24] = (i / 36) * 8 + 4;
-            cubeIndices[i + 25] = (i / 36) * 8 + 5;
-            cubeIndices[i + 26] = (i / 36) * 8 + 1;
-
-            cubeIndices[i + 27] = (i / 36) * 8 + 5;
-            cubeIndices[i + 28] = (i / 36) * 8 + 1;
-            cubeIndices[i + 29] = (i / 36) * 8 + 0;
-
-            cubeIndices[i + 30] = (i / 36) * 8 + 7;
-            cubeIndices[i + 31] = (i / 36) * 8 + 6;
-            cubeIndices[i + 32] = (i / 36) * 8 + 2;
-
-            cubeIndices[i + 33] = (i / 36) * 8 + 2;
-            cubeIndices[i + 34] = (i / 36) * 8 + 3;
-            cubeIndices[i + 35] = (i / 36) * 8 + 7;
+        for (uint32_t i = 0; i < Renderer3DData::MaxIndices; i++) {
+            cubeIndices[i] = i;
         }
 
         Ref<IndexBuffer> cubeIndexBuffer = IndexBuffer::Create(cubeIndices, Renderer3DData::MaxIndices);
@@ -123,14 +92,57 @@ namespace Banana {
                                            R"(D:\Files\S_Documents\Projects\Banana\BananaShake\assets\shaders\cube_geometry_shader.glsl)"
         );
 
-        s_Data.CubeVertexPositions[0] = {-0.5f, -0.5f, -0.5f, 1.0f};
-        s_Data.CubeVertexPositions[1] = {0.5f, -0.5f, -0.5f, 1.0f};
-        s_Data.CubeVertexPositions[2] = {0.5f, 0.5f, -0.5f, 1.0f};
-        s_Data.CubeVertexPositions[3] = {-0.5f, 0.5f, -0.5f, 1.0f};
-        s_Data.CubeVertexPositions[4] = {-0.5f, -0.5f, 0.5f, 1.0f};
-        s_Data.CubeVertexPositions[5] = {0.5f, -0.5f, 0.5f, 1.0f};
-        s_Data.CubeVertexPositions[6] = {0.5f, 0.5f, 0.5f, 1.0f};
-        s_Data.CubeVertexPositions[7] = {-0.5f, 0.5f, 0.5f, 1.0f};
+        float rawData[] = {
+            // 每组：位置(x,y,z)，法线(nx,ny,nz)
+            -0.5f, -0.5f, -0.5f, 0.0f, 0.0f, -1.0f,
+            0.5f, -0.5f, -0.5f, 0.0f, 0.0f, -1.0f,
+            0.5f, 0.5f, -0.5f, 0.0f, 0.0f, -1.0f,
+            0.5f, 0.5f, -0.5f, 0.0f, 0.0f, -1.0f,
+            -0.5f, 0.5f, -0.5f, 0.0f, 0.0f, -1.0f,
+            -0.5f, -0.5f, -0.5f, 0.0f, 0.0f, -1.0f,
+
+            -0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 1.0f,
+            0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 1.0f,
+            0.5f, 0.5f, 0.5f, 0.0f, 0.0f, 1.0f,
+            0.5f, 0.5f, 0.5f, 0.0f, 0.0f, 1.0f,
+            -0.5f, 0.5f, 0.5f, 0.0f, 0.0f, 1.0f,
+            -0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 1.0f,
+
+            -0.5f, 0.5f, 0.5f, -1.0f, 0.0f, 0.0f,
+            -0.5f, 0.5f, -0.5f, -1.0f, 0.0f, 0.0f,
+            -0.5f, -0.5f, -0.5f, -1.0f, 0.0f, 0.0f,
+            -0.5f, -0.5f, -0.5f, -1.0f, 0.0f, 0.0f,
+            -0.5f, -0.5f, 0.5f, -1.0f, 0.0f, 0.0f,
+            -0.5f, 0.5f, 0.5f, -1.0f, 0.0f, 0.0f,
+
+            0.5f, 0.5f, 0.5f, 1.0f, 0.0f, 0.0f,
+            0.5f, 0.5f, -0.5f, 1.0f, 0.0f, 0.0f,
+            0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f,
+            0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f,
+            0.5f, -0.5f, 0.5f, 1.0f, 0.0f, 0.0f,
+            0.5f, 0.5f, 0.5f, 1.0f, 0.0f, 0.0f,
+
+            -0.5f, -0.5f, -0.5f, 0.0f, -1.0f, 0.0f,
+            0.5f, -0.5f, -0.5f, 0.0f, -1.0f, 0.0f,
+            0.5f, -0.5f, 0.5f, 0.0f, -1.0f, 0.0f,
+            0.5f, -0.5f, 0.5f, 0.0f, -1.0f, 0.0f,
+            -0.5f, -0.5f, 0.5f, 0.0f, -1.0f, 0.0f,
+            -0.5f, -0.5f, -0.5f, 0.0f, -1.0f, 0.0f,
+
+            -0.5f, 0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
+            0.5f, 0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
+            0.5f, 0.5f, 0.5f, 0.0f, 1.0f, 0.0f,
+            0.5f, 0.5f, 0.5f, 0.0f, 1.0f, 0.0f,
+            -0.5f, 0.5f, 0.5f, 0.0f, 1.0f, 0.0f,
+            -0.5f, 0.5f, -0.5f, 0.0f, 1.0f, 0.0f
+        };
+
+        for (int i = 0; i < 36; ++i) {
+            s_Data.CubeVertexPositions[i][0] = glm::vec3(rawData[i * 6 + 0], rawData[i * 6 + 1], rawData[i * 6 + 2]);
+            // 位置
+            s_Data.CubeVertexPositions[i][1] = glm::vec3(rawData[i * 6 + 3], rawData[i * 6 + 4], rawData[i * 6 + 5]);
+            // 法线
+        }
 
         s_Data.CameraUniformBuffer = UniformBuffer::Create(sizeof(Renderer3DData::CameraData), 0);
     };
@@ -159,24 +171,45 @@ namespace Banana {
         StartBatch();
     }
 
+    void Renderer3D::BeginScene(const EditorCamera &camera, const glm::vec4 &lightColor, const glm::vec3 &lightPos, const glm::vec3& viewPos) {
+        BANANA_PROFILE_FUNCTION();
+
+        s_Data.CameraBuffer.ViewProjection = camera.GetViewProjection();
+        s_Data.CameraUniformBuffer->SetData(&s_Data.CameraBuffer, sizeof(s_Data.CameraBuffer));
+
+        s_Data.CubeShader->Bind();
+        s_Data.CubeShader->SetFloat4("u_LightColor", lightColor);
+        s_Data.CubeShader->SetFloat3("u_LightPos", lightPos);
+        s_Data.CubeShader->SetFloat3("u_ViewPos", viewPos);
+
+        ResetStats();
+        StartBatch();
+    }
+
     void Renderer3D::EndScene() {
         BANANA_PROFILE_FUNCTION();
 
         Flush();
     }
 
-    void Renderer3D::DrawCube(const glm::mat4 &transform, const glm::vec4 &color, int entityID) {
+    void Renderer3D::DrawCube(const glm::mat4 &transform, const glm::vec4 &ambient,
+                              const glm::vec4 &diffuse, const glm::vec4 &specular, const float &shininess,
+                              int entityID) {
         BANANA_PROFILE_FUNCTION();
 
-        constexpr size_t cubeVertexCount = 8;
+        constexpr size_t cubeVertexCount = Renderer3DData::SingleCubeVertexCount;
 
         if (s_Data.CubeIndexCount >= Renderer3DData::MaxIndices) {
             FlushAndReset();
         }
 
         for (size_t i = 0; i < cubeVertexCount; i++) {
-            s_Data.CubeVertexBufferPtr->Position = transform * s_Data.CubeVertexPositions[i];
-            s_Data.CubeVertexBufferPtr->Color = color;
+            s_Data.CubeVertexBufferPtr->Position = transform * glm::vec4(s_Data.CubeVertexPositions[i][0], 1.0f);
+            s_Data.CubeVertexBufferPtr->Normal = s_Data.CubeVertexPositions[i][1];
+            s_Data.CubeVertexBufferPtr->Material.Ambient = ambient;
+            s_Data.CubeVertexBufferPtr->Material.Diffuse = diffuse;
+            s_Data.CubeVertexBufferPtr->Material.Specular = specular;
+            s_Data.CubeVertexBufferPtr->Material.Shininess = shininess;
             s_Data.CubeVertexBufferPtr->EntityID = entityID;
             s_Data.CubeVertexBufferPtr++;
         }

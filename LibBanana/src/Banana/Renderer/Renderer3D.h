@@ -18,9 +18,13 @@ namespace Banana {
 
         static void BeginScene(const Camera &camera, glm::mat4 &transform);
 
+        // todo @Banmuye temp method, just to test light functions
+        static void BeginScene(const EditorCamera &camera, const glm::vec4 &lightColor, const glm::vec3 &lightPos, const glm::vec3 &viewPos);
+
         static void EndScene();
 
-        static void DrawCube(const glm::mat4 &transform, const glm::vec4 &color, const int entityID);
+        static void DrawCube(const glm::mat4 &transform, const glm::vec4 &ambient,
+                             const glm::vec4 &diffuse, const glm::vec4 &specular, const float &shininess, int entityID);
 
         struct Statistics {
             uint32_t DrawCalls;
@@ -40,7 +44,6 @@ namespace Banana {
         static void Flush();
 
         static void FlushAndReset();
-
     };
 }
 
