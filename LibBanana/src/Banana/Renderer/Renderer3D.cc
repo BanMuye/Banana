@@ -34,6 +34,7 @@ namespace Banana {
         static constexpr uint32_t SingleCubeIndicesCount = 36;
         static constexpr uint32_t MaxVertices = MaxCube * SingleCubeVertexCount;
         static constexpr uint32_t MaxIndices = MaxCube * SingleCubeIndicesCount;
+        static constexpr glm::vec4 InitialCameraPosition = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
 
         Ref<VertexArray> CubeVertexArray;
         Ref<VertexBuffer> CubeVertexBuffer;
@@ -50,10 +51,12 @@ namespace Banana {
 
         struct CameraData {
             glm::mat4 ViewProjection;
+            glm::vec3 Position;
         };
 
-        CameraData CameraBuffer{};
+        CameraData CameraBuffer;
         Ref<UniformBuffer> CameraUniformBuffer;
+        Ref<UniformBuffer> LightUniformBuffer;
     };
 
     static Renderer3DData s_Data;
@@ -145,42 +148,32 @@ namespace Banana {
         }
 
         s_Data.CameraUniformBuffer = UniformBuffer::Create(sizeof(Renderer3DData::CameraData), 0);
+        s_Data.LightUniformBuffer = UniformBuffer::Create(sizeof(LightData), 1);
     };
 
     void Renderer3D::Shutdown() {
         BANANA_PROFILE_FUNCTION();
     }
 
-    void Renderer3D::BeginScene(const EditorCamera &camera) {
+    void Renderer3D::BeginScene(const EditorCamera &camera, const LightController &lightController) {
         BANANA_PROFILE_FUNCTION();
 
         s_Data.CameraBuffer.ViewProjection = camera.GetViewProjection();
+        s_Data.CameraBuffer.Position = camera.GetPosition();
         s_Data.CameraUniformBuffer->SetData(&s_Data.CameraBuffer, sizeof(s_Data.CameraBuffer));
+        s_Data.CameraUniformBuffer->SetData(&s_Data.LightUniformBuffer, sizeof(lightController.GetLightData()));
 
         ResetStats();
         StartBatch();
     }
 
-    void Renderer3D::BeginScene(const Camera &camera, glm::mat4 &transform) {
+    void Renderer3D::BeginScene(const Camera &camera, glm::mat4 &transform, const LightController &lightController) {
         BANANA_PROFILE_FUNCTION();
 
         s_Data.CameraBuffer.ViewProjection = camera.GetProjection() * glm::inverse(transform);
+        s_Data.CameraBuffer.Position = transform * Renderer3DData::InitialCameraPosition;
         s_Data.CameraUniformBuffer->SetData(&s_Data.CameraBuffer, sizeof(s_Data.CameraBuffer));
-
-        ResetStats();
-        StartBatch();
-    }
-
-    void Renderer3D::BeginScene(const EditorCamera &camera, const glm::vec4 &lightColor, const glm::vec3 &lightPos, const glm::vec3& viewPos) {
-        BANANA_PROFILE_FUNCTION();
-
-        s_Data.CameraBuffer.ViewProjection = camera.GetViewProjection();
-        s_Data.CameraUniformBuffer->SetData(&s_Data.CameraBuffer, sizeof(s_Data.CameraBuffer));
-
-        s_Data.CubeShader->Bind();
-        s_Data.CubeShader->SetFloat4("u_LightColor", lightColor);
-        s_Data.CubeShader->SetFloat3("u_LightPos", lightPos);
-        s_Data.CubeShader->SetFloat3("u_ViewPos", viewPos);
+        s_Data.CameraUniformBuffer->SetData(&s_Data.LightUniformBuffer, sizeof(lightController.GetLightData()));
 
         ResetStats();
         StartBatch();

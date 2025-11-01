@@ -7,6 +7,7 @@
 
 #include <cstdint>
 
+#include "Banana/Controller/LightController.h"
 #include "Banana/Core/Timestep.h"
 #include "Banana/Core/UUID.h"
 #include "Banana/Renderer/EditorCamera.h"
@@ -62,6 +63,8 @@ namespace Banana {
         uint32_t m_ViewportWidth, m_ViewportHeight;
 
         b2World *m_PhysicsWorld = nullptr;
+
+        LightController m_LightController;
 
         friend class Entity;
         friend class SceneHierarchyPanel;

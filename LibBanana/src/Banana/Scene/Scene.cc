@@ -233,7 +233,8 @@ namespace Banana {
 
             Renderer2D::EndScene();
 
-            Renderer3D::BeginScene(*mainCamera, cameraTransform);
+            m_LightController.Update(m_Registry);
+            Renderer3D::BeginScene(*mainCamera, cameraTransform, m_LightController);
             // draw cube
             {
                 auto group = m_Registry.view<TransformComponent, CubeRendererComponent>();
@@ -276,16 +277,8 @@ namespace Banana {
 
         Renderer2D::EndScene();
 
-        // todo @Banmuye temp code, delete in the future
-        auto group = m_Registry.view<TransformComponent, PointLightComponent>();
-        if (group.begin() != group.end()) {
-            auto [lightTransform, light] = group.get<TransformComponent, PointLightComponent>(*group.begin());
-            glm::vec4 initLightPos{0.0f, 0.0f, 0.0f, 1.0f};
-            auto viewPosition = camera.GetPosition();
-            Renderer3D::BeginScene(camera, light.Color,  lightTransform.GetTransform()*initLightPos, viewPosition);
-        } else {
-            Renderer3D::BeginScene(camera);
-        }
+        m_LightController.Update(m_Registry);
+        Renderer3D::BeginScene(camera, m_LightController);
 
         // draw cube
         {
@@ -396,6 +389,14 @@ namespace Banana {
     }
 
     template<>
+    void Scene::OnComponentAdded<DirectionalLightComponent>(Entity entity, DirectionalLightComponent &component) {
+    }
+
+    template<>
     void Scene::OnComponentAdded<PointLightComponent>(Entity entity, PointLightComponent &component) {
+    }
+
+    template<>
+    void Scene::OnComponentAdded<SpotLightComponent>(Entity entity, SpotLightComponent &component) {
     }
 }

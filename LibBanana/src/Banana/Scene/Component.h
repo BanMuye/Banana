@@ -165,11 +165,34 @@ namespace Banana {
         CubeRendererComponent(const CubeRendererComponent &) = default;
     };
 
+    struct DirectionalLightComponent {
+        glm::vec3 Direction = {0.0f, 0.0f, 1.0f};
+        glm::vec3 Color = {1.0f, 1.0f, 1.0f};
+
+        DirectionalLightComponent() = default;
+
+        DirectionalLightComponent(const DirectionalLightComponent &) = default;
+    };
+
     struct PointLightComponent {
-        glm::vec4 Color = {1.0f, 1.0f, 1.0f, 1.0f};
+        glm::vec3 Color = {1.0f, 1.0f, 1.0f};
+        float Constant = 1.0f;
+        float Linear = 0.09f;
+        float Quadratic = 0.032f;
 
         PointLightComponent() = default;
+
         PointLightComponent(const PointLightComponent &) = default;
+    };
+
+    struct SpotLightComponent {
+        glm::vec3 Color = {1.0f, 1.0f, 1.0f};
+        glm::vec3 Direction = {0.0f, 0.0f, 1.0f};
+        float CutOff = 1.0f;
+
+        SpotLightComponent() = default;
+
+        SpotLightComponent(const SpotLightComponent &) = default;
     };
 }
 

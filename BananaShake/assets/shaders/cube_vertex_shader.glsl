@@ -11,7 +11,34 @@ layout(location = 6) in int a_EntityID;
 
 layout(std140, binding = 0) uniform Camera {
     mat4 u_ViewProjection;
+    vec3 u_Position;
 };
+
+layout(std140, binding = 1) uniform Light {
+    struct DirectionalLight {
+        vec3 Direction;
+        vec3 Color;
+    };
+
+    struct PointLight {
+        vec3 Position;
+        float Constant;
+        float Linear;
+        float Quadratic;
+        vec3 Color;
+    };
+
+    struct SpotLight {
+        vec3 Position;
+        vec3 Direction;
+        float CutOff;
+        vec3 Color;
+    }
+
+    DirectionalLight u_DirectionalLights[1];
+    PointLight u_PointLights[100];
+    SpotLight u_SpotLights[100];
+}
 
 struct VertexOutput {
     vec3 Position;

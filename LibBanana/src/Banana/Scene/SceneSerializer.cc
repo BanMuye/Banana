@@ -256,12 +256,35 @@ namespace Banana {
             out << YAML::EndMap;
         }
 
+        if (entity.HasComponent<DirectionalLightComponent>()) {
+            out << YAML::Key << "DirectionalLightComponent";
+            out << YAML::BeginMap;
+            auto &light = entity.GetComponent<DirectionalLightComponent>();
+            out << YAML::Key << "Color" << YAML::Value << light.Color;
+            out << YAML::Key << "Direction" << YAML::Value << light.Direction;
+
+            out << YAML::EndMap;
+        }
+
         if (entity.HasComponent<PointLightComponent>()) {
             out << YAML::Key << "PointLightComponent";
             out << YAML::BeginMap;
-
             auto &light = entity.GetComponent<PointLightComponent>();
             out << YAML::Key << "Color" << YAML::Value << light.Color;
+            out << YAML::Key << "Constant" << YAML::Value << light.Constant;
+            out << YAML::Key << "Linear" << YAML::Value << light.Linear;
+            out << YAML::Key << "Quadratic" << YAML::Value << light.Quadratic;
+
+            out << YAML::EndMap;
+        }
+
+        if (entity.HasComponent<SpotLightComponent>()) {
+            out << YAML::Key << "SpotLightComponent";
+            out << YAML::BeginMap;
+            auto &light = entity.GetComponent<SpotLightComponent>();
+            out << YAML::Key << "Color" << YAML::Value << light.Color;
+            out << YAML::Key << "Direction" << YAML::Value << light.Direction;
+            out << YAML::Key << "CutOff" << YAML::Value << light.CutOff;
 
             out << YAML::EndMap;
         }
@@ -401,10 +424,28 @@ namespace Banana {
                     cube.Shininess = cubeRendererComponent["Shininess"].as<float>();
                 }
 
+                auto directionalLightComponent = entity["DirectionalLightComponent"];
+                if (directionalLightComponent) {
+                    auto &ld = deserializedEntity.AddComponent<DirectionalLightComponent>();
+                    ld.Color = directionalLightComponent["Color"].as<glm::vec3>();
+                    ld.Direction = directionalLightComponent["Direction"].as<glm::vec3>();
+                }
+
                 auto pointLightComponent = entity["PointLightComponent"];
                 if (pointLightComponent) {
                     auto &plComponent = deserializedEntity.AddComponent<PointLightComponent>();
-                    plComponent.Color = pointLightComponent["Color"].as<glm::vec4>();
+                    plComponent.Color = pointLightComponent["Color"].as<glm::vec3>();
+                    plComponent.Constant = pointLightComponent["Constant"].as<float>();
+                    plComponent.Linear = pointLightComponent["Linear"].as<float>();
+                    plComponent.Quadratic = pointLightComponent["Quadratic"].as<float>();
+                }
+
+                auto spotLightComponent = entity["SpotLightComponent"];
+                if (spotLightComponent) {
+                    auto &slComponent = deserializedEntity.AddComponent<SpotLightComponent>();
+                    slComponent.Color = spotLightComponent["Color"].as<glm::vec3>();
+                    slComponent.Direction = spotLightComponent["Direction"].as<glm::vec3>();
+                    slComponent.CutOff = spotLightComponent["CutOff"].as<float>();
                 }
             }
         }

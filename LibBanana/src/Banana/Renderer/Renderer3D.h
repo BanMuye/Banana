@@ -5,6 +5,7 @@
 #ifndef RENDERER3D_H
 #define RENDERER3D_H
 #include "EditorCamera.h"
+#include "Banana/Controller/LightController.h"
 
 
 namespace Banana {
@@ -14,12 +15,9 @@ namespace Banana {
 
         static void Shutdown();
 
-        static void BeginScene(const EditorCamera &camera);
+        static void BeginScene(const EditorCamera &camera, const LightController& lightController);
 
-        static void BeginScene(const Camera &camera, glm::mat4 &transform);
-
-        // todo @Banmuye temp method, just to test light functions
-        static void BeginScene(const EditorCamera &camera, const glm::vec4 &lightColor, const glm::vec3 &lightPos, const glm::vec3 &viewPos);
+        static void BeginScene(const Camera &camera, glm::mat4 &transform, const LightController &lightController);
 
         static void EndScene();
 
