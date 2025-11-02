@@ -160,8 +160,8 @@ namespace Banana {
 
         s_Data.CameraBuffer.ViewProjection = camera.GetViewProjection();
         s_Data.CameraBuffer.Position = camera.GetPosition();
+        s_Data.CameraUniformBuffer->SetData(&lightController.GetLightData(), sizeof(LightData));
         s_Data.CameraUniformBuffer->SetData(&s_Data.CameraBuffer, sizeof(s_Data.CameraBuffer));
-        s_Data.CameraUniformBuffer->SetData(&s_Data.LightUniformBuffer, sizeof(lightController.GetLightData()));
 
         ResetStats();
         StartBatch();

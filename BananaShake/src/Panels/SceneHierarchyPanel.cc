@@ -268,9 +268,24 @@ namespace Banana {
                 }
             }
 
+            if (!m_SelectionContext.HasComponent<DirectionalLightComponent>()) {
+                if (ImGui::MenuItem("DirectionalLight")) {
+                    m_SelectionContext.AddComponent<DirectionalLightComponent>();
+                    ImGui::CloseCurrentPopup();
+                }
+            }
+
             if (!m_SelectionContext.HasComponent<PointLightComponent>()) {
                 if (ImGui::MenuItem("PointLight")) {
                     m_SelectionContext.AddComponent<PointLightComponent>();
+                    ImGui::CloseCurrentPopup();
+                }
+            }
+
+            if (!m_SelectionContext.HasComponent<SpotLightComponent>()) {
+            } {
+                if (ImGui::MenuItem("SpotLight")) {
+                    m_SelectionContext.AddComponent<SpotLightComponent>();
                     ImGui::CloseCurrentPopup();
                 }
             }
@@ -372,8 +387,22 @@ namespace Banana {
             ImGui::DragFloat("Shininess", &component.Shininess, 0.125f, 0.0f, 1000.0f);
         });
 
+        DrawComponent<DirectionalLightComponent>("Directional Light", entity, [](auto &component) {
+            ImGui::ColorEdit4("Color", glm::value_ptr(component.Color));
+            ImGui::DragFloat4("Direction", glm::value_ptr(component.Direction));
+        });
+
         DrawComponent<PointLightComponent>("Point Light", entity, [](auto &component) {
             ImGui::ColorEdit4("Color", glm::value_ptr(component.Color));
+            ImGui::DragFloat("Constant", &component.Constant);
+            ImGui::DragFloat("Linear", &component.Linear);
+            ImGui::DragFloat("Quadratic", &component.Quadratic);
+        });
+
+        DrawComponent<SpotLightComponent>("Spot Light", entity, [](auto &component) {
+            ImGui::ColorEdit4("Color", glm::value_ptr(component.Color));
+            ImGui::DragFloat4("Direction", glm::value_ptr(component.Direction));
+            ImGui::DragFloat("Cut Off", &component.CutOff);
         });
 
         DrawComponent<RigidBody2DComponent>("Rigidbody2D", entity, [](auto &component) {

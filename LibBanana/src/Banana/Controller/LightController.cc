@@ -9,6 +9,8 @@
 #include "Banana/Scene/Component.h"
 
 namespace Banana {
+    glm::vec4 LightController::s_InitialLightPosition = {0.0f, 0.0f, 0.0f, 1.0f};
+
     void LightController::Update(entt::registry &registry) {
         UpdateDirectionalLight(registry);
         UpdatePointLight(registry);
@@ -17,31 +19,29 @@ namespace Banana {
 
 
     void LightController::UpdateDirectionalLight(entt::registry &registry) {
-        auto view = registry.view<DirectionalLight>();
-        const auto it = view.begin();
-        for (int i = 0; i < LightData::DirectionalLightCount; ++i) {
-            if (it == view.end()) {
-                return;
-            }
+        auto view = registry.view<DirectionalLightComponent>();
+        int i = 0;
+        for (auto entity: view) {
+            if (i >= MaxDirectionalLightCount) { break; }
 
-            const auto &directionalLightComponent = registry.get<DirectionalLightComponent>(*it);
+            const auto &directionalLightComponent = registry.get<DirectionalLightComponent>(entity);
 
             m_LightData.DirectionalLights[i].Color = directionalLightComponent.Color;
             m_LightData.DirectionalLights[i].Direction = directionalLightComponent.Direction;
-
+            i++;
         }
+
+        m_LightData.directionalLightCount = i;
     }
 
     void LightController::UpdatePointLight(entt::registry &registry) {
         auto view = registry.view<PointLightComponent, TransformComponent>();
-        const auto it = view.begin();
-        for (int i = 0; i < LightData::PointLightCount; ++i) {
-            if (it == view.end()) {
-                return;
-            }
+        int i = 0;
+        for (auto entity: view) {
+            if (i >= MaxPointLightCount) { break; }
 
             const auto &[pointLightComponent, transformComponent] = registry.get<PointLightComponent,
-                TransformComponent>(*it);
+                TransformComponent>(entity);
             // todo @Banmuye whether change vec4 to vec3 is safe?
             auto position = transformComponent.GetTransform() * s_InitialLightPosition;
             m_LightData.PointLights[i].Color = pointLightComponent.Color;
@@ -49,23 +49,29 @@ namespace Banana {
             m_LightData.PointLights[i].Linear = pointLightComponent.Linear;
             m_LightData.PointLights[i].Quadratic = pointLightComponent.Quadratic;
             m_LightData.PointLights[i].Position = position;
+
+            i++;
         }
+
+        m_LightData.pointLightCount = i;
     }
 
     void LightController::UpdateSpotLight(entt::registry &registry) {
         auto view = registry.view<SpotLightComponent, TransformComponent>();
-        const auto it = view.begin();
-        for (int i = 0; i < LightData::SpotLightCount; ++i) {
-            if (it == view.end()) {
-                return;
-            }
+        int i = 0;
+        for (auto entity: view) {
+            if (i >= MaxSpotLightCount) { break; }
 
-            const auto &[spotLight, transform] = registry.get<SpotLightComponent, TransformComponent>(*it);
+            const auto &[spotLight, transform] = registry.get<SpotLightComponent, TransformComponent>(entity);
             auto position = transform.GetTransform() * s_InitialLightPosition;
             m_LightData.SpotLights[i].Color = spotLight.Color;
             m_LightData.SpotLights[i].Direction = spotLight.Direction;
             m_LightData.SpotLights[i].Position = position;
             m_LightData.SpotLights[i].CutOff = spotLight.CutOff;
+
+            i++;
         }
+
+        m_LightData.spotLightCount = i;
     }
 }

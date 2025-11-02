@@ -1,5 +1,5 @@
-//
 // Created by cyzho on 2025/10/31.
+//
 //
 
 #ifndef LIGHTCONTROLLER_H
@@ -12,33 +12,37 @@
 
 namespace Banana {
     struct DirectionalLight {
-        glm::vec3 Direction;
-        glm::vec3 Color;
+        glm::vec4 Direction;
+        glm::vec4 Color;
     };
 
     struct PointLight {
-        glm::vec3 Position;
+        glm::vec4 Position;
         float Constant;
         float Linear;
         float Quadratic;
-        glm::vec3 Color;
+        glm::vec4 Color;
     };
 
     struct SpotLight {
-        glm::vec3 Position;
-        glm::vec3 Direction;
+        glm::vec4 Position;
+        glm::vec4 Direction;
         float CutOff;
-        glm::vec3 Color;
+        glm::vec4 Color;
     };
 
-    struct LightData {
-        static constexpr uint32_t DirectionalLightCount = 1;
-        static constexpr uint32_t PointLightCount = 100;
-        static constexpr uint32_t SpotLightCount = 100;
+    static constexpr uint32_t MaxDirectionalLightCount = 1;
+    static constexpr uint32_t MaxPointLightCount = 100;
+    static constexpr uint32_t MaxSpotLightCount = 100;
 
-        DirectionalLight DirectionalLights[DirectionalLightCount];
-        PointLight PointLights[PointLightCount];
-        SpotLight SpotLights[SpotLightCount];
+    struct LightData {
+        uint32_t directionalLightCount;
+        uint32_t pointLightCount;
+        uint32_t spotLightCount;
+
+        DirectionalLight DirectionalLights[MaxDirectionalLightCount];
+        PointLight PointLights[MaxPointLightCount];
+        SpotLight SpotLights[MaxSpotLightCount];
     };
 
     class LightController {

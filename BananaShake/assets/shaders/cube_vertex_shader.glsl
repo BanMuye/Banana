@@ -14,32 +14,6 @@ layout(std140, binding = 0) uniform Camera {
     vec3 u_Position;
 };
 
-layout(std140, binding = 1) uniform Light {
-    struct DirectionalLight {
-        vec3 Direction;
-        vec3 Color;
-    };
-
-    struct PointLight {
-        vec3 Position;
-        float Constant;
-        float Linear;
-        float Quadratic;
-        vec3 Color;
-    };
-
-    struct SpotLight {
-        vec3 Position;
-        vec3 Direction;
-        float CutOff;
-        vec3 Color;
-    }
-
-    DirectionalLight u_DirectionalLights[1];
-    PointLight u_PointLights[100];
-    SpotLight u_SpotLights[100];
-}
-
 struct VertexOutput {
     vec3 Position;
     vec3 Normal;
@@ -63,4 +37,4 @@ void main() {
     v_EntityID = a_EntityID;
 
     gl_Position = u_ViewProjection * vec4(a_Position, 1.0f);
-};
+}
