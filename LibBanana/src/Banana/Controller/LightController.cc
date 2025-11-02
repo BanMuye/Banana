@@ -68,6 +68,7 @@ namespace Banana {
             m_LightData.SpotLights[i].Direction = spotLight.Direction;
             m_LightData.SpotLights[i].Position = position;
             m_LightData.SpotLights[i].CutOff = spotLight.CutOff;
+            m_LightData.SpotLights[i].OuterCutOff = spotLight.OutterCutOff;
 
             i++;
         }

@@ -189,6 +189,7 @@ namespace Banana {
         glm::vec4 Color = {1.0f, 1.0f, 1.0f, 1.0f};
         glm::vec4 Direction = {0.0f, 0.0f, 1.0f, 1.0f};
         float CutOff = 1.0f;
+        float OutterCutOff = 1.0f;
 
         SpotLightComponent() = default;
 

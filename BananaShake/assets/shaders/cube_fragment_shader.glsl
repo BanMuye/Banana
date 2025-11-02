@@ -29,6 +29,7 @@ struct SpotLight {
     vec4 Position;
     vec4 Direction;
     float CutOff;
+    float OutterCutOff;
     vec4 Color;
 };
 
@@ -75,8 +76,8 @@ vec3 CalcPointLight(PointLight pointLight, vec3 normal, vec3 viewDir, vec3 fragP
 
     float diff = max(dot(normal, lightDir), 0.0f);
 
-    vec3 reflectDir = reflect(-lightDir, normal);
-    float spec = pow(max(dot(viewDir, reflectDir), 0.0), Output.Shininess);
+    vec3 halfwayDir = normalize(lightDir + viewDir);
+    float spec = pow(max(dot(normal, halfwayDir), 0.0), Output.Shininess);
 
     float distance = length(pointLight.Position.xyz - fragPos);
     float attenuation = 1.0/(pointLight.Constant + pointLight.Linear * distance + pointLight.Quadratic *(distance * distance));
@@ -92,22 +93,19 @@ vec3 CalcSpotLight(SpotLight spotLight, vec3 normal, vec3 viewDir, vec3 fragPos)
 
     vec3 lightDir = normalize(spotLight.Position.xyz - fragPos);
 
-    float ambientFac = 0, diff = 0, spec = 0;
+    float theta = dot(lightDir, -normalize(spotLight.Direction.xyz));
+    float epsilon = spotLight.CutOff - spotLight.OutterCutOff;
+    float intensity = clamp((theta - spotLight.OutterCutOff)/epsilon, 0.0f, 1.0f);
 
-    float theta = dot(lightDir, -(spotLight.Direction.xyz));
-    if (theta > spotLight.CutOff) {
 
-        ambientFac = 1;
+    float diff = max(dot(normal, lightDir), 0.0f);
 
-        diff = max(dot(normal, lightDir), 0.0f);
+    vec3 reflectDir = reflect(-lightDir, normal);
+    float spec = pow(max(dot(viewDir, reflectDir), 0.0f), Output.Shininess);
 
-        vec3 reflectDir = reflect(-lightDir, normal);
-        spec = pow(max(dot(viewDir, reflectDir), 0.0f), Output.Shininess);
-    }
-
-    vec3 ambient = Output.Ambient.rgb * spotLight.Color.rgb * ambientFac;
-    vec3 diffuse = Output.Diffuse.rgb * spotLight.Color.rgb * diff;
-    vec3 specular = Output.Specular.rgb * spotLight.Color.rgb * spec;
+    vec3 ambient = Output.Ambient.rgb * spotLight.Color.rgb * intensity;
+    vec3 diffuse = Output.Diffuse.rgb * spotLight.Color.rgb * diff * intensity;
+    vec3 specular = Output.Specular.rgb * spotLight.Color.rgb * spec * intensity;
 
     return (ambient + diffuse + specular);
 }

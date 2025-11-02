@@ -285,6 +285,7 @@ namespace Banana {
             out << YAML::Key << "Color" << YAML::Value << light.Color;
             out << YAML::Key << "Direction" << YAML::Value << light.Direction;
             out << YAML::Key << "CutOff" << YAML::Value << light.CutOff;
+            out << YAML::Key << "OutterCutOff" << YAML::Value << light.CutOff;
 
             out << YAML::EndMap;
         }
@@ -446,6 +447,7 @@ namespace Banana {
                     slComponent.Color = spotLightComponent["Color"].as<glm::vec4>();
                     slComponent.Direction = spotLightComponent["Direction"].as<glm::vec4>();
                     slComponent.CutOff = spotLightComponent["CutOff"].as<float>();
+                    slComponent.CutOff = spotLightComponent["OutterCutOff"].as<float>();
                 }
             }
         }

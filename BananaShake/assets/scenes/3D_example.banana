@@ -1,24 +1,26 @@
 Scene: Untiled
 Entities:
-  - Entity: 10695884868689186946
+  - Entity: 8526368647535856084
     TagComponent:
       Tag: Empty Entity
     TransformComponent:
-      Translation: [0, 0, 0]
+      Translation: [0, 0, -5.9000001]
       Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
-    DirectionalLightComponent:
+    SpotLightComponent:
       Color: [1, 1, 1, 1]
       Direction: [0, 0, 1, 1]
-  - Entity: 3721872036555840990
+      CutOff: 0.226999998
+      OutterCutOff: 0.226999998
+  - Entity: 8932879724148591413
     TagComponent:
       Tag: Empty Entity
     TransformComponent:
       Translation: [0, 0, 0]
       Rotation: [0, 0, 0]
-      Scale: [1, 1, 1]
+      Scale: [40.9000015, 41.2999992, 1]
     CubeRendererComponent:
-      Ambient: [0.525096536, 0.50100255, 0.196657777, 1]
-      Diffuse: [1, 0.162162185, 0, 1]
-      Specular: [0.064399749, 0.377336681, 0.926640928, 1]
+      Ambient: [1, 1, 1, 1]
+      Diffuse: [1, 1, 1, 1]
+      Specular: [1, 1, 1, 1]
       Shininess: 1

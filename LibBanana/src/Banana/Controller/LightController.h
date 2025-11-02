@@ -29,7 +29,8 @@ namespace Banana {
         glm::vec4 Position;
         glm::vec4 Direction;
         float CutOff;
-        float _pad[3];
+        float OuterCutOff;
+        float _pad[2];
         glm::vec4 Color;
     };
 
