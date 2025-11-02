@@ -11,23 +11,25 @@
 #include "Banana/Core/Core.h"
 
 namespace Banana {
-    struct DirectionalLight {
+    struct alignas(16) DirectionalLight {
         glm::vec4 Direction;
         glm::vec4 Color;
     };
 
-    struct PointLight {
+    struct alignas(16) PointLight {
         glm::vec4 Position;
         float Constant;
         float Linear;
         float Quadratic;
+        float _pad;
         glm::vec4 Color;
     };
 
-    struct SpotLight {
+    struct alignas(16) SpotLight {
         glm::vec4 Position;
         glm::vec4 Direction;
         float CutOff;
+        float _pad[3];
         glm::vec4 Color;
     };
 
@@ -35,10 +37,11 @@ namespace Banana {
     static constexpr uint32_t MaxPointLightCount = 100;
     static constexpr uint32_t MaxSpotLightCount = 100;
 
-    struct LightData {
+    struct alignas(16) LightData {
         uint32_t directionalLightCount;
         uint32_t pointLightCount;
         uint32_t spotLightCount;
+        float _pad;
 
         DirectionalLight DirectionalLights[MaxDirectionalLightCount];
         PointLight PointLights[MaxPointLightCount];

@@ -160,7 +160,7 @@ namespace Banana {
 
         s_Data.CameraBuffer.ViewProjection = camera.GetViewProjection();
         s_Data.CameraBuffer.Position = camera.GetPosition();
-        s_Data.CameraUniformBuffer->SetData(&lightController.GetLightData(), sizeof(LightData));
+        s_Data.LightUniformBuffer->SetData(&lightController.GetLightData(), sizeof(LightData));
         s_Data.CameraUniformBuffer->SetData(&s_Data.CameraBuffer, sizeof(s_Data.CameraBuffer));
 
         ResetStats();
@@ -198,7 +198,7 @@ namespace Banana {
 
         for (size_t i = 0; i < cubeVertexCount; i++) {
             s_Data.CubeVertexBufferPtr->Position = transform * glm::vec4(s_Data.CubeVertexPositions[i][0], 1.0f);
-            s_Data.CubeVertexBufferPtr->Normal = s_Data.CubeVertexPositions[i][1];
+            s_Data.CubeVertexBufferPtr->Normal = transform * glm::vec4(s_Data.CubeVertexPositions[i][1], 1.0f);
             s_Data.CubeVertexBufferPtr->Material.Ambient = ambient;
             s_Data.CubeVertexBufferPtr->Material.Diffuse = diffuse;
             s_Data.CubeVertexBufferPtr->Material.Specular = specular;

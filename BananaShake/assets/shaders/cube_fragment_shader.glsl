@@ -60,7 +60,7 @@ vec3 CalcDirLight(DirectionalLight directionalLight, vec3 normal, vec3 viewDir) 
 
     float diff = max(dot(lightDir, normal), 0.0f);
 
-    vec3 reflectDir = reflect(-(directionalLight.Direction.xyz), normal);
+    vec3 reflectDir = reflect(-(lightDir), normal);
     float spec = pow(max(dot(viewDir, reflectDir), 0.0f), Output.Shininess);
 
     vec3 ambient = Output.Ambient.rgb * directionalLight.Color.rgb;
@@ -119,12 +119,11 @@ void main() {
     vec3 fragPos = Output.Position;
 
     vec3 lightColor = vec3(0.0f, 0.0f, 0.0f);
-    // for (int i = 0;i<u_DirectionalLightCount;i++) lightColor += CalcDirLight(u_DirectionalLights[i], normal, viewDir);
-    //for (int i = 0;i<u_PointLightCount;i++) lightColor += CalcPointLight(u_PointLights[i], normal, viewDir, fragPos);
-    //for (int i = 0;i<u_SpotLightCount;i++) lightColor += CalcSpotLight(u_SpotLights[i], normal, viewDir, fragPos);
+    for (int i = 0;i<u_DirectionalLightCount;i++) lightColor += CalcDirLight(u_DirectionalLights[i], normal, viewDir);
+    for (int i = 0;i<u_PointLightCount;i++) lightColor += CalcPointLight(u_PointLights[i], normal, viewDir, fragPos);
+    for (int i = 0;i<u_SpotLightCount;i++) lightColor += CalcSpotLight(u_SpotLights[i], normal, viewDir, fragPos);
 
-    // color = vec4(lightColor, Output.Ambient.a);
-    color = vec4(u_DirectionalLightCount,0,0,  1);
+    color = vec4(lightColor, Output.Ambient.a);
 
     color2 = v_EntityID;
 }

@@ -394,15 +394,15 @@ namespace Banana {
 
         DrawComponent<PointLightComponent>("Point Light", entity, [](auto &component) {
             ImGui::ColorEdit4("Color", glm::value_ptr(component.Color));
-            ImGui::DragFloat("Constant", &component.Constant);
-            ImGui::DragFloat("Linear", &component.Linear);
-            ImGui::DragFloat("Quadratic", &component.Quadratic);
+            ImGui::DragFloat("Constant", &component.Constant, 0.005, 0, 1000.0f);
+            ImGui::DragFloat("Linear", &component.Linear, 0.005, 0, 1000.0f);
+            ImGui::DragFloat("Quadratic", &component.Quadratic, 0.005, 0, 1000.0f);
         });
 
         DrawComponent<SpotLightComponent>("Spot Light", entity, [](auto &component) {
             ImGui::ColorEdit4("Color", glm::value_ptr(component.Color));
             ImGui::DragFloat4("Direction", glm::value_ptr(component.Direction));
-            ImGui::DragFloat("Cut Off", &component.CutOff);
+            ImGui::DragFloat("Cut Off", &component.CutOff, 0.005f, 0.0f, 1000.0f);
         });
 
         DrawComponent<RigidBody2DComponent>("Rigidbody2D", entity, [](auto &component) {
