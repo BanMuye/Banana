@@ -52,10 +52,10 @@ namespace Banana {
     void ShadowRenderer3D::Init() {
         s_Data.CubeVertexArray = VertexArray::Create();
         s_Data.CubeVertexBuffer = VertexBuffer::Create(ShadowRenderer3DData::MaxVertices * sizeof(CubeVertex));
-        s_Data.CubeVertexArray->AddVertexBuffer(s_Data.CubeVertexBuffer);
         s_Data.CubeVertexBuffer->SetLayout({
             {ShaderDataType::Float3, "a_Position"}
         });
+        s_Data.CubeVertexArray->AddVertexBuffer(s_Data.CubeVertexBuffer);
 
         s_Data.CubeVertexBufferBase = new CubeVertex[ShadowRenderer3DData::MaxVertices];
         s_Data.CubeVertexBufferPtr = s_Data.CubeVertexBufferBase;
@@ -151,7 +151,7 @@ namespace Banana {
         }
 
         for (size_t i = 0; i < cubeVertexCount; i++) {
-            s_Data.CubeVertexBufferPtr->Position = transform * glm::vec4(s_Data.CubeVertexPositions[i], 1.0f);
+            s_Data.CubeVertexBufferPtr->Position = xyz( transform * glm::vec4(s_Data.CubeVertexPositions[i], 1.0f));
             s_Data.CubeVertexBufferPtr++;
         }
 

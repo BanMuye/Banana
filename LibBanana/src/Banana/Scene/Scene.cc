@@ -48,7 +48,7 @@ namespace Banana {
         shadowFrameBufferSpecification.Width = 1280;
         shadowFrameBufferSpecification.Height = 720;
         shadowFrameBufferSpecification.Attachments = {
-            FramebufferTextureFormat::Depth
+            FramebufferTextureFormat::RGBA8, FramebufferTextureFormat::Depth
         };
         m_ShadowFrameBuffer = Framebuffer::Create(shadowFrameBufferSpecification);
     }
@@ -272,7 +272,7 @@ namespace Banana {
         }
     }
 
-    void Scene::OnUpdateEditor(Timestep ts, EditorCamera &camera ) {
+    void Scene::OnUpdateEditor(Timestep ts, EditorCamera &camera) {
         camera.OnUpdate(ts);
         m_LightController.Update(m_Registry);
 
@@ -398,6 +398,7 @@ namespace Banana {
         m_ViewFrameBuffer->Unbind();
 
         m_ShadowFrameBuffer->Bind();
+        RenderCommand::SetClearColor({1.0f, 1.0f, 1.0f, 1});
         RenderCommand::Clear();
         m_ShadowFrameBuffer->Unbind();
     }

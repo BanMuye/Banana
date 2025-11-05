@@ -83,10 +83,12 @@ namespace Banana {
         int mouseX = (int) mx;
         int mouseY = (int) my;
 
+        m_ActiveScene->GetRenderFramebuffer()->Bind();
         if (mouseX >= 0 && mouseY >= 0 && mouseX < viewportSize.x && mouseY < viewportSize.y) {
-            int pixelData = m_ActiveScene->GetRenderFramebuffer()->ReadPixel(1, mouseX, mouseY);
-            m_HoveredEntity = pixelData == -1 ? Entity() : Entity((entt::entity) pixelData, m_ActiveScene.get());
+            // int pixelData = m_ActiveScene->GetRenderFramebuffer()->ReadPixel(1, mouseX, mouseY);
+            // m_HoveredEntity = pixelData == -1 ? Entity() : Entity((entt::entity) pixelData, m_ActiveScene.get());
         }
+        m_ActiveScene->GetRenderFramebuffer()->Unbind();
 
         OnOverlayRender();
     }

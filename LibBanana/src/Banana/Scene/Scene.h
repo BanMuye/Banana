@@ -49,7 +49,7 @@ namespace Banana {
 
         uint32_t GetViewportWidth() const { return m_ViewportWidth; }
         uint32_t GetViewportHeight() const { return m_ViewportHeight; }
-        Ref<Framebuffer> GetRenderFramebuffer() { return m_ViewFrameBuffer; }
+        Ref<Framebuffer> GetRenderFramebuffer() { return m_ShadowFrameBuffer; }
 
         Entity GetPrimaryCameraEntity();
 
