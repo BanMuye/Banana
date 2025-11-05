@@ -34,6 +34,10 @@ namespace Banana {
             return m_ColorAttachments[index];
         }
 
+        virtual uint32_t GetDepthAttachmentRendererID() const override {
+            return m_DepthAttachment;
+        }
+
         virtual const FramebufferSpecification &GetSpecification() const override {
             return m_Specification;
         }

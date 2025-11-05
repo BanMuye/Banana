@@ -30,14 +30,6 @@ namespace Banana {
         m_IconStop = Texture2D::Create(
             R"(D:\Files\S_Documents\Projects\Banana\BananaShake\Resources\Icons\StopButton.png)");
 
-        FramebufferSpecification fbSpec;
-        fbSpec.Width = 1280;
-        fbSpec.Height = 720;
-        fbSpec.Attachments = {
-            FramebufferTextureFormat::RGBA8, FramebufferTextureFormat::RED_INTEGER, FramebufferTextureFormat::Depth
-        };
-        m_Framebuffer = Framebuffer::Create(fbSpec);
-
         m_ActiveScene = std::make_shared<Scene>();
 
         m_EditorCamera = EditorCamera(30.0f, 1.778f, 0.1f, 1000.0f);
@@ -60,59 +52,43 @@ namespace Banana {
         BANANA_PROFILE_FUNCTION();
 
         // Resize
-        if (FramebufferSpecification specification = m_Framebuffer->GetSpecification();
-            m_ViewportSize.x > 0.0f && m_ViewportSize.y > 0.0f && (
-                specification.Width != m_ViewportSize.x || specification.Height != m_ViewportSize.y)) {
-            m_Framebuffer->Resize(uint32_t(m_ViewportSize.x), uint32_t(m_ViewportSize.y));
+        if (m_ViewportSize.x > 0.0f && m_ViewportSize.y > 0.0f && (
+                m_ActiveScene->GetViewportWidth() != m_ViewportSize.x || m_ActiveScene->GetViewportHeight() !=
+                m_ViewportSize.y)) {
             m_EditorCamera.SetViewportSize(m_ViewportSize.x, m_ViewportSize.y);
             m_ActiveScene->OnViewportResize(uint32_t(m_ViewportSize.x), uint32_t(m_ViewportSize.y));
         }
 
         // Render
-        Renderer2D::ResetStats(); {
-            BANANA_PROFILE_SCOPE("Renderer Prep");
-            m_Framebuffer->Bind();
-            RenderCommand::SetClearColor({0.05f, 0.05f, 0.05f, 1});
-            RenderCommand::Clear();
-            m_Framebuffer->ClearAttachment(1, -1);
-        } {
-            static float rotation = 0.0f;
-            rotation += ts * 50.0f;
-
-            BANANA_PROFILE_SCOPE("Renderer Draw");
-
-            switch (m_SceneState) {
-                case SceneState::Edit: {
-                    if (m_ViewportFocused) {
-                        m_EditorCamera.OnUpdate(ts);
-                    }
-                    m_ActiveScene->OnUpdateEditor(ts, m_EditorCamera);
-                    break;
+        switch (m_SceneState) {
+            case SceneState::Edit: {
+                if (m_ViewportFocused) {
+                    m_EditorCamera.OnUpdate(ts);
                 }
-                case SceneState::Play: {
-                    m_ActiveScene->OnUpdateRuntime(ts);
-                    break;
-                }
+                m_ActiveScene->OnUpdateEditor(ts, m_EditorCamera);
+                break;
             }
-
-            auto [mx, my] = ImGui::GetMousePos();
-            mx -= m_ViewportBounds[0].x;
-            my -= m_ViewportBounds[0].y;
-            glm::vec2 viewportSize = m_ViewportBounds[1] - m_ViewportBounds[0];
-            my = viewportSize.y - my;
-
-            int mouseX = (int) mx;
-            int mouseY = (int) my;
-
-            if (mouseX >= 0 && mouseY >= 0 && mouseX < viewportSize.x && mouseY < viewportSize.y) {
-                int pixelData = m_Framebuffer->ReadPixel(1, mouseX, mouseY);
-                m_HoveredEntity = pixelData == -1 ? Entity() : Entity((entt::entity) pixelData, m_ActiveScene.get());
+            case SceneState::Play: {
+                m_ActiveScene->OnUpdateRuntime(ts);
+                break;
             }
-
-            OnOverlayRender();
-
-            m_Framebuffer->Unbind();
         }
+
+        auto [mx, my] = ImGui::GetMousePos();
+        mx -= m_ViewportBounds[0].x;
+        my -= m_ViewportBounds[0].y;
+        glm::vec2 viewportSize = m_ViewportBounds[1] - m_ViewportBounds[0];
+        my = viewportSize.y - my;
+
+        int mouseX = (int) mx;
+        int mouseY = (int) my;
+
+        if (mouseX >= 0 && mouseY >= 0 && mouseX < viewportSize.x && mouseY < viewportSize.y) {
+            int pixelData = m_ActiveScene->GetRenderFramebuffer()->ReadPixel(1, mouseX, mouseY);
+            m_HoveredEntity = pixelData == -1 ? Entity() : Entity((entt::entity) pixelData, m_ActiveScene.get());
+        }
+
+        OnOverlayRender();
     }
 
     void EditorLayer::OnImGuiRender() {
@@ -239,7 +215,7 @@ namespace Banana {
         ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
         m_ViewportSize = {viewportPanelSize.x, viewportPanelSize.y};
 
-        uint64_t textureID = m_Framebuffer->GetColorAttachmentRendererID();
+        uint64_t textureID = m_ActiveScene->GetRenderFramebuffer()->GetColorAttachmentRendererID();
         ImGui::Image(textureID, ImVec2{m_ViewportSize.x, m_ViewportSize.y}, ImVec2{0, 1},
                      ImVec2{1, 0});
 

@@ -64,10 +64,6 @@ namespace Banana {
         void UI_Toolbar();
 
     private:
-
-        // Temp
-        Ref<Framebuffer> m_Framebuffer;
-
         Ref<Scene> m_ActiveScene;
         Ref<Scene> m_EditorScene;
         std::filesystem::path m_EditorScenePath;

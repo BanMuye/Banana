@@ -9,6 +9,7 @@ struct VertexOutput {
     vec4 Ambient;
     vec4 Diffuse;
     vec4 Specular;
+    vec4 FragPosLightSpace;
     float Shininess;
 };
 
@@ -34,7 +35,7 @@ struct SpotLight {
 };
 
 layout(location = 0) in VertexOutput Output;
-layout(location = 6) in flat int v_EntityID;
+layout(location = 7) in flat int v_EntityID;
 
 layout(std140, binding = 0) uniform Camera {
     mat4 u_ViewProjection;
@@ -52,6 +53,8 @@ layout(std140, binding = 1) uniform Light {
     SpotLight u_SpotLights[100];
 };
 
+uniform sampler2D u_ShadowMap;
+
 vec3 CalcDirLight(DirectionalLight light, vec3 normal, vec3 viewDir);
 vec3 CalcPointLight(PointLight light, vec3 normal, vec3 viewDir, vec3 fragPos);
 vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 viewDir, vec3 fragPos);
@@ -64,11 +67,10 @@ vec3 CalcDirLight(DirectionalLight directionalLight, vec3 normal, vec3 viewDir) 
     vec3 reflectDir = reflect(-(lightDir), normal);
     float spec = pow(max(dot(viewDir, reflectDir), 0.0f), Output.Shininess);
 
-    vec3 ambient = Output.Ambient.rgb * directionalLight.Color.rgb;
     vec3 diffuse = directionalLight.Color.rgb * Output.Diffuse.rgb * diff;
     vec3 specular = directionalLight.Color.rgb * Output.Specular.rgb * spec;
 
-    return (ambient + diffuse + specular);
+    return (diffuse + specular);
 }
 
 vec3 CalcPointLight(PointLight pointLight, vec3 normal, vec3 viewDir, vec3 fragPos) {
@@ -82,11 +84,10 @@ vec3 CalcPointLight(PointLight pointLight, vec3 normal, vec3 viewDir, vec3 fragP
     float distance = length(pointLight.Position.xyz - fragPos);
     float attenuation = 1.0/(pointLight.Constant + pointLight.Linear * distance + pointLight.Quadratic *(distance * distance));
 
-    vec3 ambient = Output.Ambient.rgb * pointLight.Color.rgb * attenuation;
     vec3 diffuse = Output.Diffuse.rgb * pointLight.Color.rgb * diff * attenuation;
     vec3 specular = Output.Specular.rgb * pointLight.Color.rgb * spec * attenuation;
 
-    return (ambient + diffuse + specular);
+    return (diffuse + specular);
 }
 
 vec3 CalcSpotLight(SpotLight spotLight, vec3 normal, vec3 viewDir, vec3 fragPos) {
@@ -103,11 +104,24 @@ vec3 CalcSpotLight(SpotLight spotLight, vec3 normal, vec3 viewDir, vec3 fragPos)
     vec3 reflectDir = reflect(-lightDir, normal);
     float spec = pow(max(dot(viewDir, reflectDir), 0.0f), Output.Shininess);
 
-    vec3 ambient = Output.Ambient.rgb * spotLight.Color.rgb * intensity;
     vec3 diffuse = Output.Diffuse.rgb * spotLight.Color.rgb * diff * intensity;
     vec3 specular = Output.Specular.rgb * spotLight.Color.rgb * spec * intensity;
 
-    return (ambient + diffuse + specular);
+    return (diffuse + specular);
+}
+
+float ShadowCalculation(vec4 fragPosLightSpace) {
+
+    vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
+
+    projCoords = projCoords * 0.5 + 0.5;
+
+    float closetDepth = texture(u_ShadowMap, projCoords.xy).r;
+    float currentDepth = projCoords.z;
+
+    float bias = 0.005;
+    float shadow = currentDepth - bias > closetDepth ? 1.0f: 0.0f;
+    return shadow;
 }
 
 void main() {
@@ -117,11 +131,12 @@ void main() {
     vec3 fragPos = Output.Position;
 
     vec3 lightColor = vec3(0.0f, 0.0f, 0.0f);
-    for (int i = 0;i<u_DirectionalLightCount;i++) lightColor += CalcDirLight(u_DirectionalLights[i], normal, viewDir);
-    for (int i = 0;i<u_PointLightCount;i++) lightColor += CalcPointLight(u_PointLights[i], normal, viewDir, fragPos);
-    for (int i = 0;i<u_SpotLightCount;i++) lightColor += CalcSpotLight(u_SpotLights[i], normal, viewDir, fragPos);
+    float shadow = ShadowCalculation(Output.FragPosLightSpace);
+    for (int i = 0;i<u_DirectionalLightCount;i++) lightColor += CalcDirLight(u_DirectionalLights[i], normal, viewDir) * (1.0f - shadow);
+    for (int i = 0;i<u_PointLightCount;i++) lightColor += CalcPointLight(u_PointLights[i], normal, viewDir, fragPos) * (1.0f - shadow);
+    for (int i = 0;i<u_SpotLightCount;i++) lightColor += CalcSpotLight(u_SpotLights[i], normal, viewDir, fragPos) * (1.0f - shadow);
 
-    color = vec4(lightColor, Output.Ambient.a);
+    color = Output.FragPosLightSpace;
 
     color2 = v_EntityID;
 }

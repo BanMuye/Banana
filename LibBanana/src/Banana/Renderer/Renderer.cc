@@ -9,6 +9,7 @@
 
 #include "Renderer2D.h"
 #include "Renderer3D.h"
+#include "ShadowRenderer3D.h"
 #include "Banana/Platform/OpenGL/OpenGLShader.h"
 
 namespace Banana {
@@ -19,6 +20,7 @@ namespace Banana {
         RenderCommand::Init();
         Renderer2D::Init();
         Renderer3D::Init();
+        ShadowRenderer3D::Init();
     }
 
     void Renderer::OnWindowResize(uint32_t width, uint32_t height) {
