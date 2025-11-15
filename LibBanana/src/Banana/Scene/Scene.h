@@ -11,6 +11,7 @@
 #include "Banana/Core/Timestep.h"
 #include "Banana/Core/UUID.h"
 #include "Banana/Renderer/EditorCamera.h"
+#include "Banana/Renderer/Framebuffer.h"
 #include "box2d/b2_world.h"
 #include "entt/entt.hpp"
 
@@ -46,6 +47,10 @@ namespace Banana {
 
         void DuplicateEntity(Entity entity);
 
+        uint32_t GetViewportWidth() const { return m_ViewportWidth; }
+        uint32_t GetViewportHeight() const { return m_ViewportHeight; }
+        Ref<Framebuffer> GetRenderFramebuffer() { return m_ShadowFrameBuffer; }
+
         Entity GetPrimaryCameraEntity();
 
         template<typename... Component>
@@ -57,6 +62,14 @@ namespace Banana {
         template<typename T>
         void OnComponentAdded(Entity entity, T &component);
 
+        void Clear();
+
+        void Render2DOnEdit(EditorCamera &camera, Timestep ts);
+
+        void RenderShadowOnEdit();
+
+        void Render3DOnEdit(EditorCamera &camera, Timestep ts);
+
     private:
         entt::registry m_Registry;
 
@@ -65,6 +78,9 @@ namespace Banana {
         b2World *m_PhysicsWorld = nullptr;
 
         LightController m_LightController;
+
+        Ref<Framebuffer> m_ShadowFrameBuffer;
+        Ref<Framebuffer> m_ViewFrameBuffer;
 
         friend class Entity;
         friend class SceneHierarchyPanel;

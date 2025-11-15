@@ -4,6 +4,7 @@
 
 #include "OpenGLUniformBuffer.h"
 #include "glad/glad.h"
+#define GLM_FORCE_DEFAULT_ALIGNED_GENTYPES
 
 Banana::OpenGLUniformBuffer::OpenGLUniformBuffer(uint32_t size, uint32_t binding) {
     glCreateBuffers(1, &m_RendererID);

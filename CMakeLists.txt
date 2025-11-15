@@ -5,7 +5,7 @@ project(Banana)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_VERBOSE_MAKEFILE ON)
-
+set(CMAKE_BUILD_TYPE Debug)
 
 find_package(spdlog CONFIG REQUIRED)
 find_package(glfw3 CONFIG REQUIRED)

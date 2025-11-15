@@ -16,7 +16,10 @@
 #include "box2d/b2_circle_shape.h"
 #include "box2d/b2_fixture.h"
 #include "ScriptableEntity.h"
+#include "Banana/Renderer/Framebuffer.h"
+#include "Banana/Renderer/RenderCommand.h"
 #include "Banana/Renderer/Renderer3D.h"
+#include "Banana/Renderer/ShadowRenderer3D.h"
 
 namespace Banana {
     static b2BodyType RigidBody2DTypeToBox2DBody(RigidBody2DComponent::BodyType bodyType) {
@@ -31,6 +34,23 @@ namespace Banana {
 
 
     Scene::Scene() {
+        FramebufferSpecification viewFrameBufferSpecification;
+        viewFrameBufferSpecification.Width = 1280;
+        viewFrameBufferSpecification.Height = 720;
+        viewFrameBufferSpecification.Attachments = {
+            FramebufferTextureFormat::RGBA8, FramebufferTextureFormat::RED_INTEGER, FramebufferTextureFormat::Depth
+        };
+
+        m_ViewFrameBuffer = Framebuffer::Create(viewFrameBufferSpecification);
+
+
+        FramebufferSpecification shadowFrameBufferSpecification;
+        shadowFrameBufferSpecification.Width = 1280;
+        shadowFrameBufferSpecification.Height = 720;
+        shadowFrameBufferSpecification.Attachments = {
+            FramebufferTextureFormat::RGBA8, FramebufferTextureFormat::Depth
+        };
+        m_ShadowFrameBuffer = Framebuffer::Create(shadowFrameBufferSpecification);
     }
 
     Scene::~Scene() {
@@ -85,6 +105,9 @@ namespace Banana {
         CopyComponent<BoxCollider2DComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
         CopyComponent<CircleCollider2DComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
         CopyComponent<CubeRendererComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
+        CopyComponent<DirectionalLightComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
+        CopyComponent<PointLightComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
+        CopyComponent<SpotLightComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
 
         return newScene;
     }
@@ -250,52 +273,27 @@ namespace Banana {
     }
 
     void Scene::OnUpdateEditor(Timestep ts, EditorCamera &camera) {
-        Renderer2D::BeginScene(camera);
-
-        // camera control
         camera.OnUpdate(ts);
-
-        // draw sprite
-        {
-            auto group = m_Registry.view<TransformComponent, SpriteRendererComponent>();
-            for (auto entity: group) {
-                auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
-                Renderer2D::DrawSprite(transform.GetTransform(), sprite, (int) entity);
-            }
-        }
-
-        // draw circle
-        {
-            auto group = m_Registry.view<TransformComponent, CircleRendererComponent>();
-            for (auto entity: group) {
-                auto [transform, circle] = group.get<TransformComponent, CircleRendererComponent>(entity);
-
-                Renderer2D::DrawCircle(transform.GetTransform(), circle.Color, circle.Thickness, circle.Fade,
-                                       static_cast<int>(entity));
-            }
-        }
-
-        Renderer2D::EndScene();
-
         m_LightController.Update(m_Registry);
-        Renderer3D::BeginScene(camera, m_LightController);
 
-        // draw cube
-        {
-            auto group = m_Registry.view<TransformComponent, CubeRendererComponent>();
-            for (auto entity: group) {
-                auto [transform, cube] = group.get<TransformComponent, CubeRendererComponent>(entity);
+        Clear();
 
-                Renderer3D::DrawCube(transform.GetTransform(), cube.Ambient, cube.Diffuse, cube.Specular,
-                                     cube.Shininess, static_cast<int>(entity));
-            }
-        }
-        Renderer3D::EndScene();
+        m_ShadowFrameBuffer->Bind();
+        RenderShadowOnEdit();
+        m_ShadowFrameBuffer->Unbind();
+
+        m_ViewFrameBuffer->Bind();
+        Render2DOnEdit(camera, ts);
+        Render3DOnEdit(camera, ts);
+        m_ViewFrameBuffer->Unbind();
     }
 
     void Scene::OnViewportResize(uint32_t width, uint32_t height) {
         m_ViewportWidth = width;
         m_ViewportHeight = height;
+
+        m_ViewFrameBuffer->Resize(width, height);
+        m_ShadowFrameBuffer->Resize(width, height);
 
         const auto &view = m_Registry.view<CameraComponent>();
         for (auto entity: view) {
@@ -319,6 +317,9 @@ namespace Banana {
         CopyComponentIfExists<BoxCollider2DComponent>(newEntity, entity);
         CopyComponentIfExists<CircleCollider2DComponent>(newEntity, entity);
         CopyComponentIfExists<CubeRendererComponent>(newEntity, entity);
+        CopyComponentIfExists<DirectionalLightComponent>(newEntity, entity);
+        CopyComponentIfExists<PointLightComponent>(newEntity, entity);
+        CopyComponentIfExists<SpotLightComponent>(newEntity, entity);
     }
 
     Entity Scene::GetPrimaryCameraEntity() {
@@ -334,6 +335,72 @@ namespace Banana {
 
     void Scene::DestroyEntity(Entity entity) {
         m_Registry.destroy(entity);
+    }
+
+    void Scene::Render2DOnEdit(EditorCamera &camera, Timestep ts) {
+        Renderer2D::BeginScene(camera);
+        // draw sprite
+        {
+            auto group = m_Registry.view<TransformComponent, SpriteRendererComponent>();
+            for (auto entity: group) {
+                auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
+                Renderer2D::DrawSprite(transform.GetTransform(), sprite, (int) entity);
+            }
+        }
+
+        // draw circle
+        {
+            auto group = m_Registry.view<TransformComponent, CircleRendererComponent>();
+            for (auto entity: group) {
+                auto [transform, circle] = group.get<TransformComponent, CircleRendererComponent>(entity);
+
+                Renderer2D::DrawCircle(transform.GetTransform(), circle.Color, circle.Thickness, circle.Fade,
+                                       static_cast<int>(entity));
+            }
+        }
+
+        Renderer2D::EndScene();
+    }
+
+    void Scene::RenderShadowOnEdit() {
+        ShadowRenderer3D::BeginScene(m_LightController); {
+            auto group = m_Registry.view<TransformComponent, CubeRendererComponent>();
+            for (auto entity: group) {
+                auto [transform, cube] = group.get<TransformComponent, CubeRendererComponent>(entity);
+
+                ShadowRenderer3D::DrawCube(transform.GetTransform());
+            }
+        }
+        ShadowRenderer3D::EndScene();
+    }
+
+    void Scene::Render3DOnEdit(EditorCamera &camera, Timestep ts) {
+        Renderer3D::BeginScene(camera, m_LightController);
+
+        // draw cube
+        {
+            auto group = m_Registry.view<TransformComponent, CubeRendererComponent>();
+            for (auto entity: group) {
+                auto [transform, cube] = group.get<TransformComponent, CubeRendererComponent>(entity);
+
+                Renderer3D::DrawCube(transform.GetTransform(), cube.Ambient, cube.Diffuse, cube.Specular,
+                                     cube.Shininess, static_cast<int>(entity));
+            }
+        }
+        Renderer3D::EndScene();
+    }
+
+    void Scene::Clear() {
+        m_ViewFrameBuffer->Bind();
+        RenderCommand::SetClearColor({0.05f, 0.05f, 0.05f, 1});
+        RenderCommand::Clear();
+        m_ViewFrameBuffer->ClearAttachment(1, -1);
+        m_ViewFrameBuffer->Unbind();
+
+        m_ShadowFrameBuffer->Bind();
+        RenderCommand::SetClearColor({1.0f, 1.0f, 1.0f, 1});
+        RenderCommand::Clear();
+        m_ShadowFrameBuffer->Unbind();
     }
 
     template<typename T>

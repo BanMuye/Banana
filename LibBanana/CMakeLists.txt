@@ -103,7 +103,10 @@ add_library(BananaEngine STATIC
         src/Banana/Renderer/Renderer3D.cc
         src/Banana/Renderer/Renderer3D.h
         src/Banana/Controller/LightController.cc
-        src/Banana/Controller/LightController.h)
+        src/Banana/Controller/LightController.h
+        src/Banana/Utils/TextureUtils.h
+        src/Banana/Renderer/ShadowRenderer3D.cc
+        src/Banana/Renderer/ShadowRenderer3D.h)
 
 # 设置公共头文件目录（暴露给依赖模块）
 target_include_directories(BananaEngine PUBLIC

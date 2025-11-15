@@ -5,14 +5,19 @@
 #include "Banana/Core/bapch.h"
 #include "Renderer3D.h"
 
+#include <glad/glad.h>
+
+#include "Framebuffer.h"
 #include "RenderCommand.h"
 #include "Shader.h"
 #include "UniformBuffer.h"
 #include "VertexArray.h"
+#include "Banana/Utils/TextureUtils.h"
 
 namespace Banana {
     struct CubeVertex {
         glm::vec3 Position;
+        glm::vec3 OriginalPosition;
         glm::vec3 Normal;
 
         struct Material {
@@ -26,6 +31,10 @@ namespace Banana {
 
         // Editor-only
         int EntityID;
+    };
+
+    struct LightSpace {
+        glm::mat4 ViewProjection;
     };
 
     struct Renderer3DData {
@@ -55,6 +64,7 @@ namespace Banana {
         };
 
         CameraData CameraBuffer;
+        LightSpace LightSpaceBuffer;
         Ref<UniformBuffer> CameraUniformBuffer;
         Ref<UniformBuffer> LightUniformBuffer;
     };
@@ -68,6 +78,7 @@ namespace Banana {
         s_Data.CubeVertexBuffer = VertexBuffer::Create(Renderer3DData::MaxVertices * sizeof(CubeVertex));
         s_Data.CubeVertexBuffer->SetLayout({
             {ShaderDataType::Float3, "a_Position"},
+            {ShaderDataType::Float3, "a_OriginalPosition"},
             {ShaderDataType::Float3, "a_Normal"},
             {ShaderDataType::Float4, "a_Ambient"},
             {ShaderDataType::Float4, "a_Diffuse"},
@@ -160,8 +171,8 @@ namespace Banana {
 
         s_Data.CameraBuffer.ViewProjection = camera.GetViewProjection();
         s_Data.CameraBuffer.Position = camera.GetPosition();
+        s_Data.LightUniformBuffer->SetData(&lightController.GetLightData(), sizeof(LightData));
         s_Data.CameraUniformBuffer->SetData(&s_Data.CameraBuffer, sizeof(s_Data.CameraBuffer));
-        s_Data.CameraUniformBuffer->SetData(&s_Data.LightUniformBuffer, sizeof(lightController.GetLightData()));
 
         ResetStats();
         StartBatch();
@@ -198,7 +209,8 @@ namespace Banana {
 
         for (size_t i = 0; i < cubeVertexCount; i++) {
             s_Data.CubeVertexBufferPtr->Position = transform * glm::vec4(s_Data.CubeVertexPositions[i][0], 1.0f);
-            s_Data.CubeVertexBufferPtr->Normal = s_Data.CubeVertexPositions[i][1];
+            s_Data.CubeVertexBufferPtr->OriginalPosition = s_Data.CubeVertexPositions[i][0];
+            s_Data.CubeVertexBufferPtr->Normal = transform * glm::vec4(s_Data.CubeVertexPositions[i][1], 1.0f);
             s_Data.CubeVertexBufferPtr->Material.Ambient = ambient;
             s_Data.CubeVertexBufferPtr->Material.Diffuse = diffuse;
             s_Data.CubeVertexBufferPtr->Material.Specular = specular;
@@ -243,5 +255,22 @@ namespace Banana {
         EndScene();
 
         StartBatch();
+    }
+
+    void Renderer3D::CalcLightSpaceViewProjectionMatrix(const LightController &lightController) {
+        auto lightData = lightController.GetLightData();
+
+        // currently we only support shadow from directional light
+        if (lightData.directionalLightCount < 1) return;
+
+        auto directionalLight = lightData.DirectionalLights[0];
+
+        float nearPlane = -1.0f, farPlane = 1.0f;
+        glm::mat4 lightProjection = glm::ortho(-1.280f, 1.280f, -0.720f, 0.720f, nearPlane, farPlane);
+
+        glm::mat4 lightView = glm::lookAt(xyz(LightController::s_InitialLightPosition), xyz(directionalLight.Direction),
+                                          glm::vec3(0.0f, 1.0f, 0.0f));
+
+        s_Data.LightSpaceBuffer.ViewProjection = lightProjection * lightView;
     }
 }

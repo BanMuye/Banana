@@ -5,6 +5,7 @@
 #ifndef RENDERER3D_H
 #define RENDERER3D_H
 #include "EditorCamera.h"
+#include "Shader.h"
 #include "Banana/Controller/LightController.h"
 
 
@@ -42,6 +43,8 @@ namespace Banana {
         static void Flush();
 
         static void FlushAndReset();
+
+        static void CalcLightSpaceViewProjectionMatrix(const LightController& lightController);
     };
 }
 

@@ -1,12 +1,13 @@
 #version 450 core
 
 layout(location = 0) in vec3 a_Position;
-layout(location = 1) in vec3 a_Normal;
-layout(location = 2) in vec4 a_Ambient;
-layout(location = 3) in vec4 a_Diffuse;
-layout(location = 4) in vec4 a_Specular;
-layout(location = 5) in float a_Shininess;
-layout(location = 6) in int a_EntityID;
+layout(location = 1) in vec3 a_OriginalPosition;
+layout(location = 2) in vec3 a_Normal;
+layout(location = 3) in vec4 a_Ambient;
+layout(location = 4) in vec4 a_Diffuse;
+layout(location = 5) in vec4 a_Specular;
+layout(location = 6) in float a_Shininess;
+layout(location = 7) in int a_EntityID;
 
 
 layout(std140, binding = 0) uniform Camera {
@@ -14,31 +15,9 @@ layout(std140, binding = 0) uniform Camera {
     vec3 u_Position;
 };
 
-layout(std140, binding = 1) uniform Light {
-    struct DirectionalLight {
-        vec3 Direction;
-        vec3 Color;
-    };
-
-    struct PointLight {
-        vec3 Position;
-        float Constant;
-        float Linear;
-        float Quadratic;
-        vec3 Color;
-    };
-
-    struct SpotLight {
-        vec3 Position;
-        vec3 Direction;
-        float CutOff;
-        vec3 Color;
-    }
-
-    DirectionalLight u_DirectionalLights[1];
-    PointLight u_PointLights[100];
-    SpotLight u_SpotLights[100];
-}
+layout(std140, binding=2) uniform LightSpace {
+    mat4 u_LightViewProjection;
+};
 
 struct VertexOutput {
     vec3 Position;
@@ -46,11 +25,12 @@ struct VertexOutput {
     vec4 Ambient;
     vec4 Diffuse;
     vec4 Specular;
+    vec4 FragPosLightSpace;
     float Shininess;
 };
 
 layout(location = 0) out VertexOutput Output;
-layout(location = 6) out flat int v_EntityID;
+layout(location = 7) out flat int v_EntityID;
 
 void main() {
     Output.Position = a_Position;
@@ -58,9 +38,10 @@ void main() {
     Output.Ambient = a_Ambient;
     Output.Diffuse = a_Diffuse;
     Output.Specular = a_Specular;
+    Output.FragPosLightSpace = u_LightViewProjection * vec4(a_OriginalPosition, 1.0f);
     Output.Shininess = a_Shininess;
 
     v_EntityID = a_EntityID;
 
     gl_Position = u_ViewProjection * vec4(a_Position, 1.0f);
-};
+}

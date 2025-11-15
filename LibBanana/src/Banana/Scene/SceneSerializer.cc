@@ -285,6 +285,7 @@ namespace Banana {
             out << YAML::Key << "Color" << YAML::Value << light.Color;
             out << YAML::Key << "Direction" << YAML::Value << light.Direction;
             out << YAML::Key << "CutOff" << YAML::Value << light.CutOff;
+            out << YAML::Key << "OutterCutOff" << YAML::Value << light.CutOff;
 
             out << YAML::EndMap;
         }
@@ -427,14 +428,14 @@ namespace Banana {
                 auto directionalLightComponent = entity["DirectionalLightComponent"];
                 if (directionalLightComponent) {
                     auto &ld = deserializedEntity.AddComponent<DirectionalLightComponent>();
-                    ld.Color = directionalLightComponent["Color"].as<glm::vec3>();
-                    ld.Direction = directionalLightComponent["Direction"].as<glm::vec3>();
+                    ld.Color = directionalLightComponent["Color"].as<glm::vec4>();
+                    ld.Direction = directionalLightComponent["Direction"].as<glm::vec4>();
                 }
 
                 auto pointLightComponent = entity["PointLightComponent"];
                 if (pointLightComponent) {
                     auto &plComponent = deserializedEntity.AddComponent<PointLightComponent>();
-                    plComponent.Color = pointLightComponent["Color"].as<glm::vec3>();
+                    plComponent.Color = pointLightComponent["Color"].as<glm::vec4>();
                     plComponent.Constant = pointLightComponent["Constant"].as<float>();
                     plComponent.Linear = pointLightComponent["Linear"].as<float>();
                     plComponent.Quadratic = pointLightComponent["Quadratic"].as<float>();
@@ -443,9 +444,10 @@ namespace Banana {
                 auto spotLightComponent = entity["SpotLightComponent"];
                 if (spotLightComponent) {
                     auto &slComponent = deserializedEntity.AddComponent<SpotLightComponent>();
-                    slComponent.Color = spotLightComponent["Color"].as<glm::vec3>();
-                    slComponent.Direction = spotLightComponent["Direction"].as<glm::vec3>();
+                    slComponent.Color = spotLightComponent["Color"].as<glm::vec4>();
+                    slComponent.Direction = spotLightComponent["Direction"].as<glm::vec4>();
                     slComponent.CutOff = spotLightComponent["CutOff"].as<float>();
+                    slComponent.CutOff = spotLightComponent["OutterCutOff"].as<float>();
                 }
             }
         }
