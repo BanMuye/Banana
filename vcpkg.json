@@ -6,12 +6,9 @@
     "glfw3",
     {
       "name": "imgui",
-      "features": [
-        "docking-experimental",
-        "glfw-binding",
-        "opengl3-binding"
-      ]
+      "features": ["docking-experimental", "glfw-binding", "opengl3-binding"]
     },
+    "spdlog",
     {
       "name": "spdlog",
       "features": []
@@ -23,5 +20,11 @@
     "entt",
     "yaml-cpp"
   ],
-  "builtin-baseline": "e3ed41868d5034bc608eaaa58383cd6ecdbb5ffb"
+  "builtin-baseline": "c941d5e450738629213a60ab8911fd26efca7c6e",
+  "overrides": [
+    {
+      "name": "box2d",
+      "version": "2.4.1"
+    }
+  ]
 }
